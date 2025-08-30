@@ -41,54 +41,26 @@
 ### DDEV ###
 .ddev/
 
-tests/report/*
+### Test Project ###
 /hallo/
-tests/reports/bash_compatibility_20250828_234226.log
-tests/reports/bash_compatibility_20250829_195817.log
-tests/reports/bash_compatibility_20250829_201755.log
-tests/reports/bash_compatibility_20250829_220510.log
-tests/reports/bash_compatibility_20250829_223722.log
-tests/reports/bash_compatibility_report_20250828_234230.txt
-tests/reports/bash_compatibility_report_20250829_195821.txt
-tests/reports/bash_compatibility_report_20250829_201758.txt
-tests/reports/bash_compatibility_report_20250829_220513.txt
-tests/reports/bash_compatibility_report_20250829_223725.txt
-tests/reports/bash_version_20250829_195527.log
-tests/reports/bash_version_20250829_201755.log
-tests/reports/bash_version_20250829_220510.log
-tests/reports/bash_version_20250829_223721.log
-tests/reports/bash_version_report_20250829_195527.txt
-tests/reports/bash_version_report_20250829_201755.txt
-tests/reports/bash_version_report_20250829_220510.txt
-tests/reports/bash_version_report_20250829_223722.txt
-tests/reports/compatibility_master_20250828_234311.log
-tests/reports/compatibility_master_20250829_201755.log
-tests/reports/compatibility_master_20250829_220509.log
-tests/reports/compatibility_master_20250829_223721.log
-tests/reports/script_cleanup_log.md
-tests/reports/summary_report_20250829_203540.txt
-tests/reports/test_run_report_20250829_203220.txt
-tests/reports/test_run_report_20250829_203314.txt
-tests/reports/test_run_report_20250829_203606.txt
-tests/reports/test_run_report_20250829_203748.txt
-tests/reports/test_run_report_20250829_220507.txt
-tests/reports/test_results/bash_compatibility_20250828_191920.log
-tests/reports/test_results/bash_compatibility_20250828_192029.log
-tests/reports/test_results/bash_compatibility_report_20250828_191922.txt
-tests/reports/test_results/bash_compatibility_report_20250828_192033.txt
-tests/reports/test_results/bash_version_20250828_191800.log
-tests/reports/test_results/bash_version_20250828_192029.log
-tests/reports/test_results/bash_version_20250828_192521.log
-tests/reports/test_results/bash_version_report_20250828_191800.txt
-tests/reports/test_results/bash_version_report_20250828_192029.txt
-tests/reports/test_results/bash_version_report_20250828_192522.txt
-tests/reports/test_results/compatibility_master_20250828_192029.log
-tests/reports/test_results/Error_Handling_Tests_20250828_161611.log
-tests/reports/test_results/final_compatibility_report_20250828_192029.txt
-tests/reports/test_results/Integration_Tests_20250828_161611.log
-tests/reports/test_results/task_12_completion_summary.md
-tests/reports/test_results/test_report_20250828_161611.txt
-tests/reports/test_results/Unit_Tests_20250828_161611.log
-tests/reports/test_validation/test_json_report.json
-tests/reports/test_validation/test_summary_report.txt
-tests/reports/test_validation/test_text_report.txt
+
+### Test Reports ###
+/tests/reports/
+
+### Generated Files ###
+replacement_functions_only.sh
+/test_results/
+*.log
+*.tmp
+
+### Backup Files ###
+*.backup
+*.bak
+*~
+*.orig
+
+### Test Directories ###
+/quick_test/
+/debug_test/
+/test_replacement_suite/
+/test_verification/
