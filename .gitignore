@@ -41,7 +41,7 @@
 ### DDEV ###
 .ddev/
 
-/tests/report/*
+tests/report/*
 /hallo/
 tests/reports/bash_compatibility_20250828_234226.log
 tests/reports/bash_compatibility_20250829_195817.log
