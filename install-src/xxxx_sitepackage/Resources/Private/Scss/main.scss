@@ -1,0 +1,55 @@
+//
+// abstracts
+// contains no actual styles
+//
+@import "bootstrap/scss/functions";
+@import "abstracts/variables";
+@import "abstracts/variables-dark";
+@import "abstracts/bem-mixin";
+
+
+//
+// vendors
+// third-party stylesheets
+//
+@import "bootstrap/scss/bootstrap";
+
+
+//
+// base
+// boilerplate used throughout the entire site
+//
+@import "base/typography";
+@import "base/utilities";
+
+//
+// layout
+// structural layout
+//
+@import "layout/navigation";
+@import "layout/language-menu";
+@import "layout/container";
+@import "layout/footer";
+
+//
+// plugins
+// TYPO3 plugins
+//
+@import "plugins/plugins";
+//@import "plugins/forms";
+
+//
+// components
+// reusable components
+//
+@import "components/buttons";
+@import "components/cards";
+@import "components/modals";
+@import "components/color-mode-toggle";
+@import "components/forms";
+//@import "components/links";
+
+//
+// overwrite css-vars
+//
+@import "abstracts/css-vars";

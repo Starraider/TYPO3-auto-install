@@ -1,0 +1,65 @@
+//
+// Navigation Styles
+// Navbar and navigation components
+//
+
+.navbar {
+    background-color: var(--bs-navbar-bg);
+    border-bottom: 1px solid var(--bs-border-color);
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    box-shadow: 0px 2px 8px rgba(26, 26, 26, 0.04);
+    .container {
+        background-color: var(--bs-navbar-bg);
+    }
+    .navbar-brand {
+        .navbar-logo {
+            height: 40px;
+            width: auto;
+            max-width: 200px;
+        }
+    }
+
+    .navbar-nav {
+        .nav-item {
+            .nav-link {
+                color: var(--bs-navbar-nav-link-color);
+                transition: color 0.3s ease;
+
+                &:hover {
+                    color: var(--bs-navbar-nav-link-hover-color) !important;
+                }
+            }
+
+            &.active {
+                .nav-link {
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+
+    .dropdown-menu {
+        background-color: var(--bs-secondary-bg);
+        border: 1px solid var(--bs-border-color);
+        color: var(--bs-body-color);
+
+        .dropdown-item {
+            color: var(--bs-body-color);
+
+            &:hover {
+                background-color: var(--bs-tertiary-bg);
+                color: var(--bs-body-color);
+            }
+        }
+    }
+}
+
+//
+// Meta-Menu
+//
+.meta-menu {
+    .footer-navigation-link-level-1 {
+        font-weight: 300;
+        text-decoration: none;
+    }
+}

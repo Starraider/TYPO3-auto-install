@@ -1,0 +1,176 @@
+:root {
+    --bs-body-font-weight: 400;
+    --bs-font-family-sans-serif: "Share Tech Mono", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --bs-font-family-monospace: "Jersey 15", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+}
+
+// Bootstrap Color Mode Variables
+// Light mode (default) - SKOM Style Guide Implementation
+:root {
+    --bs-body-color: #373636;
+    --bs-body-bg: #f2eeec;
+    --bs-emphasis-color: #b7afac;
+    --bs-emphasis-color-rgb: 183, 175, 172;
+    --bs-secondary-color: #5c6165;
+    --bs-secondary-color-rgb: 92, 97, 101;
+    --bs-secondary-bg: #f2eeec;
+    --bs-secondary-bg-rgb: 242, 238, 236;
+    --bs-tertiary-color: rgba(26, 26, 26, 0.5);
+    --bs-tertiary-color-rgb: 26, 26, 26;
+    --bs-tertiary-bg: #F3F4F6;
+    --bs-tertiary-bg-rgb: 243, 244, 246;
+    --bs-heading-color: #373636;
+    --bs-link-color: #3B82F6;
+    --bs-link-color-rgb: 59, 130, 246;
+    --bs-link-hover-color: #2563EB;
+    --bs-link-hover-color-rgb: 37, 99, 235;
+    --bs-code-color: #EF4444;
+    --bs-highlight-bg: #FEF3C7;
+    --bs-border-color: #E5E7EB;
+    --bs-border-color-translucent: rgba(26, 26, 26, 0.175);
+    --bs-form-valid-color: #10B981;
+    --bs-form-valid-border-color: #10B981;
+    --bs-form-invalid-color: #EF4444;
+    --bs-form-invalid-border-color: #EF4444;
+
+    // Dropdown variables
+    --bs-dropdown-bg: #FFFFFF;
+    --bs-dropdown-border-color: rgba(26, 26, 26, 0.15);
+    --bs-dropdown-border-width: 1px;
+    --bs-dropdown-border-radius: 0.25rem;
+    --bs-dropdown-box-shadow: 0px 4px 16px rgba(26, 26, 26, 0.06);
+    --bs-dropdown-link-color: #1A1A1A;
+    --bs-dropdown-link-hover-color: #000000;
+    --bs-dropdown-link-hover-bg: #F8F8F8;
+    --bs-dropdown-link-active-color: #FFFFFF;
+    --bs-dropdown-link-active-bg: #1A1A1A;
+    --bs-dropdown-link-disabled-color: #9A9A9A;
+
+    // Card variables
+    --bs-card-bg: #FFFFFF;
+    --bs-card-border-color: #E8E6E1;
+    --bs-card-box-shadow: 0px 4px 16px rgba(26, 26, 26, 0.06);
+
+    // Navbar variables
+    --bs-navbar-bg: #b7afac;
+    --bs-navbar-color: #373636;
+    --bs-navbar-brand-color: #373636;
+    --bs-navbar-brand-hover-color: #373636;
+    --bs-navbar-nav-link-color: #373636;
+    --bs-navbar-nav-link-hover-color: #373636;
+    --bs-navbar-nav-link-active-color: #373636;
+    --bs-navbar-toggler-border-color: rgba(26, 26, 26, 0.15);
+
+    // Footer variables
+    --bs-footer-bg: #b7afac;
+    --bs-footer-color: #373636;
+    --bs-footer-link-color: #373636;
+    --bs-footer-link-hover-color: #373636;
+    --bs-footer-link-active-color: #373636;
+    --bs-footer-link-disabled-color: #373636;
+    --bs-footer-meta-bg: #f2eeec;
+    --bs-footer-meta-color: #373636;
+
+    // Button variables
+    --bs-btn-primary-bg: #1A1A1A;
+    --bs-btn-primary-border-color: #1A1A1A;
+    --bs-btn-primary-color: #FFFFFF;
+    --bs-btn-secondary-bg: transparent;
+    --bs-btn-secondary-border-color: #1A1A1A;
+    --bs-btn-secondary-color: #1A1A1A;
+    --bs-btn-tertiary-bg: #3B82F6;
+    --bs-btn-tertiary-border-color: #3B82F6;
+    --bs-btn-tertiary-color: #FFFFFF;
+    --bs-btn-accent-warm-bg: #F59E0B;
+    --bs-btn-accent-warm-border-color: #F59E0B;
+    --bs-btn-accent-warm-color: #FFFFFF;
+
+    // Input variables
+    --bs-input-bg: #FFFFFF;
+    --bs-input-border-color: #D1D5DB;
+    --bs-input-focus-border-color: #3B82F6;
+    --bs-input-color: #1A1A1A;
+    --bs-input-placeholder-color: #6B7280;
+}
+
+// Dark mode - SKOM Style Guide Implementation
+[data-bs-theme="dark"] {
+    --bs-body-color: #F9FAFB;
+    --bs-body-bg: #5c6165;
+    --bs-emphasis-color: #F9FAFB;
+    --bs-emphasis-color-rgb: 249, 250, 251;
+    --bs-secondary-color: rgba(249, 250, 251, 0.75);
+    --bs-secondary-color-rgb: 249, 250, 251;
+    --bs-secondary-bg: #1F2937;
+    --bs-secondary-bg-rgb: 31, 41, 55;
+    --bs-tertiary-color: rgba(249, 250, 251, 0.5);
+    --bs-tertiary-color-rgb: 249, 250, 251;
+    --bs-tertiary-bg: #374151;
+    --bs-tertiary-bg-rgb: 55, 65, 81;
+    --bs-heading-color: #F9FAFB;
+    --bs-link-color: #3B82F6;
+    --bs-link-color-rgb: 59, 130, 246;
+    --bs-link-hover-color: #60A5FA;
+    --bs-link-hover-color-rgb: 96, 165, 250;
+    --bs-code-color: #EF4444;
+    --bs-highlight-bg: #92400E;
+    --bs-border-color: #374151;
+    --bs-border-color-translucent: rgba(249, 250, 251, 0.15);
+    --bs-form-valid-color: #10B981;
+    --bs-form-valid-border-color: #10B981;
+    --bs-form-invalid-color: #EF4444;
+    --bs-form-invalid-border-color: #EF4444;
+
+    // Dropdown variables for dark mode
+    --bs-dropdown-bg: #1E1E1E;
+    --bs-dropdown-border-color: rgba(255, 255, 255, 0.15);
+
+    // Navbar variables for dark mode
+    --bs-navbar-bg: #373636;
+    --bs-navbar-color: #F9FAFB;
+    --bs-navbar-brand-color: #F9FAFB;
+    --bs-navbar-brand-hover-color: #F9FAFB;
+    --bs-navbar-nav-link-color: #D1D5DB;
+    --bs-navbar-nav-link-hover-color: #F9FAFB;
+    --bs-navbar-nav-link-active-color: #F9FAFB;
+    --bs-navbar-toggler-border-color: rgba(249, 250, 251, 0.15);
+    --bs-dropdown-border-width: 1px;
+    --bs-dropdown-border-radius: 0.25rem;
+    --bs-dropdown-box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.5);
+    --bs-dropdown-link-color: #FFFFFF;
+    --bs-dropdown-link-hover-color: #FFFFFF;
+    --bs-dropdown-link-hover-bg: rgba(255, 255, 255, 0.1);
+    --bs-dropdown-link-active-color: #FFFFFF;
+    --bs-dropdown-link-active-bg: #1A1A1A;
+    --bs-dropdown-link-disabled-color: #9A9A9A;
+
+    // Footer variables
+    --bs-footer-bg: #373636;
+    --bs-footer-color: #F9FAFB;
+    --bs-footer-link-color: #F9FAFB;
+    --bs-footer-link-hover-color: #F9FAFB;
+    --bs-footer-link-active-color: #F9FAFB;
+    --bs-footer-link-disabled-color: #F9FAFB;
+    --bs-footer-meta-bg: #5c6165;
+    --bs-footer-meta-color: #F9FAFB;
+
+    // Card variables for dark mode
+    --bs-card-bg: #1E1E1E;
+    --bs-card-border-color: #424242;
+    --bs-card-box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.3);
+
+    // Button variables for dark mode
+    --bs-btn-primary-bg: #FFFFFF;
+    --bs-btn-primary-border-color: #FFFFFF;
+    --bs-btn-primary-color: #1A1A1A;
+    --bs-btn-secondary-bg: transparent;
+    --bs-btn-secondary-border-color: #FFFFFF;
+    --bs-btn-secondary-color: #FFFFFF;
+
+    // Input variables for dark mode
+    --bs-input-bg: #2D2D2D;
+    --bs-input-border-color: #424242;
+    --bs-input-focus-border-color: #FFFFFF;
+    --bs-input-color: #FFFFFF;
+    --bs-input-placeholder-color: #9A9A9A;
+}

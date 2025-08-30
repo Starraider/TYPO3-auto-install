@@ -1,0 +1,14 @@
+//
+// Main Content Area
+// Handles spacing and layout for the main content area
+//
+
+.main-content {
+    margin-top: 76px; // Account for fixed navbar height
+    min-height: calc(100vh - 200px); // Ensure footer stays at bottom
+}
+
+// Global container styles
+.container, .container-fluid {
+    background-color: var(--bs-body-bg);
+}

@@ -1,0 +1,23 @@
+// Form Component Styles - SKOM Style Guide Implementation
+
+// Global input styles
+.form-control, .form-select {
+    height: 64px;
+    border-radius: 0.25rem;
+    border-width: 2px;
+    border-color: var(--bs-input-border-color);
+    background-color: var(--bs-input-bg);
+    color: var(--bs-input-color);
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: border-color 0.25s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+
+    &:focus {
+        border-color: var(--bs-input-focus-border-color);
+        box-shadow: 0 0 0 0.25rem rgba(26, 26, 26, 0.25);
+    }
+
+    &::placeholder {
+        color: var(--bs-input-placeholder-color);
+    }
+}

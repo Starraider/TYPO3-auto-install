@@ -1,0 +1,1 @@
+test_sitepackage with "quotes" and $variables and [brackets]

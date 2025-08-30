@@ -1,0 +1,133 @@
+// Dark color mode variables
+//
+// Custom variables for the `[data-bs-theme="dark"]` theme. Use this as a starting point for your own custom color modes by creating a new theme-specific file like `_variables-dark.scss` and adding the variables you need.
+
+//
+// Global colors - SKOM Style Guide Dark Mode Implementation
+//
+
+// scss-docs-start sass-dark-mode-vars
+// scss-docs-start theme-text-dark-variables
+$primary-text-emphasis-dark:        #F9FAFB;
+$secondary-text-emphasis-dark:      #D1D5DB;
+$success-text-emphasis-dark:        #10B981;
+$info-text-emphasis-dark:           #3B82F6;
+$warning-text-emphasis-dark:        #F59E0B;
+$danger-text-emphasis-dark:         #EF4444;
+$light-text-emphasis-dark:          #F9FAFB;
+$dark-text-emphasis-dark:           #D1D5DB;
+// scss-docs-end theme-text-dark-variables
+
+// scss-docs-start theme-bg-subtle-dark-variables
+$primary-bg-subtle-dark:            #1F2937;
+$secondary-bg-subtle-dark:          #374151;
+$success-bg-subtle-dark:            #065F46;
+$info-bg-subtle-dark:               #1E40AF;
+$warning-bg-subtle-dark:            #92400E;
+$danger-bg-subtle-dark:             #991B1B;
+$light-bg-subtle-dark:              #374151;
+$dark-bg-subtle-dark:               #111827;
+// scss-docs-end theme-bg-subtle-variables
+
+// scss-docs-start theme-border-subtle-dark-variables
+$primary-border-subtle-dark:        #374151;
+$secondary-border-subtle-dark:      #4B5563;
+$success-border-subtle-dark:        #047857;
+$info-border-subtle-dark:           #2563EB;
+$warning-border-subtle-dark:        #B45309;
+$danger-border-subtle-dark:         #DC2626;
+$light-border-subtle-dark:          #6B7280;
+$dark-border-subtle-dark:           #374151;
+// scss-docs-end theme-border-subtle-dark-variables
+
+$body-color-dark:                   #F9FAFB;
+$body-bg-dark:                      #111827;
+$body-secondary-color-dark:         rgba(249, 250, 251, 0.75);
+$body-secondary-bg-dark:            #1F2937;
+$body-tertiary-color-dark:          rgba(249, 250, 251, 0.5);
+$body-tertiary-bg-dark:             #374151;
+$body-emphasis-color-dark:          #F9FAFB;
+$border-color-dark:                 #374151;
+$border-color-translucent-dark:     rgba(249, 250, 251, 0.15);
+$headings-color-dark:               #F9FAFB;
+$link-color-dark:                   #3B82F6;
+$link-hover-color-dark:             #60A5FA;
+$code-color-dark:                   #EF4444;
+$mark-color-dark:                   $body-color-dark;
+$mark-bg-dark:                      #F59E0B;
+
+
+//
+// Forms - Dark Mode
+//
+
+$form-select-indicator-color-dark:  $body-color-dark;
+$form-select-indicator-dark:        url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='#{$form-select-indicator-color-dark}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
+
+$form-switch-color-dark:            rgba(255, 255, 255, 0.25);
+$form-switch-bg-image-dark:         url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$form-switch-color-dark}'/></svg>");
+
+// scss-docs-start form-validation-colors-dark
+$form-valid-color-dark:             #10B981;
+$form-valid-border-color-dark:      #10B981;
+$form-invalid-color-dark:           #EF4444;
+$form-invalid-border-color-dark:    #EF4444;
+// scss-docs-end form-validation-colors-dark
+
+
+//
+// Accordion - Dark Mode
+//
+
+$accordion-icon-color-dark:         $primary-text-emphasis-dark;
+$accordion-icon-active-color-dark:  $primary-text-emphasis-dark;
+
+$accordion-button-icon-dark:         url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$accordion-icon-color-dark}'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
+$accordion-button-active-icon-dark:  url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$accordion-icon-active-color-dark}'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
+// scss-docs-end sass-dark-mode-vars
+
+// Card - Dark Mode
+$card-color-dark:                    #FFFFFF;
+$card-cap-color-dark:                #FFFFFF;
+$card-bg-dark:                       #1E1E1E;
+$card-border-color-dark:             #424242;
+$card-box-shadow-dark:               0px 4px 16px rgba(0, 0, 0, 0.3);
+
+// Button - Dark Mode
+$btn-primary-bg-dark:                #FFFFFF;
+$btn-primary-border-color-dark:      #FFFFFF;
+$btn-primary-color-dark:             #1A1A1A;
+$btn-secondary-bg-dark:              transparent;
+$btn-secondary-border-color-dark:    #FFFFFF;
+$btn-secondary-color-dark:           #FFFFFF;
+
+// Input - Dark Mode
+$input-bg-dark:                      #2D2D2D;
+$input-border-color-dark:            #424242;
+$input-focus-border-color-dark:      #FFFFFF;
+$input-color-dark:                   #FFFFFF;
+$input-placeholder-color-dark:        #9A9A9A;
+
+// Navigation - Dark Mode
+$navbar-bg-dark:                     #121212;
+$navbar-color-dark:                  #FFFFFF;
+$navbar-link-color-dark:             #FFFFFF;
+$navbar-link-hover-color-dark:       #6EA8FE;
+
+// Portfolio Components - Dark Mode
+$portfolio-card-bg-dark:             #1E1E1E;
+$portfolio-card-border-color-dark:   #424242;
+$portfolio-card-box-shadow-dark:     0px 4px 16px rgba(0, 0, 0, 0.3);
+
+$case-study-card-bg-dark:            #1E1E1E;
+$case-study-card-border-color-dark:  #424242;
+$case-study-card-box-shadow-dark:    0px 4px 16px rgba(0, 0, 0, 0.3);
+
+$tech-tag-bg-dark:                   #2D2D2D;
+$tech-tag-color-dark:                #FFFFFF;
+
+// Code - Dark Mode
+$code-bg-dark:                       #2D2D2D;
+$code-color-dark:                    #E0E0E0;
+$pre-bg-dark:                        #2D2D2D;
+$pre-color-dark:                     #E0E0E0;

@@ -1,0 +1,28 @@
+plugin:
+  bootstrap_package:
+    settings:
+      scss:
+        primary: '#eb3e4a'
+        secondary: '#013859'
+    view:
+      layoutRootPath: 'EXT:xxxx_sitepackage/Resources/Private/Layouts/'
+      partialRootPath: 'EXT:xxxx_sitepackage/Resources/Private/Partials/'
+      templateRootPath: 'EXT:xxxx_sitepackage/Resources/Private/Templates/'
+  bootstrap_package_contentelements:
+    view:
+      layoutRootPath: 'EXT:xxxx_sitepackage/Resources/Private/Layouts/ContentElements/'
+      partialRootPath: 'EXT:xxxx_sitepackage/Resources/Private/Partials/ContentElements/'
+      templateRootPath: 'EXT:xxxx_sitepackage/Resources/Private/Templates/ContentElements/'
+page:
+  logo:
+    file: 'EXT:xxxx_sitepackage/Resources/Public/Images/logo.svg'
+    fileInverted: 'EXT:xxxx_sitepackage/Resources/Public/Images/logo-inverted.svg'
+    width: 192
+    alt: 'My Site Package'
+    linktitle: 'My Site Package'
+  favicon:
+    file: 'EXT:xxxx_sitepackage/Resources/Public/Icons/favicon.ico'
+  fluidtemplate:
+    layoutRootPath: 'EXT:xxxx_sitepackage/Resources/Private/Layouts/Page/'
+    partialRootPath: 'EXT:xxxx_sitepackage/Resources/Private/Partials/Page/'
+    templateRootPath: 'EXT:xxxx_sitepackage/Resources/Private/Templates/Page/'

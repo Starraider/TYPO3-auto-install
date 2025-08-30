@@ -1,0 +1,54 @@
+.btn, .frame-type-felogin_login input[type="submit"] {
+    // --bs-btn-color: #000;
+    color: #000;
+}
+
+// SKOM Style Guide Button Enhancements
+.btn {
+    transition: color 0.25s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.25s cubic-bezier(0.4, 0.0, 0.2, 1), border-color 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+    border-radius: 0.25rem;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    height: 56px;
+    padding: 0 24px;
+    border-width: 2px;
+
+    &.btn-primary {
+        background-color: var(--bs-btn-primary-bg);
+        border-color: var(--bs-btn-primary-border-color);
+        color: var(--bs-btn-primary-color);
+
+        &:hover {
+            background-color: shade-color(#1A1A1A, 10%);
+        }
+
+        &:active {
+            background-color: shade-color(#1A1A1A, 15%);
+        }
+    }
+
+    &.btn-secondary {
+        background-color: var(--bs-btn-secondary-bg);
+        border-color: var(--bs-btn-secondary-border-color);
+        color: var(--bs-btn-secondary-color);
+
+        &:hover {
+            background-color: #F5F5F5;
+        }
+
+        &:active {
+            background-color: #E0E0E0;
+        }
+    }
+
+    &.btn-outline-primary {
+        background-color: transparent;
+        border-color: var(--bs-btn-primary-border-color);
+        color: var(--bs-btn-primary-border-color);
+
+        &:hover {
+            background-color: var(--bs-btn-primary-bg);
+            color: var(--bs-btn-primary-color);
+        }
+    }
+}
