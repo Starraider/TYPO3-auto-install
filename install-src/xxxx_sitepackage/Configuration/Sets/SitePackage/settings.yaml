@@ -14,12 +14,24 @@ plugin:
       partialRootPath: 'EXT:xxxx_sitepackage/Resources/Private/Partials/ContentElements/'
       templateRootPath: 'EXT:xxxx_sitepackage/Resources/Private/Templates/ContentElements/'
 page:
+  theme:
+    cookieconsent:
+      enable: false
+    googleFont:
+      enable: false
+    breadcrumb:
+      enableLevel: 2
+    copyright:
+      enable: true
+      text: 'xxxx'
+    footernavigation:
+      navigationValue: '7,8'
   logo:
     file: 'EXT:xxxx_sitepackage/Resources/Public/Images/logo.svg'
     fileInverted: 'EXT:xxxx_sitepackage/Resources/Public/Images/logo-inverted.svg'
     width: 192
-    alt: 'My Site Package'
-    linktitle: 'My Site Package'
+    alt: 'xxxx'
+    linktitle: 'xxxx'
   favicon:
     file: 'EXT:xxxx_sitepackage/Resources/Public/Icons/favicon.ico'
   fluidtemplate:

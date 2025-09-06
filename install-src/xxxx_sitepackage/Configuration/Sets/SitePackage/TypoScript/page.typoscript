@@ -1,0 +1,46 @@
+
+page {
+    theme {
+        language.enable = {$page.theme.language.enable}
+        googleFont.enable = {$page.theme.googleFont.enable}
+        cookieconsent.enable = {$page.theme.cookieconsent.enable}
+        breadcrumb.enableLevel = {$page.theme.breadcrumb.enableLevel}
+        copyright {
+            enable = {$page.theme.copyright.enable}
+            text = {$page.theme.copyright.text}
+        }
+    }
+    logo {
+        file = {$page.logo.file}
+        fileInverted = {$page.logo.fileInverted}
+        height = {$page.logo.height}
+        width = {$page.logo.width}
+        alt = {$page.logo.alt}
+        linktitle = {$page.logo.linktitle}
+    }
+    includeCSS {
+        theme >
+    }
+
+    includeJSLibs {
+
+    }
+
+    includeJS {
+
+    }
+
+    includeJSFooterlibs {
+        bootstrap >
+        bootstrap_accordion >
+        bootstrap_lightbox >
+        bootstrap_navbar >
+        bootstrap_popover >
+        bootstrap_smoothscroll >
+        bootstrap_stickyheader >
+    }
+
+    includeJSFooter {
+        xxxx_sitepackage_scripts = EXT:xxxx_sitepackage/Resources/Public/JavaScript/main.js
+    }
+}

@@ -2,3 +2,4 @@ name: skom/xxxx-sitepackage
 label: 'xxxx sitepackage'
 dependencies:
   - bootstrap-package/full
+  - CodingFreaks/cf-cookiemanager

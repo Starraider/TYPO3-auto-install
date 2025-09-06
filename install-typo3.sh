@@ -2152,8 +2152,13 @@ fi
 # Configure vite
 cp ../install-src/vite.config.js vite.config.js
 
+
+#### .env ####
 # Copy .env
 cp ../install-src/.env .env
+
+# Copy README.md
+cp ../install-src/README.md README.md
 
 # Copy .editorconfig
 cp ../install-src/.editorconfig .editorconfig
@@ -2161,9 +2166,17 @@ cp ../install-src/.editorconfig .editorconfig
 # Copy .gitignore
 cp ../install-src/.gitignore .gitignore
 
+#### Install Rector ####
+ddev composer req ssch/typo3-rector  --no-interaction
+cp ../install-src/rector.php rector.php
+
+#### Install Playwright ####
+ddev exec npm i -D @playwright/test
+ddev exec npx playwright install --with-deps
+
 ddev typo3 cache:warmup
 
 # ddev typo3 lint:yaml
 
-clear
+# clear
 echo "TYPO3 installation completed for project: $PROJECT_NAME"

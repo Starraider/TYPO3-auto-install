@@ -3,53 +3,21 @@
 // Variables should follow the `$component-state-property-size` formula for
 // consistent naming. Ex: $nav-link-disabled-color and $modal-content-box-shadow-xs.
 
-// Color system - SKOM Style Guide Implementation
+// Color system
 
 // scss-docs-start gray-color-variables
 $white:    #fff;
-$gray-50:  #f9fafb;
-$gray-100: #f3f4f6;
-$gray-200: #e5e7eb;
-$gray-300: #d1d5db;
-$gray-400: #9ca3af;
-$gray-500: #6b7280;
-$gray-600: #4b5563;
-$gray-700: #374151;
-$gray-800: #1f2937;
-$gray-900: #111827;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
 $black:    #000;
 // scss-docs-end gray-color-variables
-
-// SKOM Style Guide Color Palette - Updated for Portfolio Focus
-// Primary Colors
-$pure-white: #FFFFFF;
-$charcoal-black: #1A1A1A;
-$warm-white: #F9FAFB;
-
-// Secondary Colors
-$light-taupe: #F3F4F6;
-$medium-grey: #6B7280;
-$dark-charcoal: #111827;
-
-// Accent Colors
-$warm-grey: #D1D5DB;
-$cool-grey: #9CA3AF;
-$subtle-blue-grey: #E8F0F8;
-$red-brown-accent: #8B4513;
-
-// Functional Colors
-$success-green: #10B981;
-$error-red: #EF4444;
-$warning-orange: #F59E0B;
-$info-blue: #3B82F6;
-
-// Portfolio-Specific Colors
-$case-study-accent: #10B981;
-$technical-blue: #3B82F6;
-$hosting-green: #10B981;
-
-// SKOM Style Guide Theme Colors
-$accent-warm: #F59E0B;
 
 // fusv-disable
 // scss-docs-start gray-colors-map
@@ -68,14 +36,14 @@ $grays: (
 // fusv-enable
 
 // scss-docs-start color-variables
-$blue:    $technical-blue;
+$blue:    #0d6efd;
 $indigo:  #6610f2;
 $purple:  #6f42c1;
 $pink:    #d63384;
-$red:     $error-red;
-$orange:  $warning-orange;
+$red:     #cf3411;
+$orange:  #fd7e14;
 $yellow:  #ffc107;
-$green:   $success-green;
+$green:   #198754;
 $teal:    #20c997;
 $cyan:    #0dcaf0;
 // scss-docs-end color-variables
@@ -104,8 +72,8 @@ $colors: (
 $min-contrast-ratio:   4.5;
 
 // Customize the light and dark text colors for use in our color contrast function.
-$color-contrast-dark:      $charcoal-black;
-$color-contrast-light:     $pure-white;
+$color-contrast-dark:      $black;
+$color-contrast-light:     $white;
 
 // fusv-disable
 $blue-100: tint-color($blue, 80%);
@@ -330,18 +298,20 @@ $cyans: (
 // fusv-enable
 
 // scss-docs-start theme-color-variables
-$primary:       #b7afac;
-$secondary:     #5c6165;
-$tertiary:      #f2eeec;
-$quaternary:    #373636;
-$accent-warm:   #a1aab3;
+$primary:       #f90;
+$secondary:     lighten($primary, 10%);
+$tertiary:      #c6d6dd;
+$quaternary:    #f3f7f8;
 
-$success:       $success-green;
-$info:          $info-blue;
-$warning:       $warning-orange;
-$danger:        $error-red;
-$light:         $warm-white;
-$dark:          $dark-charcoal;
+$success:       $green;
+$info:          $cyan;
+$warning:       $yellow;
+$danger:        $red;
+$light:         $gray-200;
+$lighter:       $gray-100;
+$dark:          $gray-800;
+$darker:        $gray-900;
+$default:       #eaebec;
 // scss-docs-end theme-color-variables
 
 // scss-docs-start theme-colors-map
@@ -350,7 +320,6 @@ $theme-colors: (
   "secondary":  $secondary,
   "tertiary":   $tertiary,
   "quaternary": $quaternary,
-  "accent-warm": $accent-warm,
   "success":    $success,
   "info":       $info,
   "warning":    $warning,
@@ -408,7 +377,7 @@ $escaped-characters: (
 
 $enable-caret:                true;
 $enable-rounded:              true;
-$enable-shadows:              true;
+$enable-shadows:              false;
 $enable-gradients:            false;
 $enable-transitions:          true;
 $enable-reduced-motion:       true;
@@ -449,13 +418,11 @@ $gradient: linear-gradient(180deg, rgba($white, .15), rgba($white, 0));
 $spacer: 1rem;
 $spacers: (
   0: 0,
-  1: $spacer * .25,   // 4px
-  2: $spacer * .5,    // 8px
-  3: $spacer,         // 16px
-  4: $spacer * 1.5,  // 24px
-  5: $spacer * 3,    // 48px
-  6: $spacer * 4,    // 64px
-  7: $spacer * 6,    // 96px
+  1: $spacer * .25,
+  2: $spacer * .5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 3,
 );
 // scss-docs-end spacer-variables-maps
 
@@ -476,26 +443,26 @@ $position-values: (
 // Settings for the `<body>` element.
 
 $body-text-align:           null;
-$body-color:                $charcoal-black;
-$body-bg:                   $pure-white;
+$body-color:                $gray-900;
+$body-bg:                   $white;
 
 $body-secondary-color:      rgba($body-color, .75);
-$body-secondary-bg:         $warm-white;
+$body-secondary-bg:         $gray-200;
 
 $body-tertiary-color:       rgba($body-color, .5);
-$body-tertiary-bg:          $light-taupe;
+$body-tertiary-bg:          $gray-100;
 
-$body-emphasis-color:       $charcoal-black;
+$body-emphasis-color:       $black;
 
 // Links
 //
 // Style anchor elements.
 
-$link-color:                              $info-blue;
-$link-decoration:                         none;
+$link-color:                              $primary;
+$link-decoration:                         underline;
 $link-shade-percentage:                   20%;
 $link-hover-color:                        shift-color($link-color, $link-shade-percentage);
-$link-hover-decoration:                   underline;
+$link-hover-decoration:                   null;
 
 $stretched-link-pseudo-element:           after;
 $stretched-link-z-index:                  1;
@@ -582,16 +549,16 @@ $border-widths: (
   5: 5px
 );
 $border-style:                solid;
-$border-color:                $warm-grey;
-$border-color-translucent:    rgba($charcoal-black, .175);
+$border-color:                $gray-300;
+$border-color-translucent:    rgba($black, .175);
 // scss-docs-end border-variables
 
 // scss-docs-start border-radius-variables
-$border-radius:               .25rem;  // 4px - More geometric
-$border-radius-sm:            .125rem; // 2px
-$border-radius-lg:            .5rem;   // 8px
-$border-radius-xl:            1rem;    // 16px
-$border-radius-xxl:           2rem;    // 32px
+$border-radius:               .375rem;
+$border-radius-sm:            .25rem;
+$border-radius-lg:            .5rem;
+$border-radius-xl:            1rem;
+$border-radius-xxl:           2rem;
 $border-radius-pill:          50rem;
 // scss-docs-end border-radius-variables
 // fusv-disable
@@ -599,19 +566,19 @@ $border-radius-2xl:           $border-radius-xxl; // Deprecated in v5.3.0
 // fusv-enable
 
 // scss-docs-start box-shadow-variables
-$box-shadow:                  0px 4px 16px rgba(26, 26, 26, 0.06);
-$box-shadow-sm:               0px 2px 8px rgba(26, 26, 26, 0.04);
-$box-shadow-lg:               0px 8px 24px rgba(26, 26, 26, 0.12);
-$box-shadow-inset:            inset 0 1px 2px rgba($charcoal-black, .075);
+$box-shadow:                  0 .5rem 1rem rgba($black, .15);
+$box-shadow-sm:               0 .125rem .25rem rgba($black, .075);
+$box-shadow-lg:               0 1rem 3rem rgba($black, .175);
+$box-shadow-inset:            inset 0 1px 2px rgba($black, .075);
 // scss-docs-end box-shadow-variables
 
-$component-active-color:      $pure-white;
-$component-active-bg:         $charcoal-black;
+$component-active-color:      $white;
+$component-active-bg:         $primary;
 
 // scss-docs-start focus-ring-variables
 $focus-ring-width:      .25rem;
 $focus-ring-opacity:    .25;
-$focus-ring-color:      rgba($charcoal-black, $focus-ring-opacity);
+$focus-ring-color:      rgba($primary, $focus-ring-opacity);
 $focus-ring-blur:       0;
 $focus-ring-box-shadow: 0 0 $focus-ring-blur $focus-ring-width $focus-ring-color;
 // scss-docs-end focus-ring-variables
@@ -622,7 +589,7 @@ $caret-vertical-align:        $caret-width * .85;
 $caret-spacing:               $caret-width * .85;
 // scss-docs-end caret-variables
 
-$transition-base:             all .25s cubic-bezier(0.4, 0.0, 0.2, 1);
+$transition-base:             all .2s ease-in-out;
 $transition-fade:             opacity .15s linear;
 // scss-docs-start collapse-transition
 $transition-collapse:         height .35s ease;
@@ -640,14 +607,14 @@ $aspect-ratios: (
 // scss-docs-end aspect-ratios
 // stylelint-enable function-disallowed-list
 
-// Typography - SKOM Style Guide Implementation
+// Typography
 //
 // Font, line-height, and color for body text, headings, and more.
 
 // scss-docs-start font-variables
 // stylelint-disable value-keyword-case
-$font-family-sans-serif:      "Share Tech Mono", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-$font-family-monospace:       "Jersey 15", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+$font-family-sans-serif:      'Source Sans Pro',Helvetica,"Helvetica Neue",Arial,sans-serif;
+$font-family-monospace:       SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 // stylelint-enable value-keyword-case
 $font-family-base:            var(--#{$prefix}font-sans-serif);
 $font-family-code:            var(--#{$prefix}font-monospace);
@@ -660,8 +627,8 @@ $font-size-sm:                $font-size-base * .875;
 $font-size-lg:                $font-size-base * 1.25;
 
 $font-weight-lighter:         lighter;
-$font-weight-light:           300;
-$font-weight-normal:          400;
+$font-weight-light:           200;
+$font-weight-normal:          300;
 $font-weight-medium:          500;
 $font-weight-semibold:        600;
 $font-weight-bold:            700;
@@ -673,13 +640,12 @@ $line-height-base:            1.5;
 $line-height-sm:              1.25;
 $line-height-lg:              2;
 
-// SKOM Typography Scale - Updated for Portfolio Focus
-$h1-font-size:                $font-size-base * 2.5;      // 48px/56px
-$h2-font-size:                $font-size-base * 2;   // 36px/44px
-$h3-font-size:                $font-size-base * 1.75;    // 24px/32px
-$h4-font-size:                $font-size-base * 1.5;   // 20px/28px
-$h5-font-size:                $font-size-base * 1.25;  // 18px/20px
-$h6-font-size:                $font-size-base;          // 16px/24px
+$h1-font-size:                $font-size-base * 2.5;
+$h2-font-size:                $font-size-base * 2;
+$h3-font-size:                $font-size-base * 1.75;
+$h4-font-size:                $font-size-base * 1.5;
+$h5-font-size:                $font-size-base * 1.25;
+$h6-font-size:                $font-size-base;
 // scss-docs-end font-variables
 
 // scss-docs-start font-sizes
@@ -697,19 +663,19 @@ $font-sizes: (
 $headings-margin-bottom:      $spacer * .5;
 $headings-font-family:        null;
 $headings-font-style:         null;
-$headings-font-weight:        700;
+$headings-font-weight:        300;
 $headings-line-height:        1.2;
-$headings-color:              $secondary;
+$headings-color:              inherit;
 // scss-docs-end headings-variables
 
 // scss-docs-start display-headings
 $display-font-sizes: (
-  1: 5rem,    // 80px
-  2: 4.5rem,  // 72px
-  3: 4rem,    // 64px
-  4: 3.5rem,  // 56px
-  5: 3rem,    // 48px
-  6: 2.5rem,  // 40px
+  1: 5rem,
+  2: 4.5rem,
+  3: 4rem,
+  4: 3.5rem,
+  5: 3rem,
+  6: 2.5rem
 );
 
 $display-font-family: null;
@@ -719,8 +685,8 @@ $display-line-height: $headings-line-height;
 // scss-docs-end display-headings
 
 // scss-docs-start type-variables
-$lead-font-size:              $font-size-base * 1.125;
-$lead-font-weight:            400;
+$lead-font-size:              $font-size-base * 1.25;
+$lead-font-weight:            300;
 
 $small-font-size:             .875em;
 
@@ -734,7 +700,7 @@ $initialism-font-size:        $small-font-size;
 
 $blockquote-margin-y:         $spacer;
 $blockquote-font-size:        $font-size-base * 1.25;
-$blockquote-footer-color:     $medium-grey;
+$blockquote-footer-color:     $gray-600;
 $blockquote-footer-font-size: $small-font-size;
 
 $hr-margin-y:                 $spacer;
@@ -1250,8 +1216,7 @@ $navbar-toggler-border-radius:      $btn-border-radius;
 $navbar-toggler-focus-width:        $btn-focus-width;
 $navbar-toggler-transition:         box-shadow .15s ease-in-out;
 
-//$navbar-light-color:                rgba(var(--#{$prefix}emphasis-color-rgb), .65);
-$navbar-light-color:                $gray-400;
+$navbar-light-color:                rgba(var(--#{$prefix}emphasis-color-rgb), .65);
 $navbar-light-hover-color:          rgba(var(--#{$prefix}emphasis-color-rgb), .8);
 $navbar-light-active-color:         rgba(var(--#{$prefix}emphasis-color-rgb), 1);
 $navbar-light-disabled-color:       rgba(var(--#{$prefix}emphasis-color-rgb), .3);
@@ -1263,8 +1228,7 @@ $navbar-light-brand-hover-color:    $navbar-light-active-color;
 // scss-docs-end navbar-variables
 
 // scss-docs-start navbar-dark-variables
-//$navbar-dark-color:                 rgba($white, .55);
-$navbar-dark-color:                 $gray-700;
+$navbar-dark-color:                 rgba($white, .55);
 $navbar-dark-hover-color:           rgba($white, .75);
 $navbar-dark-active-color:          $white;
 $navbar-dark-disabled-color:        rgba($white, .25);
