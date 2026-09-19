@@ -34,7 +34,7 @@ export function makeReplacements(config: InstallConfig): Record<string, string> 
 function projectReadme(config: InstallConfig): string {
   return `# ${config.project.title}
 
-This TYPO3 v13 project was created with \`typo3-auto-install\`.
+This TYPO3 v14 project was created with \`typo3-auto-install\`.
 
 ## Development
 
@@ -84,10 +84,10 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
   if (!adminPassword) throw new Error("An administrator password is required to build an installation plan.");
 
   const composerPackages = [
-    "helhum/typo3-console",
-    "praetorius/vite-asset-collector",
-    "helhum/dotenv-connector",
-    "b13/container",
+    "helhum/typo3-console:^9.0",
+    "praetorius/vite-asset-collector:^1.18",
+    "helhum/dotenv-connector:^3.2",
+    "b13/container:^4.1",
     `${config.sitepackage.vendor}/${sitepackageKebabName(config.sitepackage.name)}:@dev`,
   ];
 
@@ -103,7 +103,7 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
     {
       type: "command",
       executable: "ddev",
-      args: ["composer", "create-project", "typo3/cms-base-distribution:^13", "--no-interaction"],
+      args: ["composer", "create-project", "typo3/cms-base-distribution:^14.3", "--no-interaction"],
       cwd: projectDirectory,
     },
     {
@@ -148,7 +148,7 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
     steps.push({ type: "command", executable: "ddev", args: ["get", "s2b/ddev-vite-sidecar", "--yes"], cwd: projectDirectory });
   }
   if (config.features.rector) {
-    steps.push({ type: "command", executable: "ddev", args: ["composer", "require", "ssch/typo3-rector", "--dev", "--no-interaction"], cwd: projectDirectory });
+    steps.push({ type: "command", executable: "ddev", args: ["composer", "require", "ssch/typo3-rector:^3.16", "--dev", "--no-interaction"], cwd: projectDirectory });
     steps.push({ type: "copy", from: templates.rector, to: path.join(projectDirectory, "rector.php") });
   }
   if (config.features.playwright) {

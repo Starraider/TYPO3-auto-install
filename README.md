@@ -1,6 +1,6 @@
 # TYPO3 Auto-Install
 
-A TypeScript CLI that creates a TYPO3 v13 project with DDEV, a custom
+A TypeScript CLI that creates a TYPO3 v14 project with DDEV, a custom
 sitepackage, Bootstrap, Vite, and the usual development tooling. It replaces
 the former all-in-one Bash installer with a planned, testable Node.js CLI.
 
@@ -14,8 +14,9 @@ generates a sitepackage, and installs Vite, Bootstrap, and optional tooling.
 - DDEV and a running Docker provider
 - Internet access for Composer, npm, and DDEV add-ons
 
-The generated project runs TYPO3 on PHP 8.3 by default. The installer checks
-Node.js, DDEV, and Docker before a real installation.
+The generated project runs TYPO3 on PHP 8.3 by default. TYPO3 v14 requires
+PHP 8.2 or later, so PHP 5.3 is not supported. The installer checks Node.js,
+DDEV, and Docker before a real installation.
 
 ## Install
 
@@ -80,12 +81,14 @@ available flags.
 
 ## What the installer creates
 
-The project gets a DDEV TYPO3 v13 installation plus:
+The project gets a DDEV TYPO3 v14.3 installation (currently resolving the
+TYPO3 core to v14.3.7) plus:
 
 - a generated copy of `install-src/xxxx_sitepackage` under `packages/`
 - Bootstrap 5, Bootstrap Icons, Sass, and Vite with TYPO3 asset integration
-- `b13/container`, `helhum/typo3-console`,
-  `praetorius/vite-asset-collector`, and `helhum/dotenv-connector`
+- TYPO3 14.3-compatible releases of `b13/container`, `helhum/typo3-console`,
+  `praetorius/vite-asset-collector`, `helhum/dotenv-connector`, and Bootstrap
+  Package
 - Vite scripts, an environment file, project README, editor settings, and
   optional Rector and Playwright tooling
 

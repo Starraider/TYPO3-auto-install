@@ -20,7 +20,10 @@ describe("installation planning", () => {
   it("plans commands without exposing the administrator password", async () => {
     const plan = await buildInstallPlan(config, { dryRun: true, force: false, verbose: false });
     const setup = plan.find((step) => step.type === "command" && step.args[1] === "setup");
+    const createProject = plan.find((step) => step.type === "command" && step.args[1] === "create-project");
     expect(setup).toMatchObject({ type: "command", secretArguments: [8, 10] });
+    expect(createProject).toMatchObject({ type: "command", args: ["composer", "create-project", "typo3/cms-base-distribution:^14.3", "--no-interaction"] });
+    expect(plan.some((step) => step.type === "command" && step.args.includes("helhum/typo3-console:^9.0"))).toBe(true);
     expect(plan.some((step) => step.type === "render" && step.to.endsWith("packages/demo_sitepackage"))).toBe(true);
   });
 });

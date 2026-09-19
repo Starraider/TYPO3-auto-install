@@ -92,7 +92,7 @@ async function loadInstallConfig(flags: CommandFlags): Promise<InstallConfig> {
 const program = new Command();
 program
   .name("typo3-auto-install")
-  .description("Plan and create TYPO3 v13 projects with DDEV, Vite, Bootstrap, and a sitepackage")
+  .description("Plan and create TYPO3 v14 projects with DDEV, Vite, Bootstrap, and a sitepackage")
   .version("1.0.0")
   .showSuggestionAfterError();
 
