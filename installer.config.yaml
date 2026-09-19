@@ -1,0 +1,33 @@
+# Values here are safe to keep in version control. Pass the administrator
+# password with --admin-password or enter it at the prompt.
+project:
+  name: my-typo3-project
+  title: My TYPO3 project
+  directory: ./my-typo3-project
+
+admin:
+  username: admin
+  name: Project administrator
+  email: admin@example.test
+  url: https://example.test
+
+ddev:
+  phpVersion: "8.3"
+  serverType: apache
+
+database:
+  driver: mysqli
+  host: db
+  port: 3306
+  name: db
+  user: db
+  password: db
+
+sitepackage:
+  vendor: acme
+  name: my_typo3_project_sitepackage
+
+features:
+  viteSidecar: true
+  rector: true
+  playwright: false

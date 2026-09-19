@@ -1,66 +1,24 @@
-# Packages #
-############
-*.7z
-*.dmg
-*.gz
-*.bz2
-*.iso
-*.jar
-*.rar
-*.tar
-*.zip
-*.tgz
+# Dependencies and build output
+/node_modules/
+/dist/
 
-### macOS ###
+# Installer state from running the CLI in this repository
+/.typo3-auto-install/
+
+# Local IDE and operating-system files
 .DS_Store
 *.swp
-*.old
-*.ld
-*.icloud
-
-### VisualStudioCode ###
+.idea/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-*.code-workspace
 
-### Project ###
-.idea
-/node_modules/
+# Local TYPO3/DDEV project output
+/.ddev/
 /var/
 /vendor/
-/.phpunit.cache
-.phpunit.result.cache
-.php_cs.cache
-.php-cs-fixer.cache
-/composer.phar
-/Quellen/
-
-### DDEV ###
-.ddev/
-
-### Test Project ###
-/hallo/
-
-### Test Reports ###
-/tests/reports/
-
-### Generated Files ###
-replacement_functions_only.sh
-/test_results/
+/public/
+.env.local
 *.log
-*.tmp
-
-### Backup Files ###
-*.backup
-*.bak
-*~
-*.orig
-
-### Test Directories ###
-/quick_test/
-/debug_test/
-/test_replacement_suite/
-/test_verification/
