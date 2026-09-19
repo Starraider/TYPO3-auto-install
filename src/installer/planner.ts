@@ -145,7 +145,7 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
   ];
 
   if (config.features.viteSidecar) {
-    steps.push({ type: "command", executable: "ddev", args: ["get", "s2b/ddev-vite-sidecar", "--yes"], cwd: projectDirectory });
+    steps.push({ type: "command", executable: "ddev", args: ["get", "s2b/ddev-vite-sidecar"], cwd: projectDirectory });
   }
   if (config.features.rector) {
     steps.push({ type: "command", executable: "ddev", args: ["composer", "require", "ssch/typo3-rector:^3.16", "--dev", "--no-interaction"], cwd: projectDirectory });

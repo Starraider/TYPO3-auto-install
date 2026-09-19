@@ -30,4 +30,18 @@ describe("installation planning", () => {
     expect(plan.some((step) => step.type === "command" && step.args.includes("helhum/typo3-console:^9.0"))).toBe(true);
     expect(plan.some((step) => step.type === "render" && step.to.endsWith("packages/demo_sitepackage"))).toBe(true);
   });
+
+  it("installs the Vite sidecar with flags supported by ddev get", async () => {
+    const plan = await buildInstallPlan(
+      { ...config, features: { ...config.features, viteSidecar: true } },
+      { dryRun: true, force: false, verbose: false },
+    );
+    const viteSidecar = plan.find((step) => step.type === "command" && step.args[0] === "get");
+
+    expect(viteSidecar).toMatchObject({
+      type: "command",
+      executable: "ddev",
+      args: ["get", "s2b/ddev-vite-sidecar"],
+    });
+  });
 });
