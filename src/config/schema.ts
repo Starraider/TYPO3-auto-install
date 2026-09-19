@@ -35,7 +35,7 @@ export const InstallConfigSchema = z.object({
       .optional(),
   }),
   ddev: z.object({
-    phpVersion: z.string().regex(/^8\.[34]$/, "TYPO3 v14 requires PHP 8.2 or later; use PHP 8.3 or 8.4."),
+    phpVersion: z.literal("8.3", "TYPO3 v14 projects are fixed to PHP 8.3."),
     serverType: z.enum(["apache", "nginx"]),
   }),
   database: z.object({

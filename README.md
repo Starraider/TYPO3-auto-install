@@ -14,9 +14,9 @@ generates a sitepackage, and installs Vite, Bootstrap, and optional tooling.
 - DDEV and a running Docker provider
 - Internet access for Composer, npm, and DDEV add-ons
 
-The generated project runs TYPO3 on PHP 8.3 by default. TYPO3 v14 requires
-PHP 8.2 or later, so PHP 5.3 is not supported. The installer checks Node.js,
-DDEV, and Docker before a real installation.
+The generated project is fixed to PHP 8.3 in DDEV, Composer's platform
+configuration, and the Rector template. The installer checks Node.js, DDEV,
+and Docker before a real installation.
 
 ## Install
 

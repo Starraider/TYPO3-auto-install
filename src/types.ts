@@ -14,7 +14,7 @@ export interface InstallConfig {
     password?: string;
   };
   ddev: {
-    phpVersion: string;
+    phpVersion: "8.3";
     serverType: ServerType;
   };
   database: {
