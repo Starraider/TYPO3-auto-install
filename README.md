@@ -15,27 +15,89 @@ The generated project is fixed to PHP 8.3 in DDEV, Composer's platform
 configuration, and the Rector template. The installer checks Node.js, DDEV,
 and Docker before a real installation.
 
-## Install
+## Create a new TYPO3 project
 
-Install the CLI dependencies once:
+These steps create a new local TYPO3 v14 project with DDEV. Before you start,
+install Node.js 20 or later, DDEV, and Docker, then start Docker.
 
-```bash
-npm install
-```
+1. Clone the repository and enter it:
 
-Copy or edit [installer.config.yaml](installer.config.yaml). Keep the TYPO3
-administrator password out of that file. The interactive installer asks for it
-without echoing it. The default database password is DDEV's local `db` value;
-do not commit the configuration if you change it to a real secret.
-Administrator passwords need eight characters, upper- and lowercase letters,
-a number, and a special character.
+   ```bash
+   git clone https://github.com/Starraider/TYPO3-auto-install.git
+   cd TYPO3-auto-install
+   ```
 
-```bash
-npm run dev -- install
-```
+   If you downloaded the repository as a ZIP from GitHub, extract it, open a
+   terminal in the extracted `TYPO3-auto-install` directory, and continue with
+   the next step.
 
-For a repeatable CI or scripted run, supply the password through a secret-aware
-mechanism in your shell and skip prompts:
+2. Install the installer dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Confirm that Node.js, DDEV, and Docker are ready:
+
+   ```bash
+   npm run dev -- doctor
+   ```
+
+   Fix every failed check before continuing. Docker must be running.
+
+4. Set the default values for your project in
+   [installer.config.yaml](installer.config.yaml). For example, open it with:
+
+   ```bash
+   nano installer.config.yaml
+   ```
+
+   At a minimum, choose a `project.name`, `project.title`, `project.directory`,
+   `sitepackage.vendor`, and `sitepackage.name`. Use lowercase letters, numbers,
+   and hyphens for the project name and vendor. Use lowercase letters, numbers,
+   and underscores for the sitepackage key.
+
+   Set `project.directory` to an empty directory that does not already contain
+   a TYPO3 project. For example, use `../acme-website` to create the project
+   beside this installer repository. Leave the database values at their DDEV
+   defaults unless you know that your DDEV setup needs different values.
+
+   Do not add the TYPO3 administrator password to this file. The installer asks
+   for it privately. It needs at least eight characters, an uppercase letter, a
+   lowercase letter, a number, and a special character.
+
+5. Preview the work before any files are created:
+
+   ```bash
+   npm run dev -- install --dry-run
+   ```
+
+   Answer the interactive questions. Press Enter to accept the values from
+   `installer.config.yaml`, or replace them for this installation. The dry run
+   prints the planned commands and makes no changes.
+
+6. Run the installer:
+
+   ```bash
+   npm run dev -- install
+   ```
+
+   Answer the same project and administrator questions, choose whether to add
+   the Vite sidecar, TYPO3 Rector, and Playwright, then confirm `Execute this
+   plan?`. The installer creates the project, starts DDEV, installs TYPO3 and
+   the sitepackage, and configures the selected tools.
+
+7. Open the URL printed at the end of the installation, usually:
+
+   ```text
+   https://<project-name>.ddev.site
+   ```
+
+   Sign in to the TYPO3 backend with the administrator username and password
+   entered in step 6.
+
+For a non-interactive or CI installation, keep the password in an environment
+variable and run:
 
 ```bash
 npm run dev -- install \
