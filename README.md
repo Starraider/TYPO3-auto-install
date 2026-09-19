@@ -1,12 +1,9 @@
 # TYPO3 Auto-Install
 
 A TypeScript CLI that creates a TYPO3 v14 project with DDEV, a custom
-sitepackage, Bootstrap, Vite, and the usual development tooling. It replaces
-the former all-in-one Bash installer with a planned, testable Node.js CLI.
-
-The installer still has the same job. It creates a production-ready TYPO3
-project, configures DDEV and the database, creates an administrator account,
-generates a sitepackage, and installs Vite, Bootstrap, and optional tooling.
+sitepackage, Bootstrap, Vite, and the usual development tooling. It builds a
+complete plan before it changes the target project, so `--dry-run` can show
+the exact commands and files first.
 
 ## Requirements
 
@@ -78,6 +75,60 @@ managed file can have local edits.
 
 CLI flags override YAML values. Run `npm run dev -- install --help` for all
 available flags.
+
+## Installation sequence
+
+`install` performs these actions in this order. `--dry-run` completes steps
+1 through 6, then stops before it writes files or executes the plan.
+
+1. Load `installer.config.yaml`, apply CLI flag overrides, and validate the
+   resulting configuration.
+2. Ask for any interactive values, including the administrator password, or
+   require `--admin-password` when `--yes` skips prompts.
+3. Check Node.js, DDEV, and Docker. A real installation stops if any check
+   fails.
+4. Ask for confirmation unless `--yes` is set.
+5. Refuse a target directory that already has installer state or is non-empty,
+   unless `--force` is set.
+6. Build and print the complete installation plan.
+7. Create the target directory.
+8. Run `ddev config` with the configured
+   project name, TYPO3 project type, `public` docroot, and PHP version.
+9. Start DDEV.
+10. Run Composer's `create-project` for
+   `typo3/cms-base-distribution:^14.3`.
+11. Run `ddev typo3 setup --force` with the configured database connection,
+   administrator account, and TYPO3 server type.
+12. Configure Composer to allow the dotenv connector.
+13. Configure Composer to use the TYPO3 Composer repository.
+14. Configure Composer to load path repositories from `packages/*`.
+15. Configure Composer's platform PHP version as 8.3.0.
+16. Create `packages/`.
+17. Render the sitepackage template into
+    `packages/<sitepackage>`, replacing its placeholder names and
+    administrator details.
+18. Require TYPO3 Console, Vite Asset Collector, dotenv connector, Container,
+    and the rendered sitepackage.
+19. Update Composer dependencies with their dependencies.
+20. Apply TYPO3 database schema updates.
+21. Flush the TYPO3 cache.
+22. Initialize npm.
+23. Install Vite, the TYPO3 Vite plugins, Sass, Bootstrap, Bootstrap Icons,
+    and Popper as development dependencies.
+24. Add the `dev`, `build`, and `watch` npm scripts.
+25. Copy `vite.config.js`, `.editorconfig`, and `.gitignore`.
+26. Write `.env` with the configured database settings and development values.
+27. Write the generated project README.
+28. If enabled, install the DDEV Vite sidecar.
+29. If Rector is enabled, install TYPO3 Rector and copy `rector.php`.
+30. If Playwright is enabled, install its npm package and browsers with their
+    system dependencies.
+31. Warm the TYPO3 cache.
+32. Write `.typo3-auto-install/state.json`, which records the installer
+    version, project metadata, and managed paths.
+
+Before the installer copies, renders, or writes over an existing destination,
+it saves that destination under `.typo3-auto-install/backups/`.
 
 ## What the installer creates
 
