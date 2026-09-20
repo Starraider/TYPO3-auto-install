@@ -6,7 +6,7 @@ $EM_CONF[$_EXTKEY] = [
     'category' => 'templates',
     'constraints' => [
         'depends' => [
-            'bootstrap_package' => '15.0.0-15.99.99',
+            'bootstrap_package' => '16.0.0-16.99.99',
         ],
         'conflicts' => [
         ],

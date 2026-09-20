@@ -16,18 +16,49 @@ export function sitepackagePascalName(name: string): string {
     .join("");
 }
 
+function vendorPascalName(vendor: string): string {
+  return vendor
+    .split("-")
+    .map((part) => `${part.slice(0, 1).toUpperCase()}${part.slice(1)}`)
+    .join("");
+}
+
 export function makeReplacements(config: InstallConfig): Record<string, string> {
+  const extensionKey = config.sitepackage.name;
+  const packageName = sitepackageKebabName(extensionKey);
+  const displayName = extensionKey.replaceAll("_", " ");
+  const className = sitepackagePascalName(extensionKey);
+  const camelName = `${className.slice(0, 1).toLowerCase()}${className.slice(1)}`;
+  const vendorNamespace = vendorPascalName(config.sitepackage.vendor);
+
   return {
-    xxxx_sitepackage: config.sitepackage.name,
-    "xxxx-sitepackage": sitepackageKebabName(config.sitepackage.name),
-    XxxxSitepackage: sitepackagePascalName(config.sitepackage.name),
+    // TYPO3 extension keys, Composer package names, labels, and PHP namespaces.
+    xxxx_sitepackage: extensionKey,
+    "xxxx-sitepackage": packageName,
+    "xxxx sitepackage": displayName,
+    XxxxSitepackage: className,
+    xxxxSitepackage: camelName,
+    XXXX_SITEPACKAGE: extensionKey.toUpperCase(),
+    "XXXX-SITEPACKAGE": packageName.toUpperCase(),
+    "XXXX SITEPACKAGE": displayName.toUpperCase(),
+    XXXXSitepackage: className.toUpperCase(),
+    // Bare branding placeholders in the template use the human-readable name.
+    xxxx: displayName,
+    Xxxx: `${displayName.slice(0, 1).toUpperCase()}${displayName.slice(1)}`,
+    XXXX: displayName.toUpperCase(),
     "Sven Kalbhenn": config.admin.name,
     "sven@skom.de": config.admin.email,
     "https://www.skom.de": config.admin.url ?? "",
-    skom_sitepackage: config.sitepackage.name,
-    SKom: `${config.sitepackage.vendor.slice(0, 1).toUpperCase()}${config.sitepackage.vendor.slice(1)}`,
+    // The legacy template contains both a vendor-prefixed extension key and
+    // vendor names in Composer, PHP namespaces, and all-caps comments.
+    skom_sitepackage: extensionKey,
+    "skom-sitepackage": packageName,
+    "skom sitepackage": displayName,
+    SkomSitepackage: className,
     skom: config.sitepackage.vendor,
-    Skom: `${config.sitepackage.vendor.slice(0, 1).toUpperCase()}${config.sitepackage.vendor.slice(1)}`,
+    Skom: vendorNamespace,
+    SKom: vendorNamespace,
+    SKOM: config.sitepackage.vendor.toUpperCase(),
     TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: config.extensions
       .map((extension) => TYPO3_EXTENSION_SITE_SETS[extension])
       .filter((siteSet): siteSet is string => Boolean(siteSet))

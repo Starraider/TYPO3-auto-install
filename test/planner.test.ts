@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildInstallPlan, sitepackageKebabName, sitepackagePascalName } from "../src/installer/planner.js";
+import { buildInstallPlan, makeReplacements, sitepackageKebabName, sitepackagePascalName } from "../src/installer/planner.js";
 import type { InstallConfig } from "../src/types.js";
 
 const config: InstallConfig = {
@@ -16,6 +16,29 @@ describe("installation planning", () => {
   it("derives valid Composer and PHP identifiers", () => {
     expect(sitepackageKebabName("demo_sitepackage")).toBe("demo-sitepackage");
     expect(sitepackagePascalName("demo_sitepackage")).toBe("DemoSitepackage");
+  });
+
+  it("replaces customary TYPO3 sitepackage and vendor placeholder variants", () => {
+    expect(makeReplacements({
+      ...config,
+      sitepackage: { vendor: "acme-agency", name: "my_typo3_project_sitepackage" },
+    })).toMatchObject({
+      xxxx_sitepackage: "my_typo3_project_sitepackage",
+      "xxxx-sitepackage": "my-typo3-project-sitepackage",
+      "xxxx sitepackage": "my typo3 project sitepackage",
+      XxxxSitepackage: "MyTypo3ProjectSitepackage",
+      xxxxSitepackage: "myTypo3ProjectSitepackage",
+      XXXX_SITEPACKAGE: "MY_TYPO3_PROJECT_SITEPACKAGE",
+      "XXXX-SITEPACKAGE": "MY-TYPO3-PROJECT-SITEPACKAGE",
+      "XXXX SITEPACKAGE": "MY TYPO3 PROJECT SITEPACKAGE",
+      skom_sitepackage: "my_typo3_project_sitepackage",
+      "skom-sitepackage": "my-typo3-project-sitepackage",
+      SkomSitepackage: "MyTypo3ProjectSitepackage",
+      skom: "acme-agency",
+      Skom: "AcmeAgency",
+      SKom: "AcmeAgency",
+      SKOM: "ACME-AGENCY",
+    });
   });
 
   it("plans commands without exposing the administrator password", async () => {

@@ -3,6 +3,8 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { renderDirectory } from "../src/filesystem.js";
+import { makeReplacements } from "../src/installer/planner.js";
+import type { InstallConfig } from "../src/types.js";
 
 const temporaryDirectories: string[] = [];
 
@@ -28,5 +30,38 @@ describe("template rendering", () => {
 
     await expect(readFile(path.join(destination, "extension.php"), "utf8")).resolves.toBe("EXT:demo_sitepackage demo_sitepackage acme");
     await expect(readFile(path.join(destination, "icon.ico"))).resolves.toEqual(Buffer.from([0, 1, 2, 3]));
+  });
+
+  it("renders all customary TYPO3 sitepackage and vendor name forms", async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), "typo3-installer-"));
+    temporaryDirectories.push(directory);
+    const source = path.join(directory, "source");
+    const destination = path.join(directory, "destination");
+    await (await import("node:fs/promises")).mkdir(source);
+    await writeFile(
+      path.join(source, "placeholders.txt"),
+      [
+        "xxxx_sitepackage", "xxxx-sitepackage", "xxxx sitepackage", "XxxxSitepackage", "xxxxSitepackage",
+        "XXXX_SITEPACKAGE", "XXXX-SITEPACKAGE", "XXXX SITEPACKAGE", "XXXXSitepackage", "xxxx", "Xxxx", "XXXX",
+        "skom_sitepackage", "skom-sitepackage", "skom sitepackage", "SkomSitepackage", "skom", "Skom", "SKom", "SKOM",
+      ].join("\n"),
+    );
+    const config: InstallConfig = {
+      project: { name: "demo-site", title: "Demo site", directory },
+      admin: { username: "admin", name: "Admin", email: "admin@example.test", password: "SecurePass1!" },
+      ddev: { phpVersion: "8.3", serverType: "apache" },
+      database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
+      sitepackage: { vendor: "acme-agency", name: "my_typo3_project_sitepackage" },
+      extensions: [],
+      features: { viteSidecar: false, rector: false, playwright: false },
+    };
+
+    await renderDirectory(source, destination, makeReplacements(config));
+
+    await expect(readFile(path.join(destination, "placeholders.txt"), "utf8")).resolves.toBe([
+      "my_typo3_project_sitepackage", "my-typo3-project-sitepackage", "my typo3 project sitepackage", "MyTypo3ProjectSitepackage", "myTypo3ProjectSitepackage",
+      "MY_TYPO3_PROJECT_SITEPACKAGE", "MY-TYPO3-PROJECT-SITEPACKAGE", "MY TYPO3 PROJECT SITEPACKAGE", "MYTYPO3PROJECTSITEPACKAGE", "my typo3 project sitepackage", "My typo3 project sitepackage", "MY TYPO3 PROJECT SITEPACKAGE",
+      "my_typo3_project_sitepackage", "my-typo3-project-sitepackage", "my typo3 project sitepackage", "MyTypo3ProjectSitepackage", "acme-agency", "AcmeAgency", "AcmeAgency", "ACME-AGENCY",
+    ].join("\n"));
   });
 });
