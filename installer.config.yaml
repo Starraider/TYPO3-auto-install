@@ -27,6 +27,10 @@ sitepackage:
   vendor: acme
   name: my_typo3_project_sitepackage
 
+# Optional extensions to install. Interactive installs present these as a
+# multi-select menu; non-interactive installs use the values listed here.
+extensions: []
+
 features:
   viteSidecar: true
   rector: true

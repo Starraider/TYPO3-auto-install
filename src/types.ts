@@ -1,5 +1,22 @@
 export type ServerType = "apache" | "nginx";
 
+export const TYPO3_EXTENSION_PACKAGES = [
+  "CodingFreaks/cf-cookiemanager",
+  "friendsoftypo3/content-blocks",
+  "baschte/content-animations",
+  "t3g/blog",
+  "georgringer/news",
+] as const;
+
+export type Typo3ExtensionPackage = (typeof TYPO3_EXTENSION_PACKAGES)[number];
+
+export const TYPO3_EXTENSION_SITE_SETS: Partial<Record<Typo3ExtensionPackage, string>> = {
+  "CodingFreaks/cf-cookiemanager": "CodingFreaks/cf-cookiemanager",
+  "baschte/content-animations": "baschte/content-animations-bootstrap-package",
+  "t3g/blog": "blog/integration",
+  "georgringer/news": "georgringer/news",
+};
+
 export interface InstallConfig {
   project: {
     name: string;
@@ -29,6 +46,7 @@ export interface InstallConfig {
     vendor: string;
     name: string;
   };
+  extensions: Typo3ExtensionPackage[];
   features: {
     viteSidecar: boolean;
     rector: boolean;

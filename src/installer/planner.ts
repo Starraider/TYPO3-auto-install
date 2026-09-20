@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import type { InstallConfig, InstallOptions, InstallStep } from "../types.js";
+import { TYPO3_EXTENSION_SITE_SETS, type InstallConfig, type InstallOptions, type InstallStep } from "../types.js";
 
 const sourceRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../install-src");
 
@@ -28,6 +28,11 @@ export function makeReplacements(config: InstallConfig): Record<string, string> 
     SKom: `${config.sitepackage.vendor.slice(0, 1).toUpperCase()}${config.sitepackage.vendor.slice(1)}`,
     skom: config.sitepackage.vendor,
     Skom: `${config.sitepackage.vendor.slice(0, 1).toUpperCase()}${config.sitepackage.vendor.slice(1)}`,
+    TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: config.extensions
+      .map((extension) => TYPO3_EXTENSION_SITE_SETS[extension])
+      .filter((siteSet): siteSet is string => Boolean(siteSet))
+      .map((siteSet) => `  - ${siteSet}`)
+      .join("\n"),
   };
 }
 
@@ -88,6 +93,7 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
     "praetorius/vite-asset-collector:^1.18",
     "helhum/dotenv-connector:^3.2",
     "b13/container:^4.1",
+    ...config.extensions,
     `${config.sitepackage.vendor}/${sitepackageKebabName(config.sitepackage.name)}:@dev`,
   ];
 

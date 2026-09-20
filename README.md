@@ -109,6 +109,49 @@ npm run dev -- install \
 After building, the same CLI is available through `node dist/cli.js` or the
 `typo3-auto-install` package binary.
 
+## If installation fails
+
+Read the first error in the installer output and fix that problem before
+trying again. Run the preflight checks if the error mentions Node.js, DDEV, or
+Docker:
+
+```bash
+npm run dev -- doctor
+```
+
+The installer creates the target directory and starts DDEV early in the
+process. A failure after that point can leave a partially configured project
+and running DDEV containers. The next installation will refuse this non-empty
+directory, so clean it up before retrying.
+
+First, stop and remove the project's containers. Run this from the generated
+project directory:
+
+```bash
+cd ../acme-website
+ddev stop
+```
+
+From another directory, use the DDEV project name instead:
+
+```bash
+ddev stop <project-name>
+```
+
+`ddev stop` removes the containers but keeps the database and project data. If
+you want to discard the failed installation completely, remove DDEV's project
+record and database as well:
+
+```bash
+cd ../acme-website
+ddev delete --yes
+```
+
+`ddev delete` does not delete the project files. After checking that the
+directory is the failed project, delete the target directory, then run the
+installer again. The delete command removes the DDEV database, so do not use
+it if you need to keep data from a partially completed installation.
+
 ## Commands
 
 ```bash

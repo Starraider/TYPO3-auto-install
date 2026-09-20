@@ -1,5 +1,5 @@
 import * as p from "@clack/prompts";
-import type { InstallConfig } from "./types.js";
+import { TYPO3_EXTENSION_PACKAGES, type InstallConfig } from "./types.js";
 
 function cancelled<T>(answer: T | symbol): T {
   if (p.isCancel(answer)) {
@@ -29,6 +29,12 @@ export async function askForInstallConfig(defaults: InstallConfig): Promise<Inst
       return undefined;
     },
   }));
+  const extensions = cancelled(await p.multiselect({
+    message: "TYPO3 extensions to install",
+    options: TYPO3_EXTENSION_PACKAGES.map((extension) => ({ value: extension, label: extension })),
+    initialValues: defaults.extensions,
+    required: false,
+  }));
   const viteSidecar = cancelled(await p.confirm({ message: "Install the DDEV Vite sidecar?", initialValue: defaults.features.viteSidecar }));
   const rector = cancelled(await p.confirm({ message: "Install TYPO3 Rector?", initialValue: defaults.features.rector }));
   const playwright = cancelled(await p.confirm({ message: "Install Playwright?", initialValue: defaults.features.playwright }));
@@ -38,6 +44,7 @@ export async function askForInstallConfig(defaults: InstallConfig): Promise<Inst
     project: { name: projectName, title, directory },
     admin: { ...defaults.admin, username, name, email, password },
     sitepackage: { vendor, name: sitepackageName },
+    extensions,
     features: { viteSidecar, rector, playwright },
   };
 }

@@ -8,6 +8,7 @@ const config: InstallConfig = {
   ddev: { phpVersion: "8.3", serverType: "apache" },
   database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
   sitepackage: { vendor: "acme", name: "demo_sitepackage" },
+  extensions: [],
   features: { viteSidecar: false, rector: false, playwright: false },
 };
 
@@ -42,6 +43,35 @@ describe("installation planning", () => {
       type: "command",
       executable: "ddev",
       args: ["get", "s2b/ddev-vite-sidecar"],
+    });
+  });
+
+  it("installs selected extensions and adds their available site sets to the sitepackage", async () => {
+    const extensions = [
+      "CodingFreaks/cf-cookiemanager",
+      "friendsoftypo3/content-blocks",
+      "baschte/content-animations",
+      "t3g/blog",
+      "georgringer/news",
+    ] as const;
+    const plan = await buildInstallPlan(
+      { ...config, extensions: [...extensions] },
+      { dryRun: true, force: false, verbose: false },
+    );
+    const composerRequire = plan.find((step) => step.type === "command" && step.args[0] === "composer" && step.args[1] === "require");
+    const sitepackageRender = plan.find((step) => step.type === "render");
+
+    expect(composerRequire).toMatchObject({ type: "command", args: expect.arrayContaining(extensions) });
+    expect(sitepackageRender).toMatchObject({
+      type: "render",
+      replacements: {
+        TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: [
+          "  - CodingFreaks/cf-cookiemanager",
+          "  - baschte/content-animations-bootstrap-package",
+          "  - blog/integration",
+          "  - georgringer/news",
+        ].join("\n"),
+      },
     });
   });
 });
