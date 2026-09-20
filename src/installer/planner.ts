@@ -141,7 +141,7 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
     { type: "command", executable: "ddev", args: ["typo3", "database:updateschema"], cwd: projectDirectory },
     { type: "command", executable: "ddev", args: ["typo3", "cache:flush"], cwd: projectDirectory },
     { type: "command", executable: "ddev", args: ["npm", "init", "--yes"], cwd: projectDirectory },
-    { type: "command", executable: "ddev", args: ["npm", "install", "--save-dev", "vite", "vite-plugin-typo3", "vite-plugin-live-reload", "sass", "bootstrap", "bootstrap-icons", "@popperjs/core"], cwd: projectDirectory },
+    { type: "command", executable: "ddev", args: ["npm", "install", "--save-dev", "vite@^7.0.0", "vite-plugin-typo3@^3.0.0", "vite-plugin-live-reload", "sass", "bootstrap", "bootstrap-icons", "@popperjs/core"], cwd: projectDirectory },
     { type: "command", executable: "ddev", args: ["npm", "pkg", "set", "scripts.dev=vite", "scripts.build=vite build", "scripts.watch=vite build --watch"], cwd: projectDirectory },
     { type: "copy", from: templates.viteConfig, to: path.join(projectDirectory, "vite.config.js") },
     { type: "copy", from: templates.editorConfig, to: path.join(projectDirectory, ".editorconfig") },

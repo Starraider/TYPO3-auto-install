@@ -46,6 +46,18 @@ describe("installation planning", () => {
     });
   });
 
+  it("installs compatible Vite and TYPO3 plugin versions", async () => {
+    const plan = await buildInstallPlan(config, { dryRun: true, force: false, verbose: false });
+    const npmInstall = plan.find(
+      (step) => step.type === "command" && step.args[0] === "npm" && step.args[1] === "install",
+    );
+
+    expect(npmInstall).toMatchObject({
+      type: "command",
+      args: expect.arrayContaining(["vite@^7.0.0", "vite-plugin-typo3@^3.0.0"]),
+    });
+  });
+
   it("installs selected extensions and adds their available site sets to the sitepackage", async () => {
     const extensions = [
       "CodingFreaks/cf-cookiemanager",
