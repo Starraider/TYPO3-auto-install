@@ -16,6 +16,14 @@ export async function askForInstallConfig(defaults: InstallConfig): Promise<Inst
   const directory = cancelled(await p.text({ message: "Installation directory", initialValue: defaults.project.directory, validate: (value) => value.trim() ? undefined : "A directory is required." }));
   const vendor = cancelled(await p.text({ message: "Composer vendor", initialValue: defaults.sitepackage.vendor, validate: (value) => /^[a-z0-9][a-z0-9-]{2,62}$/.test(value) ? undefined : "Use a lowercase Composer vendor name." }));
   const sitepackageName = cancelled(await p.text({ message: "Sitepackage key", initialValue: defaults.sitepackage.name, validate: (value) => /^[a-z][a-z0-9_]{2,62}$/.test(value) ? undefined : "Use lowercase letters, numbers, and underscores." }));
+  const developerStack = cancelled(await p.select({
+    message: "Developer stack",
+    initialValue: defaults.developerStack,
+    options: [
+      { value: "bootstrap-vite", label: "bootstrap_package + Vite" },
+      { value: "fluid-styled-content", label: "fluid-styled-content" },
+    ],
+  }));
   const username = cancelled(await p.text({ message: "Administrator username", initialValue: defaults.admin.username, validate: (value) => value.trim() ? undefined : "A username is required." }));
   const name = cancelled(await p.text({ message: "Administrator name", initialValue: defaults.admin.name, validate: (value) => value.trim() ? undefined : "A name is required." }));
   const email = cancelled(await p.text({ message: "Administrator email", initialValue: defaults.admin.email, validate: (value) => /^\S+@\S+\.\S+$/.test(value) ? undefined : "Enter a valid email address." }));
@@ -35,7 +43,6 @@ export async function askForInstallConfig(defaults: InstallConfig): Promise<Inst
     initialValues: defaults.extensions,
     required: false,
   }));
-  const viteSidecar = cancelled(await p.confirm({ message: "Install the DDEV Vite sidecar?", initialValue: defaults.features.viteSidecar }));
   const rector = cancelled(await p.confirm({ message: "Install TYPO3 Rector?", initialValue: defaults.features.rector }));
   const playwright = cancelled(await p.confirm({ message: "Install Playwright?", initialValue: defaults.features.playwright }));
 
@@ -44,8 +51,9 @@ export async function askForInstallConfig(defaults: InstallConfig): Promise<Inst
     project: { name: projectName, title, directory },
     admin: { ...defaults.admin, username, name, email, password },
     sitepackage: { vendor, name: sitepackageName },
+    developerStack,
     extensions,
-    features: { viteSidecar, rector, playwright },
+    features: { rector, playwright },
   };
 }
 

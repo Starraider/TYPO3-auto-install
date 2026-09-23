@@ -8,8 +8,9 @@ import { assertPreflightChecks, runPreflightChecks } from "./preflight.js";
 import { install } from "./installer/install.js";
 import { confirmInstall, askForInstallConfig } from "./prompts.js";
 import { readState, removeState } from "./state.js";
-import type { InstallConfig, InstallOptions } from "./types.js";
+import type { DeveloperStack, InstallConfig, InstallOptions } from "./types.js";
 import { formatCommand, runCommand } from "./process.js";
+import { pathExists } from "./filesystem.js";
 
 interface CommandFlags {
   config: string;
@@ -23,13 +24,13 @@ interface CommandFlags {
   adminPassword?: string;
   vendor?: string;
   sitepackage?: string;
+  developerStack?: DeveloperStack;
   phpVersion?: string;
   serverType?: "apache" | "nginx";
   dryRun?: boolean;
   verbose?: boolean;
   force?: boolean;
   yes?: boolean;
-  viteSidecar?: boolean;
   rector?: boolean;
   playwright?: boolean;
 }
@@ -56,6 +57,7 @@ function mergeFlags(config: InstallConfig, flags: CommandFlags): InstallConfig {
       ...(flags.vendor ? { vendor: flags.vendor } : {}),
       ...(flags.sitepackage ? { name: flags.sitepackage } : {}),
     },
+    ...(flags.developerStack ? { developerStack: flags.developerStack } : {}),
     ddev: {
       ...config.ddev,
       ...(flags.phpVersion ? { phpVersion: flags.phpVersion } : {}),
@@ -63,7 +65,6 @@ function mergeFlags(config: InstallConfig, flags: CommandFlags): InstallConfig {
     },
     features: {
       ...config.features,
-      ...(flags.viteSidecar === undefined ? {} : { viteSidecar: flags.viteSidecar }),
       ...(flags.rector === undefined ? {} : { rector: flags.rector }),
       ...(flags.playwright === undefined ? {} : { playwright: flags.playwright }),
     },
@@ -92,7 +93,7 @@ async function loadInstallConfig(flags: CommandFlags): Promise<InstallConfig> {
 const program = new Command();
 program
   .name("typo3-auto-install")
-  .description("Plan and create TYPO3 v14 projects with DDEV, Vite, Bootstrap, and a sitepackage")
+  .description("Plan and create TYPO3 v14 projects with DDEV and a selectable developer stack")
   .version("1.0.0")
   .showSuggestionAfterError();
 
@@ -109,13 +110,13 @@ function addInstallOptions(command: Command): Command {
     .option("--admin-password <password>", "TYPO3 administrator password. Prefer a secret-aware shell mechanism.")
     .option("--vendor <name>", "Composer vendor for the sitepackage")
     .option("--sitepackage <name>", "sitepackage key, such as example_sitepackage")
+    .option("--developer-stack <stack>", "developer stack: bootstrap-vite or fluid-styled-content")
     .option("--php-version <version>", "DDEV PHP version (must be 8.3)")
     .option("--server-type <type>", "TYPO3 server type: apache or nginx")
     .option("--dry-run", "show the plan without changing files or running commands")
     .option("--verbose", "show each command as it runs")
     .option("--force", "allow an existing project directory and back up managed files")
     .option("-y, --yes", "skip interactive questions and confirmation")
-    .option("--no-vite-sidecar", "do not install the DDEV Vite sidecar")
     .option("--no-rector", "do not install TYPO3 Rector")
     .option("--playwright", "install Playwright and its browsers");
 }
@@ -156,6 +157,7 @@ program.command("status")
     console.log(`Installed: ${state.installedAt}`);
     console.log(`Installer version: ${state.installerVersion}`);
     console.log(`Sitepackage: ${state.sitepackage.vendor}/${state.sitepackage.name.replaceAll("_", "-")}`);
+    console.log(`Developer stack: ${state.developerStack ?? "bootstrap-vite"}`);
     console.log("Managed paths:");
     for (const generatedPath of state.generatedPaths) console.log(`  ${generatedPath}`);
   });
@@ -167,13 +169,16 @@ program.command("update")
   .option("--verbose", "show each command as it runs")
   .action(async ({ directory, dryRun, verbose }: { directory: string; dryRun?: boolean; verbose?: boolean }) => {
     const projectDirectory = path.resolve(directory);
-    if (!(await readState(projectDirectory))) throw new Error("No installer state found. Refusing to update an unmanaged project.");
-    const commands = [
+    const state = await readState(projectDirectory);
+    if (!state) throw new Error("No installer state found. Refusing to update an unmanaged project.");
+    const commands: Array<[string, string[]]> = [
       ["ddev", ["composer", "update", "--with-all-dependencies", "--no-interaction"]],
-      ["ddev", ["npm", "update"]],
       ["ddev", ["typo3", "database:updateschema"]],
       ["ddev", ["typo3", "cache:warmup"]],
-    ] as const;
+    ];
+    if (await pathExists(path.join(projectDirectory, "package.json"))) {
+      commands.splice(1, 0, ["ddev", ["npm", "update"]]);
+    }
     for (const [executable, args] of commands) {
       console.log(`${dryRun ? "Would run" : "Running"} ${formatCommand(executable, [...args])}`);
       if (!dryRun) await runCommand(executable, [...args], { cwd: projectDirectory, verbose: Boolean(verbose) });

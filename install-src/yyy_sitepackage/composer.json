@@ -1,0 +1,37 @@
+{
+    "name": "skom/yyy-sitepackage",
+    "type": "typo3-cms-extension",
+    "description": "",
+    "homepage": "https://www.skom.de",
+    "license": ["GPL-2.0-or-later"],
+    "keywords": ["TYPO3 CMS"],
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Sven Kalbhenn",
+            "email": "sven@skom.de",
+            "homepage": "https://www.skom.de"
+        }
+    ],
+    "require": {
+        "typo3/cms-core": "^14.0",
+        "typo3/cms-rte-ckeditor": "^14.0",
+        "typo3/cms-fluid-styled-content": "^14.0"
+    },
+    "suggest": {
+        "friendsoftypo3/content-blocks": "Allows to create custom content elements. "
+    },
+    "autoload": {
+        "psr-4": {
+            "Skom\\YyySitepackage\\": "Classes/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "yyy_sitepackage",
+            "Package": {
+                "providesPackages": {}
+            }
+        }
+    }
+}

@@ -1,7 +1,13 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { TYPO3_EXTENSION_SITE_SETS, type InstallConfig, type InstallOptions, type InstallStep } from "../types.js";
+import {
+  TYPO3_EXTENSION_SITE_SETS,
+  TYPO3_STACK_EXTENSION_SITE_SETS,
+  type InstallConfig,
+  type InstallOptions,
+  type InstallStep,
+} from "../types.js";
 
 const sourceRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../install-src");
 
@@ -42,6 +48,19 @@ export function makeReplacements(config: InstallConfig): Record<string, string> 
     "XXXX-SITEPACKAGE": packageName.toUpperCase(),
     "XXXX SITEPACKAGE": displayName.toUpperCase(),
     XXXXSitepackage: className.toUpperCase(),
+    // The Fluid Styled Content template uses its own placeholder family.
+    yyy_sitepackage: extensionKey,
+    "yyy-sitepackage": packageName,
+    "yyy sitepackage": displayName,
+    YyySitepackage: className,
+    yyySitepackage: camelName,
+    YYY_SITEPACKAGE: extensionKey.toUpperCase(),
+    "YYY-SITEPACKAGE": packageName.toUpperCase(),
+    "YYY SITEPACKAGE": displayName.toUpperCase(),
+    YYYSitepackage: className.toUpperCase(),
+    yyy: displayName,
+    Yyy: `${displayName.slice(0, 1).toUpperCase()}${displayName.slice(1)}`,
+    YYY: displayName.toUpperCase(),
     // Bare branding placeholders in the template use the human-readable name.
     xxxx: displayName,
     Xxxx: `${displayName.slice(0, 1).toUpperCase()}${displayName.slice(1)}`,
@@ -68,14 +87,17 @@ export function makeReplacements(config: InstallConfig): Record<string, string> 
 }
 
 function projectReadme(config: InstallConfig): string {
+  const development = config.developerStack === "bootstrap-vite"
+    ? "`ddev start` starts TYPO3 and its database. Use `ddev vite dev` for the Vite\ndevelopment server and `ddev vite build` for a production asset build."
+    : "`ddev start` starts TYPO3 and its database. The Fluid Styled Content\nsitepackage serves its committed CSS and JavaScript assets directly; no Vite\ndevelopment server or asset build is configured.";
+
   return `# ${config.project.title}
 
 This TYPO3 v14 project was created with \`typo3-auto-install\`.
 
 ## Development
 
-\`ddev start\` starts TYPO3 and its database. Use \`ddev vite dev\` for the Vite
-development server and \`ddev vite build\` for a production asset build.
+${development}
 
 Useful TYPO3 commands:
 
@@ -109,8 +131,9 @@ TYPO3__DB__Connections__Default__user='${config.database.user}'
 
 export async function buildInstallPlan(config: InstallConfig, _options: InstallOptions): Promise<InstallStep[]> {
   const projectDirectory = path.resolve(config.project.directory);
+  const isBootstrapVite = config.developerStack === "bootstrap-vite";
   const templates = {
-    sitepackage: path.join(sourceRoot, "xxxx_sitepackage"),
+    sitepackage: path.join(sourceRoot, isBootstrapVite ? "xxxx_sitepackage" : "yyy_sitepackage"),
     viteConfig: path.join(sourceRoot, "vite.config.js"),
     editorConfig: path.join(sourceRoot, ".editorconfig"),
     gitignore: path.join(sourceRoot, ".gitignore"),
@@ -121,12 +144,19 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
 
   const composerPackages = [
     "helhum/typo3-console:^9.0",
-    "praetorius/vite-asset-collector:^1.18",
     "helhum/dotenv-connector:^3.2",
     "b13/container:^4.1",
+    ...(isBootstrapVite ? ["praetorius/vite-asset-collector:^1.18"] : []),
     ...config.extensions,
     `${config.sitepackage.vendor}/${sitepackageKebabName(config.sitepackage.name)}:@dev`,
   ];
+  const extensionSiteSets = config.extensions
+    .map((extension) => TYPO3_EXTENSION_SITE_SETS[extension] ?? TYPO3_STACK_EXTENSION_SITE_SETS[config.developerStack][extension])
+    .filter((siteSet): siteSet is string => Boolean(siteSet));
+  const replacements = {
+    ...makeReplacements(config),
+    TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: extensionSiteSets.map((siteSet) => `  - ${siteSet}`).join("\n"),
+  };
 
   const steps: InstallStep[] = [
     { type: "mkdir", path: projectDirectory },
@@ -165,23 +195,27 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
       type: "render",
       from: templates.sitepackage,
       to: path.join(projectDirectory, "packages", config.sitepackage.name),
-      replacements: makeReplacements(config),
+      replacements,
     },
     { type: "command", executable: "ddev", args: ["composer", "require", ...composerPackages, "--no-interaction"], cwd: projectDirectory },
     { type: "command", executable: "ddev", args: ["composer", "update", "--with-all-dependencies", "--no-interaction"], cwd: projectDirectory },
     { type: "command", executable: "ddev", args: ["typo3", "database:updateschema"], cwd: projectDirectory },
     { type: "command", executable: "ddev", args: ["typo3", "cache:flush"], cwd: projectDirectory },
-    { type: "command", executable: "ddev", args: ["npm", "init", "--yes"], cwd: projectDirectory },
-    { type: "command", executable: "ddev", args: ["npm", "install", "--save-dev", "vite@^7.0.0", "vite-plugin-typo3@^3.0.0", "vite-plugin-live-reload", "sass", "bootstrap", "bootstrap-icons", "@popperjs/core"], cwd: projectDirectory },
-    { type: "command", executable: "ddev", args: ["npm", "pkg", "set", "scripts.dev=vite", "scripts.build=vite build", "scripts.watch=vite build --watch"], cwd: projectDirectory },
-    { type: "copy", from: templates.viteConfig, to: path.join(projectDirectory, "vite.config.js") },
     { type: "copy", from: templates.editorConfig, to: path.join(projectDirectory, ".editorconfig") },
     { type: "copy", from: templates.gitignore, to: path.join(projectDirectory, ".gitignore") },
     { type: "write", path: path.join(projectDirectory, ".env"), contents: environmentFile(config) },
     { type: "write", path: path.join(projectDirectory, "README.md"), contents: projectReadme(config) },
   ];
 
-  if (config.features.viteSidecar) {
+  if (isBootstrapVite) {
+    steps.splice(
+      steps.length - 4,
+      0,
+      { type: "command", executable: "ddev", args: ["npm", "init", "--yes"], cwd: projectDirectory },
+      { type: "command", executable: "ddev", args: ["npm", "install", "--save-dev", "vite@^7.0.0", "vite-plugin-typo3@^3.0.0", "vite-plugin-live-reload", "sass", "bootstrap", "bootstrap-icons", "@popperjs/core"], cwd: projectDirectory },
+      { type: "command", executable: "ddev", args: ["npm", "pkg", "set", "scripts.dev=vite", "scripts.build=vite build", "scripts.watch=vite build --watch"], cwd: projectDirectory },
+      { type: "copy", from: templates.viteConfig, to: path.join(projectDirectory, "vite.config.js") },
+    );
     steps.push({ type: "command", executable: "ddev", args: ["get", "s2b/ddev-vite-sidecar"], cwd: projectDirectory });
   }
   if (config.features.rector) {

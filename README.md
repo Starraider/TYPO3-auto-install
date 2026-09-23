@@ -1,9 +1,10 @@
 # TYPO3 Auto-Install
 
-A TypeScript CLI that creates a TYPO3 v14 project with DDEV, a custom
-sitepackage, Bootstrap, Vite, and the usual development tooling. It builds a
-complete plan before it changes the target project, so `--dry-run` can show
-the exact commands and files first.
+A TypeScript CLI that creates a TYPO3 v14 project with DDEV and a custom
+sitepackage. Before optional TYPO3 extensions are selected, it asks which
+developer stack to install: `bootstrap_package + Vite` or
+`fluid-styled-content`. It builds a complete plan before it changes the target
+project, so `--dry-run` can show the exact commands and files first.
 
 ## Requirements
 
@@ -53,9 +54,9 @@ install Node.js 20 or later, DDEV, and Docker, then start Docker.
    ```
 
    At a minimum, choose a `project.name`, `project.title`, `project.directory`,
-   `sitepackage.vendor`, and `sitepackage.name`. Use lowercase letters, numbers,
-   and hyphens for the project name and vendor. Use lowercase letters, numbers,
-   and underscores for the sitepackage key.
+   `sitepackage.vendor`, `sitepackage.name`, and `developerStack`. Use lowercase
+   letters, numbers, and hyphens for the project name and vendor. Use lowercase
+   letters, numbers, and underscores for the sitepackage key.
 
    Set `project.directory` to an empty directory that does not already contain
    a TYPO3 project. For example, use `../acme-website` to create the project
@@ -82,10 +83,11 @@ install Node.js 20 or later, DDEV, and Docker, then start Docker.
    npm run dev -- install
    ```
 
-   Answer the same project and administrator questions, choose whether to add
-   the Vite sidecar, TYPO3 Rector, and Playwright, then confirm `Execute this
-   plan?`. The installer creates the project, starts DDEV, installs TYPO3 and
-   the sitepackage, and configures the selected tools.
+   Answer the same project and administrator questions. The developer-stack
+   choice appears before the TYPO3 extension multi-select; TYPO3 Rector and
+   Playwright remain independent optional choices. The installer then creates
+   the project, starts DDEV, installs TYPO3 and the selected sitepackage, and
+   configures the applicable tools.
 
 7. Open the URL printed at the end of the installation, usually:
 
@@ -176,10 +178,48 @@ managed file can have local edits.
 - `ddev`: PHP version and TYPO3 server type
 - `database`: the DDEV database connection
 - `sitepackage`: Composer vendor and TYPO3 extension key
-- `features`: Vite sidecar, TYPO3 Rector, and Playwright choices
+- `developerStack`: `bootstrap-vite` or `fluid-styled-content`
+- `extensions`: optional TYPO3 extensions, available with either stack
+- `features`: TYPO3 Rector and Playwright choices
 
 CLI flags override YAML values. Run `npm run dev -- install --help` for all
 available flags.
+
+## Developer stacks
+
+The chosen stack controls only stack-specific dependencies and generated
+assets. Shared TYPO3 setup, the local Composer sitepackage repository, dotenv
+support, Container, optional extensions, Rector, and Playwright remain
+available in both variants.
+
+| Component | `bootstrap-vite` | `fluid-styled-content` |
+| --- | --- | --- |
+| Rendered template | `install-src/xxxx_sitepackage` | `install-src/yyy_sitepackage` |
+| Content renderer | Bootstrap Package, required by the sitepackage | Fluid Styled Content, required by the sitepackage and declared as its site set |
+| Vite Asset Collector | Installed | Not installed |
+| Node/Vite/Sass/Bootstrap npm dependencies and scripts | Installed | Not installed |
+| `vite.config.js` | Copied | Not copied |
+| DDEV Vite sidecar | Installed | Not installed |
+| `baschte/content-animations` site set | Bootstrap Package integration | Fluid Styled Content integration |
+
+`typo3/cms-base-distribution:^14.3` already includes Fluid Styled Content.
+The FSC sitepackage retains `typo3/cms-fluid-styled-content` in its own
+`composer.json`, so requiring the generated local sitepackage explicitly
+preserves that dependency without duplicating it at the project root. The
+Bootstrap Package is likewise a dependency of the Bootstrap/Vite sitepackage.
+
+The `yyy_sitepackage` is rendered into `packages/<sitepackage-name>` with the
+same vendor and sitepackage substitutions as `xxxx_sitepackage`: Composer name,
+extension key, PHP namespace, site-set name, Content Block identifiers,
+`EXT:` paths, labels, and example-site dependency all receive the configured
+values. This includes the original `yyy_*`, `Yyy*`, and `YYY*` placeholder
+forms.
+
+The installer leaves selected extensions available in both variants. News,
+blog, Cookie Manager, Content Blocks, Rector, and Playwright are stack-neutral.
+Content Animations is also installed with either stack, but its generated site
+set dependency matches the selected content renderer; importing the Bootstrap
+Package set into an FSC project would be incorrect.
 
 ## Installation sequence
 
@@ -212,24 +252,25 @@ available flags.
 17. Render the sitepackage template into
     `packages/<sitepackage>`, replacing its placeholder names and
     administrator details.
-18. Require TYPO3 Console, Vite Asset Collector, dotenv connector, Container,
-    and the rendered sitepackage.
+18. Require TYPO3 Console, dotenv connector, Container, the selected optional
+    extensions, and the rendered sitepackage. The Bootstrap/Vite site also
+    requires Vite Asset Collector; the FSC site's package declares Fluid Styled
+    Content.
 19. Update Composer dependencies with their dependencies.
 20. Apply TYPO3 database schema updates.
 21. Flush the TYPO3 cache.
-22. Initialize npm.
-23. Install Vite, the TYPO3 Vite plugins, Sass, Bootstrap, Bootstrap Icons,
-    and Popper as development dependencies.
-24. Add the `dev`, `build`, and `watch` npm scripts.
-25. Copy `vite.config.js`, `.editorconfig`, and `.gitignore`.
-26. Write `.env` with the configured database settings and development values.
-27. Write the generated project README.
-28. If enabled, install the DDEV Vite sidecar.
-29. If Rector is enabled, install TYPO3 Rector and copy `rector.php`.
-30. If Playwright is enabled, install its npm package and browsers with their
+22. For the Bootstrap/Vite stack only, initialize npm, install Vite, the TYPO3
+    Vite plugins, Sass, Bootstrap, Bootstrap Icons, and Popper, add the
+    `dev`, `build`, and `watch` scripts, and copy `vite.config.js`.
+23. Copy `.editorconfig` and `.gitignore`.
+24. Write `.env` with the configured database settings and development values.
+25. Write the generated project README.
+26. For the Bootstrap/Vite stack only, install the DDEV Vite sidecar.
+27. If Rector is enabled, install TYPO3 Rector and copy `rector.php`.
+28. If Playwright is enabled, install its npm package and browsers with their
     system dependencies.
-31. Warm the TYPO3 cache.
-32. Write `.typo3-auto-install/state.json`, which records the installer
+29. Warm the TYPO3 cache.
+30. Write `.typo3-auto-install/state.json`, which records the installer
     version, project metadata, and managed paths.
 
 Before the installer copies, renders, or writes over an existing destination,
@@ -237,16 +278,15 @@ it saves that destination under `.typo3-auto-install/backups/`.
 
 ## What the installer creates
 
-The project gets a DDEV TYPO3 v14.3 installation (currently resolving the
-TYPO3 core to v14.3.7) plus:
+The project gets a DDEV TYPO3 v14.3 installation plus:
 
-- a generated copy of `install-src/xxxx_sitepackage` under `packages/`
-- Bootstrap 5, Bootstrap Icons, Sass, and Vite with TYPO3 asset integration
-- TYPO3 14.3-compatible releases of `b13/container`, `helhum/typo3-console`,
-  `praetorius/vite-asset-collector`, `helhum/dotenv-connector`, and Bootstrap
-  Package
-- Vite scripts, an environment file, project README, editor settings, and
-  optional Rector and Playwright tooling
+- a generated copy of the selected sitepackage template under `packages/`
+- shared TYPO3 tooling: `b13/container`, `helhum/typo3-console`, and
+  `helhum/dotenv-connector`
+- either Bootstrap Package with Vite Asset Collector, Vite, and its DDEV
+  sidecar, or Fluid Styled Content with its static asset sitepackage
+- an environment file, project README, editor settings, optional selected TYPO3
+  extensions, and optional Rector, Playwright tooling
 
 The installer builds its complete plan before it makes changes. `--dry-run`
 prints the plan and redacts administrator and database passwords. When

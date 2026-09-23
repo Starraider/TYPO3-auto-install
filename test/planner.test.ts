@@ -8,8 +8,9 @@ const config: InstallConfig = {
   ddev: { phpVersion: "8.3", serverType: "apache" },
   database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
   sitepackage: { vendor: "acme", name: "demo_sitepackage" },
+  developerStack: "bootstrap-vite",
   extensions: [],
-  features: { viteSidecar: false, rector: false, playwright: false },
+  features: { rector: false, playwright: false },
 };
 
 describe("installation planning", () => {
@@ -55,11 +56,8 @@ describe("installation planning", () => {
     expect(plan.some((step) => step.type === "render" && step.to.endsWith("packages/demo_sitepackage"))).toBe(true);
   });
 
-  it("installs the Vite sidecar with flags supported by ddev get", async () => {
-    const plan = await buildInstallPlan(
-      { ...config, features: { ...config.features, viteSidecar: true } },
-      { dryRun: true, force: false, verbose: false },
-    );
+  it("installs the Vite sidecar for the Bootstrap and Vite stack", async () => {
+    const plan = await buildInstallPlan(config, { dryRun: true, force: false, verbose: false });
     const viteSidecar = plan.find((step) => step.type === "command" && step.args[0] === "get");
 
     expect(viteSidecar).toMatchObject({
@@ -107,6 +105,28 @@ describe("installation planning", () => {
           "  - georgringer/news",
         ].join("\n"),
       },
+    });
+  });
+
+  it("uses the Fluid Styled Content template without Vite-only dependencies", async () => {
+    const plan = await buildInstallPlan(
+      { ...config, developerStack: "fluid-styled-content", extensions: ["baschte/content-animations"] },
+      { dryRun: true, force: false, verbose: false },
+    );
+    const composerRequire = plan.find((step) => step.type === "command" && step.args[0] === "composer" && step.args[1] === "require");
+    const sitepackageRender = plan.find((step) => step.type === "render");
+
+    expect(composerRequire).toMatchObject({
+      type: "command",
+      args: expect.not.arrayContaining(["praetorius/vite-asset-collector:^1.18"]),
+    });
+    expect(plan.some((step) => step.type === "command" && step.args[0] === "npm")).toBe(false);
+    expect(plan.some((step) => step.type === "command" && step.args[0] === "get")).toBe(false);
+    expect(plan.some((step) => step.type === "copy" && step.to.endsWith("vite.config.js"))).toBe(false);
+    expect(sitepackageRender).toMatchObject({
+      type: "render",
+      from: expect.stringMatching(/yyy_sitepackage$/),
+      replacements: { TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: "  - baschte/content-animations-fluid-styles-content" },
     });
   });
 });

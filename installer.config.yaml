@@ -27,11 +27,15 @@ sitepackage:
   vendor: acme
   name: my_typo3_project_sitepackage
 
+# The interactive installer asks for this before the extension multi-select.
+# bootstrap-vite installs Bootstrap Package, Vite Asset Collector, Vite, and
+# the DDEV Vite sidecar. fluid-styled-content uses the FSC sitepackage instead.
+developerStack: bootstrap-vite
+
 # Optional extensions to install. Interactive installs present these as a
 # multi-select menu; non-interactive installs use the values listed here.
 extensions: []
 
 features:
-  viteSidecar: true
   rector: true
   playwright: false

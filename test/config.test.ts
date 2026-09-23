@@ -8,7 +8,8 @@ describe("configuration validation", () => {
     ddev: { phpVersion: "8.3", serverType: "apache" },
     database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
     sitepackage: { vendor: "acme", name: "demo_sitepackage" },
-    features: { viteSidecar: true, rector: true, playwright: false },
+    developerStack: "bootstrap-vite",
+    features: { rector: true, playwright: false },
   };
 
   it("rejects unsafe DDEV project names", () => {
@@ -18,7 +19,8 @@ describe("configuration validation", () => {
       ddev: { phpVersion: "8.3", serverType: "apache" },
       database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
       sitepackage: { vendor: "acme", name: "demo_sitepackage" },
-      features: { viteSidecar: true, rector: true, playwright: false },
+      developerStack: "bootstrap-vite",
+      features: { rector: true, playwright: false },
     })).toThrow(/lowercase/);
   });
 
@@ -29,7 +31,8 @@ describe("configuration validation", () => {
       ddev: { phpVersion: "8.4", serverType: "apache" },
       database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
       sitepackage: { vendor: "acme", name: "demo_sitepackage" },
-      features: { viteSidecar: true, rector: true, playwright: false },
+      developerStack: "bootstrap-vite",
+      features: { rector: true, playwright: false },
     })).toThrow(/PHP 8\.3/);
   });
 
@@ -39,6 +42,12 @@ describe("configuration validation", () => {
       ...validConfig,
       extensions: ["friendsoftypo3/content-blocks", "georgringer/news"],
     }).extensions).toEqual(["friendsoftypo3/content-blocks", "georgringer/news"]);
+  });
+
+  it("accepts both developer stacks", () => {
+    const { developerStack: _developerStack, ...legacyConfig } = validConfig;
+    expect(validateConfig(legacyConfig).developerStack).toBe("bootstrap-vite");
+    expect(validateConfig({ ...validConfig, developerStack: "fluid-styled-content" }).developerStack).toBe("fluid-styled-content");
   });
 
   it("rejects unsupported or duplicate TYPO3 extensions", () => {

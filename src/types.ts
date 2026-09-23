@@ -1,5 +1,9 @@
 export type ServerType = "apache" | "nginx";
 
+export const DEVELOPER_STACKS = ["bootstrap-vite", "fluid-styled-content"] as const;
+
+export type DeveloperStack = (typeof DEVELOPER_STACKS)[number];
+
 export const TYPO3_EXTENSION_PACKAGES = [
   "CodingFreaks/cf-cookiemanager",
   "friendsoftypo3/content-blocks",
@@ -12,9 +16,17 @@ export type Typo3ExtensionPackage = (typeof TYPO3_EXTENSION_PACKAGES)[number];
 
 export const TYPO3_EXTENSION_SITE_SETS: Partial<Record<Typo3ExtensionPackage, string>> = {
   "CodingFreaks/cf-cookiemanager": "CodingFreaks/cf-cookiemanager",
-  "baschte/content-animations": "baschte/content-animations-bootstrap-package",
   "t3g/blog": "blog/integration",
   "georgringer/news": "georgringer/news",
+};
+
+export const TYPO3_STACK_EXTENSION_SITE_SETS: Record<DeveloperStack, Partial<Record<Typo3ExtensionPackage, string>>> = {
+  "bootstrap-vite": {
+    "baschte/content-animations": "baschte/content-animations-bootstrap-package",
+  },
+  "fluid-styled-content": {
+    "baschte/content-animations": "baschte/content-animations-fluid-styles-content",
+  },
 };
 
 export interface InstallConfig {
@@ -46,9 +58,9 @@ export interface InstallConfig {
     vendor: string;
     name: string;
   };
+  developerStack: DeveloperStack;
   extensions: Typo3ExtensionPackage[];
   features: {
-    viteSidecar: boolean;
     rector: boolean;
     playwright: boolean;
   };
@@ -79,5 +91,6 @@ export interface InstallState {
   installedAt: string;
   project: Pick<InstallConfig["project"], "name" | "title">;
   sitepackage: InstallConfig["sitepackage"];
+  developerStack: DeveloperStack;
   generatedPaths: string[];
 }

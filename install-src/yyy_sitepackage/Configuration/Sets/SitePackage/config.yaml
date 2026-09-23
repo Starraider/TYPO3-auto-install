@@ -1,0 +1,5 @@
+name: skom/yyy-sitepackage
+label: 'YYY Sitepackage'
+dependencies:
+  - typo3/fluid-styled-content
+  - typo3/fluid-styled-content-css

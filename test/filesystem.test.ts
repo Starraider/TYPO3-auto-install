@@ -52,8 +52,9 @@ describe("template rendering", () => {
       ddev: { phpVersion: "8.3", serverType: "apache" },
       database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
       sitepackage: { vendor: "acme-agency", name: "my_typo3_project_sitepackage" },
+      developerStack: "bootstrap-vite",
       extensions: [],
-      features: { viteSidecar: false, rector: false, playwright: false },
+      features: { rector: false, playwright: false },
     };
 
     await renderDirectory(source, destination, makeReplacements(config));
@@ -62,6 +63,35 @@ describe("template rendering", () => {
       "my_typo3_project_sitepackage", "my-typo3-project-sitepackage", "my typo3 project sitepackage", "MyTypo3ProjectSitepackage", "myTypo3ProjectSitepackage",
       "MY_TYPO3_PROJECT_SITEPACKAGE", "MY-TYPO3-PROJECT-SITEPACKAGE", "MY TYPO3 PROJECT SITEPACKAGE", "MYTYPO3PROJECTSITEPACKAGE", "my typo3 project sitepackage", "My typo3 project sitepackage", "MY TYPO3 PROJECT SITEPACKAGE",
       "my_typo3_project_sitepackage", "my-typo3-project-sitepackage", "my typo3 project sitepackage", "MyTypo3ProjectSitepackage", "acme-agency", "AcmeAgency", "AcmeAgency", "ACME-AGENCY",
+    ].join("\n"));
+  });
+
+  it("renders the Fluid Styled Content template placeholder family", async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), "typo3-installer-"));
+    temporaryDirectories.push(directory);
+    const source = path.join(directory, "source");
+    const destination = path.join(directory, "destination");
+    await (await import("node:fs/promises")).mkdir(source);
+    await writeFile(
+      path.join(source, "placeholders.txt"),
+      ["yyy_sitepackage", "yyy-sitepackage", "YyySitepackage", "yyySitepackage", "YYY_SITEPACKAGE", "YYY-SITEPACKAGE", "YYY SITEPACKAGE", "YYY"].join("\n"),
+    );
+    const config: InstallConfig = {
+      project: { name: "demo-site", title: "Demo site", directory },
+      admin: { username: "admin", name: "Admin", email: "admin@example.test", password: "SecurePass1!" },
+      ddev: { phpVersion: "8.3", serverType: "apache" },
+      database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
+      sitepackage: { vendor: "acme-agency", name: "my_typo3_project_sitepackage" },
+      developerStack: "fluid-styled-content",
+      extensions: [],
+      features: { rector: false, playwright: false },
+    };
+
+    await renderDirectory(source, destination, makeReplacements(config));
+
+    await expect(readFile(path.join(destination, "placeholders.txt"), "utf8")).resolves.toBe([
+      "my_typo3_project_sitepackage", "my-typo3-project-sitepackage", "MyTypo3ProjectSitepackage", "myTypo3ProjectSitepackage",
+      "MY_TYPO3_PROJECT_SITEPACKAGE", "MY-TYPO3-PROJECT-SITEPACKAGE", "MY TYPO3 PROJECT SITEPACKAGE", "MY TYPO3 PROJECT SITEPACKAGE",
     ].join("\n"));
   });
 });

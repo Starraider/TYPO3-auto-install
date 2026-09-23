@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TYPO3_EXTENSION_PACKAGES } from "../types.js";
+import { DEVELOPER_STACKS, TYPO3_EXTENSION_PACKAGES } from "../types.js";
 
 const identifier = z
   .string()
@@ -51,12 +51,12 @@ export const InstallConfigSchema = z.object({
     vendor: identifier,
     name: packageName,
   }),
+  developerStack: z.enum(DEVELOPER_STACKS).default("bootstrap-vite"),
   extensions: z
     .array(z.enum(TYPO3_EXTENSION_PACKAGES))
     .default([])
     .refine((extensions) => new Set(extensions).size === extensions.length, "Choose each TYPO3 extension only once."),
   features: z.object({
-    viteSidecar: z.boolean(),
     rector: z.boolean(),
     playwright: z.boolean(),
   }),

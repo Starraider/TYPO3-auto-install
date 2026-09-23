@@ -20,13 +20,14 @@ export async function writeState(projectDirectory: string, config: InstallConfig
     installedAt: new Date().toISOString(),
     project: { name: config.project.name, title: config.project.title },
     sitepackage: config.sitepackage,
+    developerStack: config.developerStack,
     generatedPaths: [
       `packages/${config.sitepackage.name}`,
-      "vite.config.js",
       ".env",
       "README.md",
       ".editorconfig",
       ".gitignore",
+      ...(config.developerStack === "bootstrap-vite" ? ["vite.config.js"] : []),
       ...(config.features.rector ? ["rector.php"] : []),
     ],
   };
