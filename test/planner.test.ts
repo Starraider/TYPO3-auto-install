@@ -67,6 +67,21 @@ describe("installation planning", () => {
     });
   });
 
+  it("runs TYPO3 extension setup for every developer stack", async () => {
+    for (const developerStack of ["bootstrap-package", "bootstrap-vite", "fluid-styled-content"] as const) {
+      const plan = await buildInstallPlan(
+        { ...config, developerStack },
+        { dryRun: true, force: false, verbose: false },
+      );
+      const extensionSetup = plan.find(
+        (step) => step.type === "command" && step.executable === "ddev" && step.args[0] === "typo3" && step.args[1] === "extension:setup",
+      );
+
+      expect(extensionSetup).toMatchObject({ type: "command", args: ["typo3", "extension:setup"] });
+      expect(plan.at(-1)).toMatchObject({ type: "command", executable: "ddev", args: ["typo3", "extension:setup"] });
+    }
+  });
+
   it("installs compatible Vite and TYPO3 plugin versions", async () => {
     const plan = await buildInstallPlan(config, { dryRun: true, force: false, verbose: false });
     const npmInstall = plan.find(
@@ -127,6 +142,36 @@ describe("installation planning", () => {
       type: "render",
       from: expect.stringMatching(/yyy_sitepackage$/),
       replacements: { TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: "  - baschte/content-animations-fluid-styles-content" },
+    });
+  });
+
+  it("uses and fully renders the Bootstrap Package-only template without Vite dependencies", async () => {
+    const plan = await buildInstallPlan(
+      { ...config, developerStack: "bootstrap-package", extensions: ["baschte/content-animations", "georgringer/news"] },
+      { dryRun: true, force: false, verbose: false },
+    );
+    const composerRequire = plan.find((step) => step.type === "command" && step.args[0] === "composer" && step.args[1] === "require");
+    const sitepackageRender = plan.find((step) => step.type === "render");
+
+    expect(composerRequire).toMatchObject({
+      type: "command",
+      args: expect.not.arrayContaining(["praetorius/vite-asset-collector:^1.18"]),
+    });
+    expect(plan.some((step) => step.type === "command" && step.args[0] === "npm")).toBe(false);
+    expect(plan.some((step) => step.type === "command" && step.args[0] === "get")).toBe(false);
+    expect(plan.some((step) => step.type === "copy" && step.to.endsWith("vite.config.js"))).toBe(false);
+    expect(sitepackageRender).toMatchObject({
+      type: "render",
+      from: expect.stringMatching(/bbb_sitepackage$/),
+      replacements: {
+        "skom/bbb": "acme/demo-sitepackage",
+        bbb: "demo_sitepackage",
+        Bbb: "DemoSitepackage",
+        TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: [
+          "  - baschte/content-animations-bootstrap-package",
+          "  - georgringer/news",
+        ].join("\n"),
+      },
     });
   });
 });

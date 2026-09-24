@@ -1,0 +1,5 @@
+name: skom/bbb
+label: 'bbb'
+dependencies:
+  - bootstrap-package/full
+TYPO3_EXTENSION_SITE_SET_DEPENDENCIES

@@ -110,7 +110,7 @@ function addInstallOptions(command: Command): Command {
     .option("--admin-password <password>", "TYPO3 administrator password. Prefer a secret-aware shell mechanism.")
     .option("--vendor <name>", "Composer vendor for the sitepackage")
     .option("--sitepackage <name>", "sitepackage key, such as example_sitepackage")
-    .option("--developer-stack <stack>", "developer stack: bootstrap-vite or fluid-styled-content")
+    .option("--developer-stack <stack>", "developer stack: bootstrap-package, bootstrap-vite, or fluid-styled-content")
     .option("--php-version <version>", "DDEV PHP version (must be 8.3)")
     .option("--server-type <type>", "TYPO3 server type: apache or nginx")
     .option("--dry-run", "show the plan without changing files or running commands")

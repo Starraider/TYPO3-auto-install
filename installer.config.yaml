@@ -28,9 +28,9 @@ sitepackage:
   name: my_typo3_project_sitepackage
 
 # The interactive installer asks for this before the extension multi-select.
-# bootstrap-vite installs Bootstrap Package, Vite Asset Collector, Vite, and
-# the DDEV Vite sidecar. fluid-styled-content uses the FSC sitepackage instead.
-developerStack: bootstrap-vite
+# bootstrap-package installs only Bootstrap Package. bootstrap-vite additionally
+# installs Vite Asset Collector, Vite, and the DDEV Vite sidecar.
+developerStack: bootstrap-package
 
 # Optional extensions to install. Interactive installs present these as a
 # multi-select menu; non-interactive installs use the values listed here.

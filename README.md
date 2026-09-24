@@ -2,9 +2,9 @@
 
 A TypeScript CLI that creates a TYPO3 v14 project with DDEV and a custom
 sitepackage. Before optional TYPO3 extensions are selected, it asks which
-developer stack to install: `bootstrap_package + Vite` or
-`fluid-styled-content`. It builds a complete plan before it changes the target
-project, so `--dry-run` can show the exact commands and files first.
+developer stack to install: `bootstrap_package`, `bootstrap_package + Vite`,
+or `fluid-styled-content`. It builds a complete plan before it changes the
+target project, so `--dry-run` can show the exact commands and files first.
 
 ## Requirements
 
@@ -178,8 +178,9 @@ managed file can have local edits.
 - `ddev`: PHP version and TYPO3 server type
 - `database`: the DDEV database connection
 - `sitepackage`: Composer vendor and TYPO3 extension key
-- `developerStack`: `bootstrap-vite` or `fluid-styled-content`
-- `extensions`: optional TYPO3 extensions, available with either stack
+- `developerStack`: `bootstrap-package`, `bootstrap-vite`, or
+  `fluid-styled-content`
+- `extensions`: optional TYPO3 extensions, available with every stack
 - `features`: TYPO3 Rector and Playwright choices
 
 CLI flags override YAML values. Run `npm run dev -- install --help` for all
@@ -190,36 +191,41 @@ available flags.
 The chosen stack controls only stack-specific dependencies and generated
 assets. Shared TYPO3 setup, the local Composer sitepackage repository, dotenv
 support, Container, optional extensions, Rector, and Playwright remain
-available in both variants.
+available in every variant.
 
-| Component | `bootstrap-vite` | `fluid-styled-content` |
-| --- | --- | --- |
-| Rendered template | `install-src/xxxx_sitepackage` | `install-src/yyy_sitepackage` |
-| Content renderer | Bootstrap Package, required by the sitepackage | Fluid Styled Content, required by the sitepackage and declared as its site set |
-| Vite Asset Collector | Installed | Not installed |
-| Node/Vite/Sass/Bootstrap npm dependencies and scripts | Installed | Not installed |
-| `vite.config.js` | Copied | Not copied |
-| DDEV Vite sidecar | Installed | Not installed |
-| `baschte/content-animations` site set | Bootstrap Package integration | Fluid Styled Content integration |
+| Component | `bootstrap-package` | `bootstrap-vite` | `fluid-styled-content` |
+| --- | --- | --- | --- |
+| Interactive label | `bootstrap_package` | `bootstrap_package + Vite` | `fluid-styled-content` |
+| Rendered template | `install-src/bbb_sitepackage` | `install-src/xxxx_sitepackage` | `install-src/yyy_sitepackage` |
+| Content renderer | Bootstrap Package | Bootstrap Package | Fluid Styled Content |
+| Renderer dependency | `bk2k/bootstrap-package` in the local sitepackage | `bk2k/bootstrap-package` in the local sitepackage | `typo3/cms-fluid-styled-content` in the local sitepackage |
+| Vite Asset Collector | Not installed | Installed | Not installed |
+| Vite, TYPO3 Vite plugins, Sass, Bootstrap, Icons, Popper, npm scripts, and `vite.config.js` | Not installed | Installed/copied | Not installed |
+| DDEV Vite sidecar | Not installed | Installed | Not installed |
+| `baschte/content-animations` site set | Bootstrap Package integration | Bootstrap Package integration | Fluid Styled Content integration |
 
-`typo3/cms-base-distribution:^14.3` already includes Fluid Styled Content.
-The FSC sitepackage retains `typo3/cms-fluid-styled-content` in its own
+The Bootstrap-only template is rendered to `packages/<sitepackage-name>` and
+its original `bbb` placeholders are replaced with the requested values: its
+Composer package name becomes `<vendor>/<sitepackage-name-with-hyphens>`, while
+the extension key, PHP namespace, site-set name, RTE preset, and every `EXT:`
+path receive the configured vendor and sitepackage name. Its site-set template
+also receives selected extension site-set dependencies, just like the Vite
+template.
+
+`typo3/cms-base-distribution:^14.3` already includes Fluid Styled Content. The
+FSC sitepackage retains `typo3/cms-fluid-styled-content` in its own
 `composer.json`, so requiring the generated local sitepackage explicitly
-preserves that dependency without duplicating it at the project root. The
-Bootstrap Package is likewise a dependency of the Bootstrap/Vite sitepackage.
+preserves that dependency without duplicating it at the project root. Bootstrap
+Package is likewise declared by each Bootstrap sitepackage. Vite Asset
+Collector and the DDEV Vite sidecar are useful only when Vite produces assets;
+they are intentionally absent from the Bootstrap-only and FSC stacks.
 
-The `yyy_sitepackage` is rendered into `packages/<sitepackage-name>` with the
-same vendor and sitepackage substitutions as `xxxx_sitepackage`: Composer name,
-extension key, PHP namespace, site-set name, Content Block identifiers,
-`EXT:` paths, labels, and example-site dependency all receive the configured
-values. This includes the original `yyy_*`, `Yyy*`, and `YYY*` placeholder
-forms.
-
-The installer leaves selected extensions available in both variants. News,
-blog, Cookie Manager, Content Blocks, Rector, and Playwright are stack-neutral.
-Content Animations is also installed with either stack, but its generated site
-set dependency matches the selected content renderer; importing the Bootstrap
-Package set into an FSC project would be incorrect.
+All selectable TYPO3 extensions are included in the Composer requirement for
+every stack. Cookie Manager, Blog, and News have stack-neutral site sets;
+Content Blocks has no automatic site-set dependency; and Content Animations
+uses the renderer-specific site set shown above. Rector is a separate Composer
+development dependency, while Playwright is an independent npm/browser setup,
+so neither choice is tied to a developer stack.
 
 ## Installation sequence
 
@@ -253,9 +259,9 @@ Package set into an FSC project would be incorrect.
     `packages/<sitepackage>`, replacing its placeholder names and
     administrator details.
 18. Require TYPO3 Console, dotenv connector, Container, the selected optional
-    extensions, and the rendered sitepackage. The Bootstrap/Vite site also
-    requires Vite Asset Collector; the FSC site's package declares Fluid Styled
-    Content.
+    extensions, and the rendered sitepackage. The Vite stack also requires Vite
+    Asset Collector; Bootstrap Package and Fluid Styled Content are declared by
+    their respective sitepackages.
 19. Update Composer dependencies with their dependencies.
 20. Apply TYPO3 database schema updates.
 21. Flush the TYPO3 cache.
@@ -270,7 +276,9 @@ Package set into an FSC project would be incorrect.
 28. If Playwright is enabled, install its npm package and browsers with their
     system dependencies.
 29. Warm the TYPO3 cache.
-30. Write `.typo3-auto-install/state.json`, which records the installer
+30. As the final installation command, run `ddev typo3 extension:setup` to
+    activate and initialize installed extensions for either developer stack.
+31. Write `.typo3-auto-install/state.json`, which records the installer
     version, project metadata, and managed paths.
 
 Before the installer copies, renders, or writes over an existing destination,
@@ -283,8 +291,9 @@ The project gets a DDEV TYPO3 v14.3 installation plus:
 - a generated copy of the selected sitepackage template under `packages/`
 - shared TYPO3 tooling: `b13/container`, `helhum/typo3-console`, and
   `helhum/dotenv-connector`
-- either Bootstrap Package with Vite Asset Collector, Vite, and its DDEV
-  sidecar, or Fluid Styled Content with its static asset sitepackage
+- Bootstrap Package with static sitepackage assets, Bootstrap Package with Vite
+  Asset Collector, Vite, and its DDEV sidecar, or Fluid Styled Content with its
+  static asset sitepackage
 - an environment file, project README, editor settings, optional selected TYPO3
   extensions, and optional Rector, Playwright tooling
 

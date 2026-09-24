@@ -44,9 +44,10 @@ describe("configuration validation", () => {
     }).extensions).toEqual(["friendsoftypo3/content-blocks", "georgringer/news"]);
   });
 
-  it("accepts both developer stacks", () => {
+  it("accepts all developer stacks and keeps the legacy default", () => {
     const { developerStack: _developerStack, ...legacyConfig } = validConfig;
     expect(validateConfig(legacyConfig).developerStack).toBe("bootstrap-vite");
+    expect(validateConfig({ ...validConfig, developerStack: "bootstrap-package" }).developerStack).toBe("bootstrap-package");
     expect(validateConfig({ ...validConfig, developerStack: "fluid-styled-content" }).developerStack).toBe("fluid-styled-content");
   });
 

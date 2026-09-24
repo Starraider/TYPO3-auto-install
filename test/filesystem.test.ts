@@ -94,4 +94,28 @@ describe("template rendering", () => {
       "MY_TYPO3_PROJECT_SITEPACKAGE", "MY-TYPO3-PROJECT-SITEPACKAGE", "MY TYPO3 PROJECT SITEPACKAGE", "MY TYPO3 PROJECT SITEPACKAGE",
     ].join("\n"));
   });
+
+  it("renders the Bootstrap Package-only template with the configured vendor and sitepackage name", async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), "typo3-installer-"));
+    temporaryDirectories.push(directory);
+    const destination = path.join(directory, "my_typo3_project_sitepackage");
+    const config: InstallConfig = {
+      project: { name: "demo-site", title: "Demo site", directory },
+      admin: { username: "admin", name: "Admin", email: "admin@example.test", password: "SecurePass1!" },
+      ddev: { phpVersion: "8.3", serverType: "apache" },
+      database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
+      sitepackage: { vendor: "acme-agency", name: "my_typo3_project_sitepackage" },
+      developerStack: "bootstrap-package",
+      extensions: [],
+      features: { rector: false, playwright: false },
+    };
+
+    await renderDirectory(path.resolve("install-src/bbb_sitepackage"), destination, makeReplacements(config));
+
+    await expect(readFile(path.join(destination, "composer.json"), "utf8")).resolves.toContain('"name": "acme-agency/my-typo3-project-sitepackage"');
+    await expect(readFile(path.join(destination, "composer.json"), "utf8")).resolves.toContain('"AcmeAgency\\\\MyTypo3ProjectSitepackage\\\\": "Classes/"');
+    await expect(readFile(path.join(destination, "composer.json"), "utf8")).resolves.toContain('"extension-key": "my_typo3_project_sitepackage"');
+    await expect(readFile(path.join(destination, "Configuration/Sets/SitePackage/config.yaml"), "utf8")).resolves.toContain("name: acme-agency/my-typo3-project-sitepackage");
+    await expect(readFile(path.join(destination, "ext_localconf.php"), "utf8")).resolves.toContain("EXT:my_typo3_project_sitepackage/Configuration/RTE/Default.yaml");
+  });
 });

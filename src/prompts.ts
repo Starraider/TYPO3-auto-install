@@ -20,6 +20,7 @@ export async function askForInstallConfig(defaults: InstallConfig): Promise<Inst
     message: "Developer stack",
     initialValue: defaults.developerStack,
     options: [
+      { value: "bootstrap-package", label: "bootstrap_package" },
       { value: "bootstrap-vite", label: "bootstrap_package + Vite" },
       { value: "fluid-styled-content", label: "fluid-styled-content" },
     ],

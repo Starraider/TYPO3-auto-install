@@ -65,6 +65,13 @@ export function makeReplacements(config: InstallConfig): Record<string, string> 
     xxxx: displayName,
     Xxxx: `${displayName.slice(0, 1).toUpperCase()}${displayName.slice(1)}`,
     XXXX: displayName.toUpperCase(),
+    // The Bootstrap-only template still uses its short original extension key.
+    // Match its combined Composer and namespace forms first so an underscore in
+    // the configured extension key never leaks into the Composer package name.
+    "skom/bbb": `${config.sitepackage.vendor}/${packageName}`,
+    bbb: extensionKey,
+    Bbb: className,
+    BBB: extensionKey.toUpperCase(),
     "Sven Kalbhenn": config.admin.name,
     "sven@skom.de": config.admin.email,
     "https://www.skom.de": config.admin.url ?? "",
@@ -89,6 +96,8 @@ export function makeReplacements(config: InstallConfig): Record<string, string> 
 function projectReadme(config: InstallConfig): string {
   const development = config.developerStack === "bootstrap-vite"
     ? "`ddev start` starts TYPO3 and its database. Use `ddev vite dev` for the Vite\ndevelopment server and `ddev vite build` for a production asset build."
+    : config.developerStack === "bootstrap-package"
+      ? "`ddev start` starts TYPO3 and its database. Bootstrap Package serves the\nsitepackage theme directly; no Vite development server or asset build is configured."
     : "`ddev start` starts TYPO3 and its database. The Fluid Styled Content\nsitepackage serves its committed CSS and JavaScript assets directly; no Vite\ndevelopment server or asset build is configured.";
 
   return `# ${config.project.title}
@@ -132,8 +141,13 @@ TYPO3__DB__Connections__Default__user='${config.database.user}'
 export async function buildInstallPlan(config: InstallConfig, _options: InstallOptions): Promise<InstallStep[]> {
   const projectDirectory = path.resolve(config.project.directory);
   const isBootstrapVite = config.developerStack === "bootstrap-vite";
+  const sitepackageTemplate = {
+    "bootstrap-package": "bbb_sitepackage",
+    "bootstrap-vite": "xxxx_sitepackage",
+    "fluid-styled-content": "yyy_sitepackage",
+  }[config.developerStack];
   const templates = {
-    sitepackage: path.join(sourceRoot, isBootstrapVite ? "xxxx_sitepackage" : "yyy_sitepackage"),
+    sitepackage: path.join(sourceRoot, sitepackageTemplate),
     viteConfig: path.join(sourceRoot, "vite.config.js"),
     editorConfig: path.join(sourceRoot, ".editorconfig"),
     gitignore: path.join(sourceRoot, ".gitignore"),
@@ -227,6 +241,7 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
     steps.push({ type: "command", executable: "ddev", args: ["exec", "npx", "playwright", "install", "--with-deps"], cwd: projectDirectory });
   }
   steps.push({ type: "command", executable: "ddev", args: ["typo3", "cache:warmup"], cwd: projectDirectory });
+  steps.push({ type: "command", executable: "ddev", args: ["typo3", "extension:setup"], cwd: projectDirectory });
   return steps;
 }
 

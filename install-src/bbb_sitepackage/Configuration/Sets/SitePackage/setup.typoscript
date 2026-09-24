@@ -1,0 +1,21 @@
+page {
+    includeCSS {
+        theme = EXT:bbb/Resources/Public/Scss/Theme/theme.scss
+    }
+
+    includeJSLibs {
+
+    }
+
+    includeJS {
+
+    }
+
+    includeJSFooterlibs {
+
+    }
+
+    includeJSFooter {
+        bbb_scripts = EXT:bbb/Resources/Public/JavaScript/main.js
+    }
+}
