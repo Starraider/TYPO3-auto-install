@@ -147,6 +147,8 @@ record and database as well:
 ```bash
 cd ../acme-website
 ddev delete --yes
+# or to omit snapshots
+ddev delete --omit-snapshot --yes
 ```
 
 `ddev delete` does not delete the project files. After checking that the
