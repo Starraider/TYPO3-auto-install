@@ -49,6 +49,7 @@ describe("configuration validation", () => {
     expect(validateConfig(legacyConfig).developerStack).toBe("bootstrap-vite");
     expect(validateConfig({ ...validConfig, developerStack: "bootstrap-package" }).developerStack).toBe("bootstrap-package");
     expect(validateConfig({ ...validConfig, developerStack: "fluid-styled-content" }).developerStack).toBe("fluid-styled-content");
+    expect(validateConfig({ ...validConfig, developerStack: "fluid-styled-content-vite" }).developerStack).toBe("fluid-styled-content-vite");
   });
 
   it("rejects unsupported or duplicate TYPO3 extensions", () => {

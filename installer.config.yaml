@@ -28,8 +28,9 @@ sitepackage:
   name: my_typo3_project_sitepackage
 
 # The interactive installer asks for this before the extension multi-select.
-# bootstrap-package installs only Bootstrap Package. bootstrap-vite additionally
-# installs Vite Asset Collector, Vite, and the DDEV Vite sidecar.
+# bootstrap-package and fluid-styled-content install their renderers directly.
+# bootstrap-vite and fluid-styled-content-vite additionally install Vite Asset
+# Collector, Vite, and the DDEV Vite sidecar.
 developerStack: bootstrap-package
 
 # Optional extensions to install. Interactive installs present these as a

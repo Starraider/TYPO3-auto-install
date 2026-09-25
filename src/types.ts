@@ -1,6 +1,6 @@
 export type ServerType = "apache" | "nginx";
 
-export const DEVELOPER_STACKS = ["bootstrap-package", "bootstrap-vite", "fluid-styled-content"] as const;
+export const DEVELOPER_STACKS = ["bootstrap-package", "bootstrap-vite", "fluid-styled-content", "fluid-styled-content-vite"] as const;
 
 export type DeveloperStack = (typeof DEVELOPER_STACKS)[number];
 
@@ -28,6 +28,9 @@ export const TYPO3_STACK_EXTENSION_SITE_SETS: Record<DeveloperStack, Partial<Rec
     "baschte/content-animations": "baschte/content-animations-bootstrap-package",
   },
   "fluid-styled-content": {
+    "baschte/content-animations": "baschte/content-animations-fluid-styles-content",
+  },
+  "fluid-styled-content-vite": {
     "baschte/content-animations": "baschte/content-animations-fluid-styles-content",
   },
 };

@@ -27,7 +27,7 @@ export async function writeState(projectDirectory: string, config: InstallConfig
       "README.md",
       ".editorconfig",
       ".gitignore",
-      ...(config.developerStack === "bootstrap-vite" ? ["vite.config.js"] : []),
+      ...(config.developerStack === "bootstrap-vite" || config.developerStack === "fluid-styled-content-vite" ? ["vite.config.js"] : []),
       ...(config.features.rector ? ["rector.php"] : []),
     ],
   };

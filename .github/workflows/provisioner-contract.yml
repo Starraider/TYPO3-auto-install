@@ -1,0 +1,25 @@
+name: Provisioner Contract
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/provision-migration-worktree.sh'
+      - 'tests/scripts/provision-migration-worktree-test.sh'
+      - 'tests/fixtures/provision-migration-worktree/**'
+      - '.github/workflows/provisioner-contract.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/provision-migration-worktree.sh'
+      - 'tests/scripts/provision-migration-worktree-test.sh'
+      - 'tests/fixtures/provision-migration-worktree/**'
+      - '.github/workflows/provisioner-contract.yml'
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run provisioner contract suite
+        run: tests/scripts/provision-migration-worktree-test.sh

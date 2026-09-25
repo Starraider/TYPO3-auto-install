@@ -95,6 +95,30 @@ describe("template rendering", () => {
     ].join("\n"));
   });
 
+  it("overlays Vite assets onto the Fluid Styled Content sitepackage", async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), "typo3-installer-"));
+    temporaryDirectories.push(directory);
+    const destination = path.join(directory, "my_typo3_project_sitepackage");
+    const config: InstallConfig = {
+      project: { name: "demo-site", title: "Demo site", directory },
+      admin: { username: "admin", name: "Admin", email: "admin@example.test", password: "SecurePass1!" },
+      ddev: { phpVersion: "8.3", serverType: "apache" },
+      database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
+      sitepackage: { vendor: "acme-agency", name: "my_typo3_project_sitepackage" },
+      developerStack: "fluid-styled-content-vite",
+      extensions: [],
+      features: { rector: false, playwright: false },
+    };
+
+    await renderDirectory(path.resolve("install-src/yyy_sitepackage"), destination, makeReplacements(config));
+    await renderDirectory(path.resolve("install-src/fluid-styled-content-vite"), destination, makeReplacements(config));
+
+    await expect(readFile(path.join(destination, "Resources/Private/PageView/Layouts/PageLayout.html"), "utf8")).resolves.toContain('<vite:asset entry="EXT:my_typo3_project_sitepackage/Resources/Private/JavaScript/Main.entry.js" />');
+    await expect(readFile(path.join(destination, "Resources/Private/PageView/Layouts/PageLayout.html"), "utf8")).resolves.not.toContain("Resources/Public/Css/main.css");
+    await expect(readFile(path.join(destination, "Configuration/ViteEntrypoints.json"), "utf8")).resolves.toContain("../Resources/Private/JavaScript/Main.entry.js");
+    await expect(readFile(path.join(destination, "Resources/Private/JavaScript/Main.entry.js"), "utf8")).resolves.toContain('import "../Scss/main.scss"');
+  });
+
   it("renders the Bootstrap Package-only template with the configured vendor and sitepackage name", async () => {
     const directory = await mkdtemp(path.join(tmpdir(), "typo3-installer-"));
     temporaryDirectories.push(directory);

@@ -3,7 +3,8 @@
 A TypeScript CLI that creates a TYPO3 v14 project with DDEV and a custom
 sitepackage. Before optional TYPO3 extensions are selected, it asks which
 developer stack to install: `bootstrap_package`, `bootstrap_package + Vite`,
-or `fluid-styled-content`. It builds a complete plan before it changes the
+`fluid-styled-content`, or `fluid-styled-content + Vite`. It builds a complete
+plan before it changes the
 target project, so `--dry-run` can show the exact commands and files first.
 
 ## Requirements
@@ -180,8 +181,8 @@ managed file can have local edits.
 - `ddev`: PHP version and TYPO3 server type
 - `database`: the DDEV database connection
 - `sitepackage`: Composer vendor and TYPO3 extension key
-- `developerStack`: `bootstrap-package`, `bootstrap-vite`, or
-  `fluid-styled-content`
+- `developerStack`: `bootstrap-package`, `bootstrap-vite`,
+  `fluid-styled-content`, or `fluid-styled-content-vite`
 - `extensions`: optional TYPO3 extensions, available with every stack
 - `features`: TYPO3 Rector and Playwright choices
 
@@ -195,16 +196,16 @@ assets. Shared TYPO3 setup, the local Composer sitepackage repository, dotenv
 support, Container, optional extensions, Rector, and Playwright remain
 available in every variant.
 
-| Component | `bootstrap-package` | `bootstrap-vite` | `fluid-styled-content` |
-| --- | --- | --- | --- |
-| Interactive label | `bootstrap_package` | `bootstrap_package + Vite` | `fluid-styled-content` |
-| Rendered template | `install-src/bbb_sitepackage` | `install-src/xxxx_sitepackage` | `install-src/yyy_sitepackage` |
-| Content renderer | Bootstrap Package | Bootstrap Package | Fluid Styled Content |
-| Renderer dependency | `bk2k/bootstrap-package` in the local sitepackage | `bk2k/bootstrap-package` in the local sitepackage | `typo3/cms-fluid-styled-content` in the local sitepackage |
-| Vite Asset Collector | Not installed | Installed | Not installed |
-| Vite, TYPO3 Vite plugins, Sass, Bootstrap, Icons, Popper, npm scripts, and `vite.config.js` | Not installed | Installed/copied | Not installed |
-| DDEV Vite sidecar | Not installed | Installed | Not installed |
-| `baschte/content-animations` site set | Bootstrap Package integration | Bootstrap Package integration | Fluid Styled Content integration |
+| Component | `bootstrap-package` | `bootstrap-vite` | `fluid-styled-content` | `fluid-styled-content-vite` |
+| --- | --- | --- | --- | --- |
+| Interactive label | `bootstrap_package` | `bootstrap_package + Vite` | `fluid-styled-content` | `fluid-styled-content + Vite` |
+| Sitepackage | `install-src/bbb_sitepackage` | `install-src/xxxx_sitepackage` | `install-src/yyy_sitepackage` | `install-src/yyy_sitepackage` plus the Vite asset overlay |
+| Content renderer | Bootstrap Package | Bootstrap Package | Fluid Styled Content | Fluid Styled Content |
+| Renderer dependency | `bk2k/bootstrap-package` in the local sitepackage | `bk2k/bootstrap-package` in the local sitepackage | `typo3/cms-fluid-styled-content` in the local sitepackage | `typo3/cms-fluid-styled-content` in the local sitepackage |
+| Vite Asset Collector | Not installed | Installed | Not installed | Installed |
+| Vite tooling | Not installed | Vite, TYPO3 plugin, Sass, Bootstrap, Icons, Popper, npm scripts, and `vite.config.js` | Not installed | Vite, TYPO3 plugin, `sass-embedded`, npm scripts, and `vite.config.js` |
+| DDEV Vite sidecar | Not installed | Installed | Not installed | Installed |
+| `baschte/content-animations` site set | Bootstrap Package integration | Bootstrap Package integration | Fluid Styled Content integration | Fluid Styled Content integration |
 
 The Bootstrap-only template is rendered to `packages/<sitepackage-name>` and
 its original `bbb` placeholders are replaced with the requested values: its
@@ -218,9 +219,12 @@ template.
 FSC sitepackage retains `typo3/cms-fluid-styled-content` in its own
 `composer.json`, so requiring the generated local sitepackage explicitly
 preserves that dependency without duplicating it at the project root. Bootstrap
-Package is likewise declared by each Bootstrap sitepackage. Vite Asset
-Collector and the DDEV Vite sidecar are useful only when Vite produces assets;
-they are intentionally absent from the Bootstrap-only and FSC stacks.
+Package is likewise declared by each Bootstrap sitepackage. The FSC/Vite stack
+reuses the FSC sitepackage and overlays only its Vite entrypoint, private SCSS,
+and private JavaScript sources. Its page layout registers that entrypoint once
+through the Vite Asset Collector, while the FSC-only stack continues to load
+its committed static assets. Vite Asset Collector and the DDEV Vite sidecar
+are intentionally absent from the non-Vite stacks.
 
 All selectable TYPO3 extensions are included in the Composer requirement for
 every stack. Cookie Manager, Blog, and News have stack-neutral site sets;
@@ -261,19 +265,20 @@ so neither choice is tied to a developer stack.
     `packages/<sitepackage>`, replacing its placeholder names and
     administrator details.
 18. Require TYPO3 Console, dotenv connector, Container, the selected optional
-    extensions, and the rendered sitepackage. The Vite stack also requires Vite
-    Asset Collector; Bootstrap Package and Fluid Styled Content are declared by
-    their respective sitepackages.
+    extensions, and the rendered sitepackage. Each Vite stack also requires
+    Vite Asset Collector; Bootstrap Package and Fluid Styled Content are
+    declared by their respective sitepackages.
 19. Update Composer dependencies with their dependencies.
 20. Apply TYPO3 database schema updates.
 21. Flush the TYPO3 cache.
-22. For the Bootstrap/Vite stack only, initialize npm, install Vite, the TYPO3
-    Vite plugins, Sass, Bootstrap, Bootstrap Icons, and Popper, add the
-    `dev`, `build`, and `watch` scripts, and copy `vite.config.js`.
+22. For each Vite stack, initialize npm, install Vite and its TYPO3 plugin,
+    add the `dev`, `build`, and `watch` scripts, and copy `vite.config.js`.
+    The Bootstrap/Vite stack also installs Bootstrap, Bootstrap Icons, Popper,
+    and Sass; the FSC/Vite stack installs `sass-embedded` for SCSS builds.
 23. Copy `.editorconfig` and `.gitignore`.
 24. Write `.env` with the configured database settings and development values.
 25. Write the generated project README.
-26. For the Bootstrap/Vite stack only, install the DDEV Vite sidecar.
+26. For each Vite stack, install the DDEV Vite sidecar.
 27. If Rector is enabled, install TYPO3 Rector and copy `rector.php`.
 28. If Playwright is enabled, install its npm package and browsers with their
     system dependencies.
@@ -294,8 +299,8 @@ The project gets a DDEV TYPO3 v14.3 installation plus:
 - shared TYPO3 tooling: `b13/container`, `helhum/typo3-console`, and
   `helhum/dotenv-connector`
 - Bootstrap Package with static sitepackage assets, Bootstrap Package with Vite
-  Asset Collector, Vite, and its DDEV sidecar, or Fluid Styled Content with its
-  static asset sitepackage
+  Asset Collector, Vite, and its DDEV sidecar, Fluid Styled Content with static
+  assets, or Fluid Styled Content with its Vite-built SCSS and JavaScript
 - an environment file, project README, editor settings, optional selected TYPO3
   extensions, and optional Rector, Playwright tooling
 

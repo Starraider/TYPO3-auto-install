@@ -23,6 +23,7 @@ export async function askForInstallConfig(defaults: InstallConfig): Promise<Inst
       { value: "bootstrap-package", label: "bootstrap_package" },
       { value: "bootstrap-vite", label: "bootstrap_package + Vite" },
       { value: "fluid-styled-content", label: "fluid-styled-content" },
+      { value: "fluid-styled-content-vite", label: "fluid-styled-content + Vite" },
     ],
   }));
   const username = cancelled(await p.text({ message: "Administrator username", initialValue: defaults.admin.username, validate: (value) => value.trim() ? undefined : "A username is required." }));

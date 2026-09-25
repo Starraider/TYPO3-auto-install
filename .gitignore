@@ -15,6 +15,9 @@
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# agents
+.agents
+
 # Local TYPO3/DDEV project output
 /.ddev/
 /var/

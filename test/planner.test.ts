@@ -68,7 +68,7 @@ describe("installation planning", () => {
   });
 
   it("runs TYPO3 extension setup for every developer stack", async () => {
-    for (const developerStack of ["bootstrap-package", "bootstrap-vite", "fluid-styled-content"] as const) {
+    for (const developerStack of ["bootstrap-package", "bootstrap-vite", "fluid-styled-content", "fluid-styled-content-vite"] as const) {
       const plan = await buildInstallPlan(
         { ...config, developerStack },
         { dryRun: true, force: false, verbose: false },
@@ -143,6 +143,36 @@ describe("installation planning", () => {
       from: expect.stringMatching(/yyy_sitepackage$/),
       replacements: { TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: "  - baschte/content-animations-fluid-styles-content" },
     });
+  });
+
+  it("adds Vite to the Fluid Styled Content sitepackage without duplicating its template", async () => {
+    const plan = await buildInstallPlan(
+      { ...config, developerStack: "fluid-styled-content-vite", extensions: ["baschte/content-animations"] },
+      { dryRun: true, force: false, verbose: false },
+    );
+    const composerRequire = plan.find((step) => step.type === "command" && step.args[0] === "composer" && step.args[1] === "require");
+    const renders = plan.filter((step) => step.type === "render");
+    const npmInstall = plan.find((step) => step.type === "command" && step.args[0] === "npm" && step.args[1] === "install");
+    const viteSidecar = plan.find((step) => step.type === "command" && step.args[0] === "get");
+
+    expect(composerRequire).toMatchObject({
+      type: "command",
+      args: expect.arrayContaining(["praetorius/vite-asset-collector:^1.18"]),
+    });
+    expect(renders).toHaveLength(2);
+    expect(renders[0]).toMatchObject({ type: "render", from: expect.stringMatching(/yyy_sitepackage$/) });
+    expect(renders[1]).toMatchObject({ type: "render", from: expect.stringMatching(/fluid-styled-content-vite$/) });
+    expect(renders[0]).toMatchObject({
+      replacements: {
+        FSC_SITE_ASSETS: '<vite:asset entry="EXT:demo_sitepackage/Resources/Private/JavaScript/Main.entry.js" />',
+        TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: "  - baschte/content-animations-fluid-styles-content",
+      },
+    });
+    expect(npmInstall).toMatchObject({
+      type: "command",
+      args: expect.arrayContaining(["vite@^7.0.0", "vite-plugin-typo3@^3.0.0", "sass-embedded"]),
+    });
+    expect(viteSidecar).toMatchObject({ type: "command", args: ["get", "s2b/ddev-vite-sidecar"] });
   });
 
   it("uses and fully renders the Bootstrap Package-only template without Vite dependencies", async () => {
