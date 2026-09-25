@@ -115,6 +115,8 @@ describe("template rendering", () => {
 
     await expect(readFile(path.join(destination, "Resources/Private/PageView/Layouts/PageLayout.html"), "utf8")).resolves.toContain('<vite:asset entry="EXT:my_typo3_project_sitepackage/Resources/Private/JavaScript/Main.entry.js" />');
     await expect(readFile(path.join(destination, "Resources/Private/PageView/Layouts/PageLayout.html"), "utf8")).resolves.not.toContain("Resources/Public/Css/main.css");
+    await expect(readFile(path.join(destination, "Resources/Private/PageView/Layouts/PageLayout.html"), "utf8")).resolves.toContain('xmlns:vite="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"');
+    await expect(readFile(path.join(destination, "Resources/Private/PageView/Layouts/PageLayout.html"), "utf8")).resolves.not.toContain("<f:if condition=\"true\"");
     await expect(readFile(path.join(destination, "Configuration/ViteEntrypoints.json"), "utf8")).resolves.toContain("../Resources/Private/JavaScript/Main.entry.js");
     await expect(readFile(path.join(destination, "Resources/Private/JavaScript/Main.entry.js"), "utf8")).resolves.toContain('import "../Scss/main.scss"');
   });
