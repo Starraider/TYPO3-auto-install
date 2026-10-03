@@ -8,7 +8,7 @@ import { assertPreflightChecks, runPreflightChecks } from "./preflight.js";
 import { install } from "./installer/install.js";
 import { confirmInstall, askForInstallConfig } from "./prompts.js";
 import { readState, removeState } from "./state.js";
-import type { DeveloperStack, InstallConfig, InstallOptions } from "./types.js";
+import { DEVELOPER_STACKS, type DeveloperStack, type InstallConfig, type InstallOptions } from "./types.js";
 import { formatCommand, runCommand } from "./process.js";
 import { pathExists } from "./filesystem.js";
 
@@ -110,7 +110,7 @@ function addInstallOptions(command: Command): Command {
     .option("--admin-password <password>", "TYPO3 administrator password. Prefer a secret-aware shell mechanism.")
     .option("--vendor <name>", "Composer vendor for the sitepackage")
     .option("--sitepackage <name>", "sitepackage key, such as example_sitepackage")
-    .option("--developer-stack <stack>", "developer stack: bootstrap-package, bootstrap-vite, fluid-styled-content, or fluid-styled-content-vite")
+    .option("--developer-stack <stack>", `developer stack: ${DEVELOPER_STACKS.join(", ")}`)
     .option("--php-version <version>", "DDEV PHP version (must be 8.3)")
     .option("--server-type <type>", "TYPO3 server type: apache or nginx")
     .option("--dry-run", "show the plan without changing files or running commands")
@@ -178,6 +178,9 @@ program.command("update")
     ];
     if (await pathExists(path.join(projectDirectory, "package.json"))) {
       commands.splice(1, 0, ["ddev", ["npm", "update"]]);
+    }
+    if (state.developerStack === "fluid-styled-content-vite-stylex") {
+      commands.splice(2, 0, ["ddev", ["npm", "run", "build"]], ["ddev", ["typo3", "cache:flush"]]);
     }
     for (const [executable, args] of commands) {
       console.log(`${dryRun ? "Would run" : "Running"} ${formatCommand(executable, [...args])}`);

@@ -3,7 +3,8 @@
 A TypeScript CLI that creates a TYPO3 v14 project with DDEV and a custom
 sitepackage. Before optional TYPO3 extensions are selected, it asks which
 developer stack to install: `bootstrap_package`, `bootstrap_package + Vite`,
-`fluid-styled-content`, or `fluid-styled-content + Vite`. It builds a complete
+`fluid-styled-content`, `fluid-styled-content + Vite`, or
+`fluid-styled-content + Vite + StyleX`. It builds a complete
 plan before it changes the
 target project, so `--dry-run` can show the exact commands and files first.
 
@@ -182,7 +183,7 @@ managed file can have local edits.
 - `database`: the DDEV database connection
 - `sitepackage`: Composer vendor and TYPO3 extension key
 - `developerStack`: `bootstrap-package`, `bootstrap-vite`,
-  `fluid-styled-content`, or `fluid-styled-content-vite`
+  `fluid-styled-content`, `fluid-styled-content-vite`, or `fluid-styled-content-vite-stylex`
 - `extensions`: optional TYPO3 extensions, available with every stack
 - `features`: TYPO3 Rector and Playwright choices
 
@@ -233,6 +234,58 @@ uses the renderer-specific site set shown above. Rector is a separate Composer
 development dependency, while Playwright is an independent npm/browser setup,
 so neither choice is tied to a developer stack.
 
+## Fluid Styled Content + Vite + StyleX
+
+Select `fluid-styled-content + Vite + StyleX` at the prompt, set
+`developerStack: fluid-styled-content-vite-stylex` in YAML, or pass
+`--developer-stack fluid-styled-content-vite-stylex` to `install`.
+
+This fifth stack reuses the FSC sitepackage with a StyleX overlay. It installs
+`skom/stylex-connector:^1.0` and Vite Asset Collector in Composer, plus
+`@stylexjs/stylex`, `@stylexjs/unplugin`, `@babel/parser`, Vite, the TYPO3 Vite
+plugin, and live reload at the project root. DDEV uses Node.js 22. This stack
+uses plain CSS and StyleX, so it does not install Sass.
+
+The generated project includes:
+
+- `Configuration/ViteEntrypoints.json` and one `<vite:asset>` call in the page layout
+- an active `skom/stylex-connector` Site Set dependency and manifest registration in `ext_localconf.php`
+- `Resources/Private/JavaScript/Stylex/Site.stylex.js`, imported by `Main.entry.js`,
+  with `Site.shell` and `Site.content` classes used in Fluid
+- a root `vite-plugin-stylex-manifest.js` that extracts compiled classes after the StyleX transform
+- development loading and refresh of `/virtual:stylex.css` from the Vite origin
+- page caching disabled only in Development contexts so Fluid follows changing atomic class names
+- a scoped rich-text stylesheet imported by the entrypoint
+- a `verify-stylex-build.mjs` script that checks emitted assets and the CSS selectors used by Fluid
+
+FSC CSS and the base template's Bootstrap CDN assets remain enabled for existing
+content elements. StyleX uses `useCSSLayers: false` to work with that unlayered
+CSS. The connector's separate TypoScript CSS include stays disabled because
+Vite Asset Collector delivers the built CSS.
+
+The installer adds the DDEV sidecar with npm selected, restarts DDEV, and runs
+`ddev npm run build`, followed by a TYPO3 cache flush. A failed build or missing
+StyleX CSS stops installation before success is recorded. Both manifests must
+be deployed together:
+
+- `public/_assets/vite/.vite/manifest.json` and its referenced assets
+- `packages/<sitepackage>/Resources/Public/StylexManifest/stylex-manifest.json`
+
+For development, run `ddev vite` and open the TYPO3 page. Give each new
+`*.stylex.js` file a unique basename and import it from `Main.entry.js`.
+Use `{stylex:class(styles: 'FileName.variant')}` in Fluid. The supplied manifest
+writer supports static `stylex.create()` styles in JS, JSX, TS, and TSX files.
+Dynamic style arguments need a project-specific manifest strategy.
+
+For production, stop the dev server and run `ddev npm run build`, then
+`ddev typo3 cache:flush`. Serve built assets in TYPO3's Production context.
+The generated `.env` defaults to Development, which expects `ddev vite` to be running. The `update` command also rebuilds and validates this
+stack after dependency updates. The generated manifest writer, verifier, and
+Vite configuration are tracked in installer state for status and uninstall.
+
+The sidecar installation follows the
+[official DDEV add-on instructions](https://github.com/s2b/ddev-vite-sidecar#readme).
+
 ## Installation sequence
 
 `install` performs these actions in this order. `--dry-run` completes steps
@@ -278,7 +331,9 @@ so neither choice is tied to a developer stack.
 23. Copy `.editorconfig` and `.gitignore`.
 24. Write `.env` with the configured database settings and development values.
 25. Write the generated project README.
-26. For each Vite stack, install the DDEV Vite sidecar.
+26. For each Vite stack, install the DDEV Vite sidecar. The StyleX stack
+    initializes its npm tooling after writing the shared project files, then
+    restarts DDEV, builds and validates both manifests and CSS, and flushes caches.
 27. If Rector is enabled, install TYPO3 Rector and copy `rector.php`.
 28. If Playwright is enabled, install its npm package and browsers with their
     system dependencies.
@@ -300,7 +355,8 @@ The project gets a DDEV TYPO3 v14.3 installation plus:
   `helhum/dotenv-connector`
 - Bootstrap Package with static sitepackage assets, Bootstrap Package with Vite
   Asset Collector, Vite, and its DDEV sidecar, Fluid Styled Content with static
-  assets, or Fluid Styled Content with its Vite-built SCSS and JavaScript
+  assets, Fluid Styled Content with its Vite-built SCSS and JavaScript, or
+  Fluid Styled Content with Vite-built StyleX CSS and a registered class manifest
 - an environment file, project README, editor settings, optional selected TYPO3
   extensions, and optional Rector, Playwright tooling
 

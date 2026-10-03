@@ -1,6 +1,7 @@
 import { readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { InstallConfig, InstallState } from "./types.js";
+import { stackUsesVite } from "./types.js";
 import { pathExists } from "./filesystem.js";
 
 export function statePath(projectDirectory: string): string {
@@ -27,7 +28,8 @@ export async function writeState(projectDirectory: string, config: InstallConfig
       "README.md",
       ".editorconfig",
       ".gitignore",
-      ...(config.developerStack === "bootstrap-vite" || config.developerStack === "fluid-styled-content-vite" ? ["vite.config.js"] : []),
+      ...(stackUsesVite(config.developerStack) ? ["vite.config.js"] : []),
+      ...(config.developerStack === "fluid-styled-content-vite-stylex" ? ["vite-plugin-stylex-manifest.js", "verify-stylex-build.mjs"] : []),
       ...(config.features.rector ? ["rector.php"] : []),
     ],
   };

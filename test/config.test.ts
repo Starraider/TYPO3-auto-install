@@ -52,6 +52,11 @@ describe("configuration validation", () => {
     expect(validateConfig({ ...validConfig, developerStack: "fluid-styled-content-vite" }).developerStack).toBe("fluid-styled-content-vite");
   });
 
+  it("accepts the Fluid Styled Content, Vite, and StyleX stack", () => {
+    expect(validateConfig({ ...validConfig, developerStack: "fluid-styled-content-vite-stylex" }).developerStack)
+      .toBe("fluid-styled-content-vite-stylex");
+  });
+
   it("rejects unsupported or duplicate TYPO3 extensions", () => {
     expect(() => validateConfig({ ...validConfig, extensions: ["vendor/not-supported"] })).toThrow();
     expect(() => validateConfig({ ...validConfig, extensions: ["georgringer/news", "georgringer/news"] })).toThrow(/only once/);

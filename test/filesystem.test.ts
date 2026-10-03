@@ -3,7 +3,9 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { renderDirectory } from "../src/filesystem.js";
-import { makeReplacements } from "../src/installer/planner.js";
+import { buildInstallPlan, makeReplacements } from "../src/installer/planner.js";
+import { readState, writeState } from "../src/state.js";
+import { parse } from "yaml";
 import type { InstallConfig } from "../src/types.js";
 
 const temporaryDirectories: string[] = [];
@@ -144,4 +146,50 @@ describe("template rendering", () => {
     await expect(readFile(path.join(destination, "Configuration/Sets/SitePackage/config.yaml"), "utf8")).resolves.toContain("name: acme-agency/my-typo3-project-sitepackage");
     await expect(readFile(path.join(destination, "ext_localconf.php"), "utf8")).resolves.toContain("EXT:my_typo3_project_sitepackage/Configuration/RTE/Default.yaml");
   });
+  it("keeps connector identifiers intact when rendering a custom StyleX sitepackage", async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), "typo3-stylex-render-"));
+    temporaryDirectories.push(directory);
+    const config: InstallConfig = {
+      project: { name: "demo-site", title: "Demo site", directory },
+      admin: { username: "admin", name: "Admin", email: "admin@example.test", password: "SecurePass1!" },
+      ddev: { phpVersion: "8.3", serverType: "apache" },
+      database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
+      sitepackage: { vendor: "acme-agency", name: "my_custom_sitepackage" },
+      developerStack: "fluid-styled-content-vite-stylex",
+      extensions: ["baschte/content-animations"],
+      features: { rector: false, playwright: false },
+    };
+    const plan = await buildInstallPlan(config, { dryRun: true, force: false, verbose: false });
+    for (const step of plan) {
+      if (step.type === "render") await renderDirectory(step.from, step.to, step.replacements);
+    }
+    const sitepackage = path.join(directory, "packages/my_custom_sitepackage");
+    const composer = JSON.parse(await readFile(path.join(sitepackage, "composer.json"), "utf8"));
+    expect(composer.name).toBe("acme-agency/my-custom-sitepackage");
+    expect(composer.require["skom/stylex-connector"]).toBe("^1.0");
+    const set = parse(await readFile(path.join(sitepackage, "Configuration/Sets/SitePackage/config.yaml"), "utf8"));
+    expect(set.dependencies).toEqual([
+      "typo3/fluid-styled-content", "typo3/fluid-styled-content-css", "skom/stylex-connector",
+      "baschte/content-animations-fluid-styles-content",
+    ]);
+    const registry = await readFile(path.join(sitepackage, "ext_localconf.php"), "utf8");
+    expect(registry).toContain("Vendor\\StylexConnector\\Configuration\\StylexRegistry::registerManifest");
+    expect(registry).toContain("EXT:my_custom_sitepackage/Resources/Public/StylexManifest/stylex-manifest.json");
+    const layout = await readFile(path.join(sitepackage, "Resources/Private/PageView/Layouts/PageLayout.html"), "utf8");
+    expect(layout.match(/<vite:asset/g)).toHaveLength(1);
+    expect(layout).toContain("EXT:my_custom_sitepackage/Resources/Private/JavaScript/Main.entry.js");
+    expect(layout).toContain("stylex:class(styles: 'Site.shell')");
+    expect(layout).not.toContain("stylex_sitepackage");
+    const entry = await readFile(path.join(sitepackage, "Resources/Private/JavaScript/Main.entry.js"), "utf8");
+    expect(entry).toContain('import "./Stylex/Site.stylex.js"');
+    expect(entry).toContain("/virtual:stylex.css");
+    const development = await readFile(path.join(sitepackage, "Configuration/Sets/SitePackage/TypoScript/stylex.typoscript"), "utf8");
+    expect(development).toContain('[applicationContext matches "/^Development/"]');
+    expect(development).toContain("config.no_cache = 1");
+    await writeState(directory, config, "1.0.0");
+    expect((await readState(directory))?.generatedPaths).toEqual(expect.arrayContaining([
+      "vite.config.js", "vite-plugin-stylex-manifest.js", "verify-stylex-build.mjs",
+    ]));
+  });
+
 });

@@ -31,6 +31,8 @@ sitepackage:
 # bootstrap-package and fluid-styled-content install their renderers directly.
 # bootstrap-vite and fluid-styled-content-vite additionally install Vite Asset
 # Collector, Vite, and the DDEV Vite sidecar.
+# fluid-styled-content-vite-stylex adds StyleX compilation, its TYPO3 connector,
+# manifest registration, development CSS loading, and a verified production build.
 developerStack: bootstrap-package
 
 # Optional extensions to install. Interactive installs present these as a

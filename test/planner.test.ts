@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildInstallPlan, makeReplacements, sitepackageKebabName, sitepackagePascalName } from "../src/installer/planner.js";
-import type { InstallConfig } from "../src/types.js";
+import { DEVELOPER_STACKS, type InstallConfig } from "../src/types.js";
 
 const config: InstallConfig = {
   project: { name: "demo-site", title: "Demo site", directory: "/tmp/demo-site" },
@@ -68,7 +68,7 @@ describe("installation planning", () => {
   });
 
   it("runs TYPO3 extension setup for every developer stack", async () => {
-    for (const developerStack of ["bootstrap-package", "bootstrap-vite", "fluid-styled-content", "fluid-styled-content-vite"] as const) {
+    for (const developerStack of DEVELOPER_STACKS) {
       const plan = await buildInstallPlan(
         { ...config, developerStack },
         { dryRun: true, force: false, verbose: false },
@@ -204,4 +204,36 @@ describe("installation planning", () => {
       },
     });
   });
+  it("installs and builds StyleX after configuring the sidecar", async () => {
+    const plan = await buildInstallPlan(
+      { ...config, developerStack: "fluid-styled-content-vite-stylex", extensions: ["baschte/content-animations"] },
+      { dryRun: true, force: false, verbose: false },
+    );
+    const commands = plan.filter(step => step.type === "command");
+    expect(commands.find(step => step.args[0] === "config")?.args).toContain("--nodejs-version=22");
+    expect(commands.find(step => step.args[1] === "require")?.args).toEqual(expect.arrayContaining([
+      "skom/stylex-connector:^1.0", "praetorius/vite-asset-collector:^1.18",
+    ]));
+    const npmDependencies = commands.filter(step => step.args[0] === "npm" && step.args[1] === "install").flatMap(step => step.args);
+    expect(npmDependencies).toEqual(expect.arrayContaining([
+      "@stylexjs/stylex@^0.19.1", "@stylexjs/unplugin@^0.19.1", "@babel/parser@^7.29.0",
+    ]));
+    expect(npmDependencies).not.toEqual(expect.arrayContaining(["sass-embedded", "bootstrap"]));
+    const overlay = plan.find(step => step.type === "render" && step.from.endsWith("fluid-styled-content-vite-stylex"));
+    expect(overlay).toMatchObject({ replacements: {
+      STYLEX_CONNECTOR_PACKAGE: "skom/stylex-connector",
+      TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: "  - baschte/content-animations-fluid-styles-content",
+    } });
+    const sidecar = commands.findIndex(step => step.executable === "env");
+    const restart = commands.findIndex(step => step.args[0] === "restart");
+    const build = commands.findIndex(step => step.args.join(" ") === "npm run build");
+    expect(sidecar).toBeGreaterThan(-1);
+    expect(restart).toBeGreaterThan(sidecar);
+    expect(build).toBeGreaterThan(restart);
+    expect(commands[build + 1].args).toEqual(["typo3", "cache:flush"]);
+    const vite = plan.find(step => step.type === "write" && step.path.endsWith("vite.config.js"));
+    expect(vite).toMatchObject({ contents: expect.stringContaining("packages/demo_sitepackage/Resources/Public/StylexManifest/stylex-manifest.json") });
+    expect(plan.find(step => step.type === "write" && step.path.endsWith("verify-stylex-build.mjs"))).toBeDefined();
+  });
+
 });
