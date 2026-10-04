@@ -1,0 +1,20 @@
+<f:if condition="{breadcrumb}">
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+        <ol class="breadcrumb-nav__list">
+            <f:for each="{breadcrumb}" as="item">
+                <f:if condition="{item.current}">
+                    <f:then>
+                        <li class="breadcrumb-nav__item breadcrumb-nav__item--current" aria-current="page">
+                            <span class="breadcrumb-nav__text">{item.title}</span>
+                        </li>
+                    </f:then>
+                    <f:else>
+                        <li class="breadcrumb-nav__item">
+                            <a href="{item.link}" title="{item.title}" class="breadcrumb-nav__link">{item.title}</a>
+                        </li>
+                    </f:else>
+                </f:if>
+            </f:for>
+        </ol>
+    </nav>
+</f:if>

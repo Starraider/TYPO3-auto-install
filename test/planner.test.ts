@@ -140,12 +140,12 @@ describe("installation planning", () => {
     expect(plan.some((step) => step.type === "copy" && step.to.endsWith("vite.config.js"))).toBe(false);
     expect(sitepackageRender).toMatchObject({
       type: "render",
-      from: expect.stringMatching(/yyy_sitepackage$/),
+      from: expect.stringMatching(/fluid-styled-content\/sitepackage$/),
       replacements: { TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: "  - baschte/content-animations-fluid-styles-content" },
     });
   });
 
-  it("adds Vite to the Fluid Styled Content sitepackage without duplicating its template", async () => {
+  it("renders the self-contained Vite sitepackage of the Fluid Styled Content stack", async () => {
     const plan = await buildInstallPlan(
       { ...config, developerStack: "fluid-styled-content-vite", extensions: ["baschte/content-animations"] },
       { dryRun: true, force: false, verbose: false },
@@ -159,9 +159,8 @@ describe("installation planning", () => {
       type: "command",
       args: expect.arrayContaining(["praetorius/vite-asset-collector:^1.18"]),
     });
-    expect(renders).toHaveLength(2);
-    expect(renders[0]).toMatchObject({ type: "render", from: expect.stringMatching(/yyy_sitepackage$/) });
-    expect(renders[1]).toMatchObject({ type: "render", from: expect.stringMatching(/fluid-styled-content-vite$/) });
+    expect(renders).toHaveLength(1);
+    expect(renders[0]).toMatchObject({ type: "render", from: expect.stringMatching(/fluid-styled-content-vite\/sitepackage$/) });
     expect(renders[0]).toMatchObject({
       replacements: {
         FSC_SITE_ASSETS: '<vite:asset entry="EXT:demo_sitepackage/Resources/Private/JavaScript/Main.entry.js" />',
@@ -194,7 +193,7 @@ describe("installation planning", () => {
     expect(plan.some((step) => step.type === "copy" && step.to.endsWith("vite.config.js"))).toBe(false);
     expect(sitepackageRender).toMatchObject({
       type: "render",
-      from: expect.stringMatching(/bbb_sitepackage$/),
+      from: expect.stringMatching(/bootstrap-package\/sitepackage$/),
       replacements: {
         "skom/bbb": "acme/demo-sitepackage",
         bbb: "demo_sitepackage",
@@ -222,8 +221,8 @@ describe("installation planning", () => {
     ]));
     expect(npmDependencies).not.toContain("sass-embedded");
     expect(npmDependencies).not.toContain("bootstrap");
-    const overlay = plan.find(step => step.type === "render" && step.from.endsWith("fluid-styled-content-vite-stylex"));
-    expect(overlay).toMatchObject({ replacements: {
+    const stylexSitepackage = plan.find(step => step.type === "render" && step.from.endsWith("fluid-styled-content-vite-stylex/sitepackage"));
+    expect(stylexSitepackage).toMatchObject({ replacements: {
       STYLEX_CONNECTOR_PACKAGE: "skom/stylex-connector",
       STYLEX_CONNECTOR_VERSION: "dev-main",
       TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: "  - baschte/content-animations-fluid-styles-content",

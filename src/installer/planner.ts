@@ -12,6 +12,7 @@ import {
 } from "../types.js";
 
 const sourceRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../install-src");
+const sharedRoot = path.join(sourceRoot, "shared");
 
 export function sitepackageKebabName(name: string): string {
   return name.replaceAll("_", "-");
@@ -178,22 +179,18 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
   const isFluidStyledContentVite = config.developerStack === "fluid-styled-content-vite";
   const usesStylex = config.developerStack === "fluid-styled-content-vite-stylex";
   const usesVite = stackUsesVite(config.developerStack);
-  const sitepackageTemplate = {
-    "bootstrap-package": "bbb_sitepackage",
-    "bootstrap-vite": "xxxx_sitepackage",
-    "fluid-styled-content": "yyy_sitepackage",
-    "fluid-styled-content-vite": "yyy_sitepackage",
-    "fluid-styled-content-vite-stylex": "yyy_sitepackage",
-  }[config.developerStack];
+  // Every developer stack owns a self-contained folder in install-src/:
+  //   <stack>/sitepackage  complete sitepackage, rendered to packages/<name>
+  //   <stack>/root         project-root files (vite.config.js, build scripts)
+  // Files common to all stacks live in install-src/shared.
+  const stackRoot = path.join(sourceRoot, config.developerStack);
   const templates = {
-    sitepackage: path.join(sourceRoot, sitepackageTemplate),
-    fluidStyledContentViteOverlay: path.join(sourceRoot, "fluid-styled-content-vite"),
-    stylexOverlay: path.join(sourceRoot, "fluid-styled-content-vite-stylex"),
-    stylexRoot: path.join(sourceRoot, "stylex"),
-    viteConfig: path.join(sourceRoot, "vite.config.js"),
-    editorConfig: path.join(sourceRoot, ".editorconfig"),
-    gitignore: path.join(sourceRoot, ".gitignore"),
-    rector: path.join(sourceRoot, "rector.php"),
+    sitepackage: path.join(stackRoot, "sitepackage"),
+    stackRoot: path.join(stackRoot, "root"),
+    viteConfig: path.join(stackRoot, "root", "vite.config.js"),
+    editorConfig: path.join(sharedRoot, ".editorconfig"),
+    gitignore: path.join(sharedRoot, ".gitignore"),
+    rector: path.join(sharedRoot, "rector.php"),
   };
   const adminPassword = config.admin.password;
   if (!adminPassword) throw new Error("An administrator password is required to build an installation plan.");
@@ -254,18 +251,6 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
       to: path.join(projectDirectory, "packages", config.sitepackage.name),
       replacements,
     },
-    ...(isFluidStyledContentVite ? [{
-      type: "render" as const,
-      from: templates.fluidStyledContentViteOverlay,
-      to: path.join(projectDirectory, "packages", config.sitepackage.name),
-      replacements,
-    }] : []),
-    ...(usesStylex ? [{
-      type: "render" as const,
-      from: templates.stylexOverlay,
-      to: path.join(projectDirectory, "packages", config.sitepackage.name),
-      replacements,
-    }] : []),
     { type: "command", executable: "ddev", args: ["composer", "require", ...composerPackages, "--no-interaction"], cwd: projectDirectory },
     { type: "command", executable: "ddev", args: ["composer", "update", "--with-all-dependencies", "--no-interaction"], cwd: projectDirectory },
     { type: "command", executable: "ddev", args: ["typo3", "database:updateschema"], cwd: projectDirectory },
@@ -301,7 +286,7 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
     steps.push({ type: "command", executable: "ddev", args: ["restart"], cwd: projectDirectory });
   }
   if (usesStylex) {
-    const rootTemplate = async (filename: string) => (await readFile(path.join(templates.stylexRoot, filename), "utf8"))
+    const rootTemplate = async (filename: string) => (await readFile(path.join(templates.stackRoot, filename), "utf8"))
       .replaceAll("yyy_sitepackage", config.sitepackage.name);
     steps.push(
       { type: "command", executable: "ddev", args: ["npm", "init", "--yes"], cwd: projectDirectory },

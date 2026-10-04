@@ -1,0 +1,4 @@
+styles.content.textmedia.maxW: 1200
+styles.content.textmedia.maxWInText: 600
+styles.content.textmedia.linkWraplightboxEnabled: true
+styles.content.textmedia.lightboxCssClass: lightbox

@@ -1,0 +1,27 @@
+# =============================================================================
+# TypoScript Configuration for Page Layouts (Default & Subpage)
+# =============================================================================
+
+page {
+    # Ensure responsive mobile-first viewport meta tag is rendered in <head>
+    meta {
+        viewport = width=device-width, initial-scale=1.0
+    }
+
+    # Dynamically apply semantic layout classes to <body> based on the active backend layout
+    # Yields: <body class="page-layout page-layout--default"> or <body class="page-layout page-layout--subpage">
+    bodyTagCObject = TEXT
+    bodyTagCObject {
+        data = page:backend_layout
+        ifEmpty.data = levelfield:-2, backend_layout_next_level, slide
+        split {
+            token = pagets__
+            1 {
+                current = 1
+                wrap = |
+            }
+        }
+        ifEmpty = default
+        wrap = <body class="page-layout page-layout--|">
+    }
+}

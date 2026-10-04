@@ -1,0 +1,17 @@
+<html
+    data-namespace-typo3-fluid="true"
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:vite="http://typo3.org/ns/Praetorius/ViteAssetCollector/ViewHelpers"
+    FSC_STYLEX_NAMESPACE
+>
+FSC_SITE_ASSETS
+<div class="site-wrapper site-wrapper--{page.pageLayout.identifier}">
+    <f:render partial="Header" arguments="{_all}"/>
+    <main id="main-content" role="main"FSC_PAGE_MAIN_CLASS>
+        <divFSC_PAGE_CONTENT_CLASS>
+            <f:render section="Main"/>
+        </div>
+    </main>
+    <f:render partial="Footer" arguments="{_all}"/>
+</div>
+</html>

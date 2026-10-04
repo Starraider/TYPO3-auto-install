@@ -1,0 +1,48 @@
+categories:
+  YyySitepackage:
+    label: 'YYY Sitepackage'
+  YyySitepackage.templates:
+    label: 'Templates'
+    parent: YyySitepackage
+  YyySitepackage.layout:
+    label: 'Layout'
+    parent: YyySitepackage
+  YyySitepackage.menus:
+    label: 'Menus'
+    parent: YyySitepackage
+
+settings:
+  YyySitepackage.template_path:
+    label: 'Page template path'
+    category: YyySitepackage.templates
+    description: 'Path to the templates of the YYY Sitepackage.'
+    type: string
+    default: 'EXT:yyy_sitepackage/Resources/Private/Templates/'
+
+  YyySitepackage.logo:
+    label: 'Logo'
+    category: YyySitepackage.layout
+    description: 'Path to the logo of YYY Sitepackage.'
+    type: string
+    default: 'EXT:yyy_sitepackage/Resources/Public/Images/logo.svg'
+
+  YyySitepackage.logo-alt:
+    label: 'Logo Alt text'
+    category: YyySitepackage.layout
+    description: 'Alternative text of the logo for the visually impaired'
+    type: string
+    default: 'Logo'
+
+  YyySitepackage.favicon:
+    label: 'Favicon'
+    description: 'This icon is displayed in search engine results and in the browser tab'
+    category: YyySitepackage.layout
+    type: string
+    default: 'EXT:yyy_sitepackage/Resources/Public/Icons/favicon.ico'
+
+  YyySitepackage.footerMenuRoot:
+      label: 'Footer menu root uid'
+      description: 'The subpages of this page are displayed in the footer'
+      category: YyySitepackage.menus
+      type: int
+      default: 2

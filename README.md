@@ -200,13 +200,31 @@ available in every variant.
 | Component | `bootstrap-package` | `bootstrap-vite` | `fluid-styled-content` | `fluid-styled-content-vite` |
 | --- | --- | --- | --- | --- |
 | Interactive label | `bootstrap_package` | `bootstrap_package + Vite` | `fluid-styled-content` | `fluid-styled-content + Vite` |
-| Sitepackage | `install-src/bbb_sitepackage` | `install-src/xxxx_sitepackage` | `install-src/yyy_sitepackage` | `install-src/yyy_sitepackage` plus the Vite asset overlay |
+| Sitepackage | `install-src/bootstrap-package/sitepackage` | `install-src/bootstrap-vite/sitepackage` | `install-src/fluid-styled-content/sitepackage` | `install-src/fluid-styled-content-vite/sitepackage` |
 | Content renderer | Bootstrap Package | Bootstrap Package | Fluid Styled Content | Fluid Styled Content |
 | Renderer dependency | `bk2k/bootstrap-package` in the local sitepackage | `bk2k/bootstrap-package` in the local sitepackage | `typo3/cms-fluid-styled-content` in the local sitepackage | `typo3/cms-fluid-styled-content` in the local sitepackage |
 | Vite Asset Collector | Not installed | Installed | Not installed | Installed |
 | Vite tooling | Not installed | Vite, TYPO3 plugin, Sass, Bootstrap, Icons, Popper, npm scripts, and `vite.config.js` | Not installed | Vite, TYPO3 plugin, `sass-embedded`, npm scripts, and `vite.config.js` |
 | DDEV Vite sidecar | Not installed | Installed | Not installed | Installed |
 | `baschte/content-animations` site set | Bootstrap Package integration | Bootstrap Package integration | Fluid Styled Content integration | Fluid Styled Content integration |
+
+### Template layout
+
+Every developer stack owns a self-contained folder in `install-src/`. The
+installer never layers templates, so changing one stack cannot affect another:
+
+```text
+install-src/
+  shared/                            .editorconfig, .gitignore, rector.php
+  <developer-stack>/
+    sitepackage/                     complete sitepackage, rendered to packages/<name>
+    root/                            project-root files (only stacks that need them)
+```
+
+`root/` holds `vite.config.js` for the Vite stacks and, for the StyleX stack,
+also `verify-stylex-build.mjs`. Each stack folder is complete on its own, so a
+fix to a file that several Fluid Styled Content stacks have in common has to be
+applied in each of those stack folders.
 
 The Bootstrap-only template is rendered to `packages/<sitepackage-name>` and
 its original `bbb` placeholders are replaced with the requested values: its
@@ -221,7 +239,7 @@ FSC sitepackage retains `typo3/cms-fluid-styled-content` in its own
 `composer.json`, so requiring the generated local sitepackage explicitly
 preserves that dependency without duplicating it at the project root. Bootstrap
 Package is likewise declared by each Bootstrap sitepackage. The FSC/Vite stack
-reuses the basic FSC sitepackage and adds its Vite entrypoint, private SCSS,
+has its own sitepackage with a Vite entrypoint, private SCSS,
 and private JavaScript sources. Both FSC/Vite stacks use FSC's built-in content
 templates and CSS, with a plain HTML page shell and no Bootstrap packages or
 CDN assets. They include no custom content-block examples or replacement FSC
@@ -261,7 +279,7 @@ Select `fluid-styled-content + Vite + StyleX` at the prompt, set
 `developerStack: fluid-styled-content-vite-stylex` in YAML, or pass
 `--developer-stack fluid-styled-content-vite-stylex` to `install`.
 
-This fifth stack reuses the FSC sitepackage with a StyleX overlay. It installs
+This fifth stack has its own FSC-based sitepackage with StyleX sources. It installs
 `skom/stylex-connector` and Vite Asset Collector in Composer, plus
 `@stylexjs/stylex`, `@stylexjs/unplugin`, `@babel/parser`, Vite, the TYPO3 Vite
 plugin, and live reload at the project root. DDEV uses Node.js 22. This stack

@@ -112,8 +112,7 @@ describe("template rendering", () => {
       features: { rector: false, playwright: false },
     };
 
-    await renderDirectory(path.resolve("install-src/yyy_sitepackage"), destination, makeReplacements(config));
-    await renderDirectory(path.resolve("install-src/fluid-styled-content-vite"), destination, makeReplacements(config));
+    await renderDirectory(path.resolve("install-src/fluid-styled-content-vite/sitepackage"), destination, makeReplacements(config));
 
     await expect(readFile(path.join(destination, "Resources/Private/PageView/Layouts/PageLayout.html"), "utf8")).resolves.toContain('<vite:asset entry="EXT:my_typo3_project_sitepackage/Resources/Private/JavaScript/Main.entry.js" />');
     await expect(readFile(path.join(destination, "Resources/Private/PageView/Layouts/PageLayout.html"), "utf8")).resolves.not.toContain("Resources/Public/Css/main.css");
@@ -140,11 +139,11 @@ describe("template rendering", () => {
       };
       const plan = await buildInstallPlan(config, { dryRun: true, force: false, verbose: false });
       const renders = plan.filter(step => step.type === "render");
-      expect(renders).toHaveLength(2);
-      expect(renders[1].from).toMatch(new RegExp(`${developerStack}$`));
-      expect(renders[1].from).not.toContain("fluid-styled-content-frontend");
-      // Only the base sitepackage provides page layouts and templates.
-      await expect(readdir(path.join(renders[1].from, "Resources/Private/PageView"))).rejects.toMatchObject({ code: "ENOENT" });
+      expect(renders).toHaveLength(1);
+      expect(renders[0].from).toMatch(new RegExp(`${developerStack}/sitepackage$`));
+      expect(renders[0].from).not.toContain("fluid-styled-content-frontend");
+      // Each stack's sitepackage is self-contained and provides its own page layouts.
+      await expect(readdir(path.join(renders[0].from, "Resources/Private/PageView"))).resolves.toContain("Layouts");
       for (const step of plan) {
         if (step.type === "render") await renderDirectory(step.from, step.to, step.replacements);
         if (step.type === "command") expect(step.args.join(" ")).not.toMatch(/bootstrap|@popperjs/i);
@@ -200,7 +199,7 @@ describe("template rendering", () => {
       features: { rector: false, playwright: false },
     };
 
-    await renderDirectory(path.resolve("install-src/bbb_sitepackage"), destination, makeReplacements(config));
+    await renderDirectory(path.resolve("install-src/bootstrap-package/sitepackage"), destination, makeReplacements(config));
 
     await expect(readFile(path.join(destination, "composer.json"), "utf8")).resolves.toContain('"name": "acme-agency/my-typo3-project-sitepackage"');
     await expect(readFile(path.join(destination, "composer.json"), "utf8")).resolves.toContain('"AcmeAgency\\\\MyTypo3ProjectSitepackage\\\\": "Classes/"');

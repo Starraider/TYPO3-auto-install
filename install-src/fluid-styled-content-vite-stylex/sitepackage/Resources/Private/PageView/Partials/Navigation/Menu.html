@@ -1,0 +1,11 @@
+<ul class="site-nav__list">
+    <f:for each="{menu}" as="menuItem">
+        <li class="site-nav__item{f:if(condition: menuItem.active, then: ' site-nav__item--active')}{f:if(condition: menuItem.current, then: ' site-nav__item--current')}">
+            <a href="{menuItem.link}" target="{menuItem.target}" title="{menuItem.title}"
+               class="site-nav__link{f:if(condition: menuItem.active, then: ' site-nav__link--active')}"
+               aria-current="{f:if(condition: menuItem.current, then: 'page', else: 'false')}">
+                {menuItem.title}
+            </a>
+        </li>
+    </f:for>
+</ul>

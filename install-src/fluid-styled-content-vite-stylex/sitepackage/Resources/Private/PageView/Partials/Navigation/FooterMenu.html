@@ -1,0 +1,11 @@
+<f:if condition="{footerMenu}">
+    <nav class="footer-nav" aria-label="Footer navigation">
+        <ul class="footer-nav__list">
+            <f:for each="{footerMenu}" as="menuItem">
+                <li class="footer-nav__item">
+                    <a href="{menuItem.link}" class="footer-nav__link">{menuItem.title}</a>
+                </li>
+            </f:for>
+        </ul>
+    </nav>
+</f:if>

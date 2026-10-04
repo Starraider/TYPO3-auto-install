@@ -36,7 +36,7 @@ async function buildFixture(): Promise<string> {
       "Site.content": { kind: "compiled", className: "xContent", properties: { padding: "xContent" } },
     },
   }));
-  const verifier = await readFile(path.resolve("install-src/stylex/verify-stylex-build.mjs"), "utf8");
+  const verifier = await readFile(path.resolve("install-src/fluid-styled-content-vite-stylex/root/verify-stylex-build.mjs"), "utf8");
   await writeFile(path.join(directory, "verify-stylex-build.mjs"), verifier.replaceAll("yyy_sitepackage", "custom_sitepackage"));
   return directory;
 }

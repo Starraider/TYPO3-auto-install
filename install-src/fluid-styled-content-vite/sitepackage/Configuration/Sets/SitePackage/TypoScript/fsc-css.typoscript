@@ -1,0 +1,4 @@
+# FSC CSS (fluid-styled-content-css) is output as a plain stylesheet first.
+# The Vite asset (<vite:asset> in PageLayout.html, no priority) is rendered afterwards,
+# so project SCSS overrides FSC purely by load order.
+plugin.tx_frontend._CSS_DEFAULT_STYLE.wrap >
