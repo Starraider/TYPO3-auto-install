@@ -1,1 +1,1 @@
-console.log("Fluid Styled Content Vite bundle loaded");
+// Add project JavaScript here.

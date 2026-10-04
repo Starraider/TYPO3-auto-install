@@ -218,7 +218,8 @@ describe("installation planning", () => {
     expect(npmDependencies).toEqual(expect.arrayContaining([
       "@stylexjs/stylex@^0.19.1", "@stylexjs/unplugin@^0.19.1", "@babel/parser@^7.29.0",
     ]));
-    expect(npmDependencies).not.toEqual(expect.arrayContaining(["sass-embedded", "bootstrap"]));
+    expect(npmDependencies).not.toContain("sass-embedded");
+    expect(npmDependencies).not.toContain("bootstrap");
     const overlay = plan.find(step => step.type === "render" && step.from.endsWith("fluid-styled-content-vite-stylex"));
     expect(overlay).toMatchObject({ replacements: {
       STYLEX_CONNECTOR_PACKAGE: "skom/stylex-connector",

@@ -1,15 +1,15 @@
 # Values here are safe to keep in version control. Pass the administrator
 # password with --admin-password or enter it at the prompt.
 project:
-  name: my-typo3-project
-  title: My TYPO3 project
-  directory: ./my-typo3-project
+  name: stylex-test
+  title: StyleX Test
+  directory: ../stylex-test
 
 admin:
-  username: admin
-  name: Project administrator
-  email: admin@example.test
-  url: https://example.test
+  username: sven2209
+  name: Sven Kalbhenn
+  email: sven@skom.de
+  url: https://www.skom.de
 
 ddev:
   phpVersion: "8.3"
@@ -35,7 +35,7 @@ sitepackage:
 # manifest registration, development CSS loading, and a verified production build.
 # Its connector requirement is pinned in src/stylex.ts until the maintained
 # adapter and validator are included in a tagged release.
-developerStack: bootstrap-package
+developerStack: fluid-styled-content-vite-stylex
 
 # Optional extensions to install. Interactive installs present these as a
 # multi-select menu; non-interactive installs use the values listed here.

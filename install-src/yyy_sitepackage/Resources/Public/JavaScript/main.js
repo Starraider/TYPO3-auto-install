@@ -1,1 +1,1 @@
-console.log('WE LOVE TYPO3');
+// Add project JavaScript here.

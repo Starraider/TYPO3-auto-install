@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -122,6 +122,63 @@ describe("template rendering", () => {
     await expect(readFile(path.join(destination, "Configuration/ViteEntrypoints.json"), "utf8")).resolves.toContain("../Resources/Private/JavaScript/Main.entry.js");
     await expect(readFile(path.join(destination, "Resources/Private/JavaScript/Main.entry.js"), "utf8")).resolves.toContain('import "../Scss/main.scss"');
   });
+
+  it.each(["fluid-styled-content-vite", "fluid-styled-content-vite-stylex"] as const)(
+    "generates %s without Bootstrap assets or dependencies",
+    async (developerStack) => {
+      const directory = await mkdtemp(path.join(tmpdir(), "typo3-fsc-render-"));
+      temporaryDirectories.push(directory);
+      const config: InstallConfig = {
+        project: { name: "demo-site", title: "Demo site", directory },
+        admin: { username: "admin", name: "Admin", email: "admin@example.test", password: "SecurePass1!" },
+        ddev: { phpVersion: "8.3", serverType: "apache" },
+        database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
+        sitepackage: { vendor: "acme", name: "demo_sitepackage" },
+        developerStack,
+        extensions: [],
+        features: { rector: false, playwright: false },
+      };
+      const plan = await buildInstallPlan(config, { dryRun: true, force: false, verbose: false });
+      const renders = plan.filter(step => step.type === "render");
+      expect(renders).toHaveLength(2);
+      expect(renders[1].from).toMatch(new RegExp(`${developerStack}$`));
+      expect(renders[1].from).not.toContain("fluid-styled-content-frontend");
+      // Only the base sitepackage provides page layouts and templates.
+      await expect(readdir(path.join(renders[1].from, "Resources/Private/PageView"))).rejects.toMatchObject({ code: "ENOENT" });
+      for (const step of plan) {
+        if (step.type === "render") await renderDirectory(step.from, step.to, step.replacements);
+        if (step.type === "command") expect(step.args.join(" ")).not.toMatch(/bootstrap|@popperjs/i);
+        if (step.type === "write") expect(step.contents).not.toMatch(/bootstrap/i);
+      }
+      const sitepackage = path.join(directory, "packages/demo_sitepackage");
+      const settings = parse(await readFile(path.join(sitepackage, "Configuration/Sets/SitePackage/settings.yaml"), "utf8"));
+      expect(settings).not.toHaveProperty(["styles.templates.layoutRootPath"]);
+      expect(settings).not.toHaveProperty(["styles.templates.partialRootPath"]);
+      expect(settings).not.toHaveProperty(["styles.templates.templateRootPath"]);
+      const siteSet = parse(await readFile(path.join(sitepackage, "Configuration/Sets/SitePackage/config.yaml"), "utf8"));
+      expect(siteSet.dependencies).toEqual(expect.arrayContaining([
+        "typo3/fluid-styled-content", "typo3/fluid-styled-content-css",
+      ]));
+      async function checkFiles(folder: string): Promise<void> {
+        for (const entry of await readdir(folder, { withFileTypes: true })) {
+          const file = path.join(folder, entry.name);
+          if (entry.isDirectory()) await checkFiles(file);
+          else if (/\.(html|css|scss|js|json|yaml|php|xlf|md)$/.test(entry.name)) {
+            expect(path.relative(sitepackage, file)).not.toMatch(/^Resources\/Private\/ContentElements\//);
+            expect(await readFile(file, "utf8"), file).not.toMatch(/bootstrap|--bs-|data-bs-|\.bs\./i);
+          }
+        }
+      }
+      await checkFiles(sitepackage);
+      const layout = await readFile(path.join(sitepackage, "Resources/Private/PageView/Layouts/PageLayout.html"), "utf8");
+      expect(layout.match(/<vite:asset/g)).toHaveLength(1);
+      const header = await readFile(path.join(sitepackage, "Resources/Private/PageView/Partials/Header.html"), "utf8");
+      expect(header).toContain('<nav aria-label="Main navigation">');
+      expect(header).not.toContain("<details");
+      await expect(readdir(path.join(sitepackage, "ContentBlocks/ContentElements"))).rejects.toMatchObject({ code: "ENOENT" });
+      expect(layout).not.toMatch(/FSC_[A-Z_]+/);
+    },
+  );
 
   it("renders the Bootstrap Package-only template with the configured vendor and sitepackage name", async () => {
     const directory = await mkdtemp(path.join(tmpdir(), "typo3-installer-"));

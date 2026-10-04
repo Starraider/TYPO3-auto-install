@@ -1,4 +1,1 @@
-/* Rich text needs element rules even when its surrounding layout uses StyleX. */
-.ce-bodytext p { margin-block-end: 1rem; }
-.ce-bodytext a { text-decoration: underline; }
-.ce-bodytext ul, .ce-bodytext ol { padding-inline-start: 1.5rem; }
+/* Add project styles here. Fluid Styled Content supplies its own content styles. */

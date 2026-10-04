@@ -89,6 +89,15 @@ export function makeReplacements(config: InstallConfig): Record<string, string> 
     SKOM: config.sitepackage.vendor.toUpperCase(),
     STYLEX_CONNECTOR_PACKAGE: "skom/stylex-connector",
     STYLEX_CONNECTOR_VERSION,
+    FSC_STYLEX_NAMESPACE: config.developerStack === "fluid-styled-content-vite-stylex"
+      ? 'xmlns:stylex="http://typo3.org/ns/Vendor/StylexConnector/ViewHelpers"'
+      : "",
+    FSC_PAGE_MAIN_CLASS: config.developerStack === "fluid-styled-content-vite-stylex"
+      ? ` class="{stylex:class(styles: 'Site.shell')}"`
+      : "",
+    FSC_PAGE_CONTENT_CLASS: config.developerStack === "fluid-styled-content-vite-stylex"
+      ? ` class="{stylex:class(styles: 'Site.content')}"`
+      : "",
     FSC_SITE_ASSETS: config.developerStack === "fluid-styled-content-vite" || config.developerStack === "fluid-styled-content-vite-stylex"
       ? `<vite:asset entry="EXT:${extensionKey}/Resources/Private/JavaScript/Main.entry.js" />`
       : `<f:asset.css identifier="main" href="EXT:${extensionKey}/Resources/Public/Css/main.css" />\n<f:asset.script identifier="main" src="EXT:${extensionKey}/Resources/Public/JavaScript/main.js" />`,
@@ -131,7 +140,7 @@ Deploy \`public/_assets/vite/\` and
 Development disables page caching so Fluid class names follow live StyleX edits.
 The generated .env uses TYPO3_CONTEXT=Development and expects the Vite dev server.
 Use TYPO3_CONTEXT=Production to serve the built assets without it.
-The project retains FSC CSS and Bootstrap CDN assets for its existing content markup.
+Fluid Styled Content supplies the standard content styles, layouts, templates, and partials.
 ` : ""}
 Useful TYPO3 commands:
 

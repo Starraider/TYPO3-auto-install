@@ -221,11 +221,19 @@ FSC sitepackage retains `typo3/cms-fluid-styled-content` in its own
 `composer.json`, so requiring the generated local sitepackage explicitly
 preserves that dependency without duplicating it at the project root. Bootstrap
 Package is likewise declared by each Bootstrap sitepackage. The FSC/Vite stack
-reuses the FSC sitepackage and overlays only its Vite entrypoint, private SCSS,
-and private JavaScript sources. Its page layout registers that entrypoint once
-through the Vite Asset Collector, while the FSC-only stack continues to load
+reuses the basic FSC sitepackage and adds its Vite entrypoint, private SCSS,
+and private JavaScript sources. Both FSC/Vite stacks use FSC's built-in content
+templates and CSS, with a plain HTML page shell and no Bootstrap packages or
+CDN assets. They include no custom content-block examples or replacement FSC
+templates. The shared page layout registers the entrypoint once through the
+Vite Asset Collector, while the FSC-only stack continues to load
 its committed static assets. Vite Asset Collector and the DDEV Vite sidecar
 are intentionally absent from the non-Vite stacks.
+
+Fluid Styled Content supplies the standard content-element layouts, templates,
+and partials. The sitepackage does not override FSC template paths or bundle
+replacement content-element templates. Its `PageView` files provide the page
+wrapper, navigation, and content regions around the FSC-rendered content.
 
 All selectable TYPO3 extensions are included in the Composer requirement for
 every stack. Cookie Manager, Blog, and News have stack-neutral site sets;
@@ -264,12 +272,12 @@ The generated project includes:
   after the StyleX transform, with the sitepackage namespace and legacy aliases enabled
 - development loading and refresh of `/virtual:stylex.css` from the Vite origin
 - page caching disabled only in Development contexts so Fluid follows changing atomic class names
-- a scoped rich-text stylesheet imported by the entrypoint
 - a `verify-stylex-build.mjs` script that checks emitted assets, Fluid CSS selectors,
   version 2 manifest output, and paired CSS checksums
 
-FSC CSS and the base template's Bootstrap CDN assets remain enabled for existing
-content elements. StyleX uses `useCSSLayers: false` to work with that unlayered
+FSC supplies its standard CSS for content elements. The shared page layout
+adds the StyleX wrapper classes only for the StyleX stack. StyleX uses
+`useCSSLayers: false` to work with that unlayered
 CSS. The connector's separate TypoScript CSS include stays disabled because
 Vite Asset Collector delivers the built CSS.
 
