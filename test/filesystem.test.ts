@@ -166,7 +166,7 @@ describe("template rendering", () => {
     const sitepackage = path.join(directory, "packages/my_custom_sitepackage");
     const composer = JSON.parse(await readFile(path.join(sitepackage, "composer.json"), "utf8"));
     expect(composer.name).toBe("acme-agency/my-custom-sitepackage");
-    expect(composer.require["skom/stylex-connector"]).toBe("^1.0");
+    expect(composer.require["skom/stylex-connector"]).toBe("dev-main");
     const set = parse(await readFile(path.join(sitepackage, "Configuration/Sets/SitePackage/config.yaml"), "utf8"));
     expect(set.dependencies).toEqual([
       "typo3/fluid-styled-content", "typo3/fluid-styled-content-css", "skom/stylex-connector",
@@ -188,8 +188,9 @@ describe("template rendering", () => {
     expect(development).toContain("config.no_cache = 1");
     await writeState(directory, config, "1.0.0");
     expect((await readState(directory))?.generatedPaths).toEqual(expect.arrayContaining([
-      "vite.config.js", "vite-plugin-stylex-manifest.js", "verify-stylex-build.mjs",
+      "vite.config.js", "verify-stylex-build.mjs",
     ]));
+    expect((await readState(directory))?.generatedPaths).not.toContain("vite-plugin-stylex-manifest.js");
   });
 
 });

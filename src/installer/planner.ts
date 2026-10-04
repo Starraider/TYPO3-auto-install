@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { STYLEX_CONNECTOR_REQUIREMENT, STYLEX_CONNECTOR_VERSION, STYLEX_VALIDATE_ARGS } from "../stylex.js";
 import {
   stackUsesVite,
   TYPO3_EXTENSION_SITE_SETS,
@@ -87,6 +88,7 @@ export function makeReplacements(config: InstallConfig): Record<string, string> 
     SKom: vendorNamespace,
     SKOM: config.sitepackage.vendor.toUpperCase(),
     STYLEX_CONNECTOR_PACKAGE: "skom/stylex-connector",
+    STYLEX_CONNECTOR_VERSION,
     FSC_SITE_ASSETS: config.developerStack === "fluid-styled-content-vite" || config.developerStack === "fluid-styled-content-vite-stylex"
       ? `<vite:asset entry="EXT:${extensionKey}/Resources/Private/JavaScript/Main.entry.js" />`
       : `<f:asset.css identifier="main" href="EXT:${extensionKey}/Resources/Public/Css/main.css" />\n<f:asset.script identifier="main" src="EXT:${extensionKey}/Resources/Public/JavaScript/main.js" />`,
@@ -118,8 +120,13 @@ Import each new \`*.stylex.js\` source in \`Main.entry.js\`, using a unique base
 Fluid resolves its compiled classes with \`{stylex:class(styles: 'Site.shell')}\`.
 
 Run \`ddev npm run build\` after changing styles. This builds CSS and JavaScript,
-writes the StyleX manifest, and checks that the Fluid classes have emitted CSS.
-Then run \`ddev typo3 cache:flush\`. Deploy \`public/_assets/vite/\` and
+writes the version 2 StyleX manifest, and checks Fluid CSS selectors and CSS checksums.
+Then run \`ddev typo3 stylex:validate --required-key Site.shell --required-key Site.content\`
+and \`ddev typo3 cache:flush\`. Installation and dependency updates run these commands automatically.
+The manifest adapter comes from the Composer-installed connector. Legacy aliases keep
+the supplied Fluid keys working alongside canonical module/object keys.
+The root Composer requirement is \`${STYLEX_CONNECTOR_REQUIREMENT}\`.
+Deploy \`public/_assets/vite/\` and
 \`packages/${config.sitepackage.name}/Resources/Public/StylexManifest/stylex-manifest.json\` together.
 Development disables page caching so Fluid class names follow live StyleX edits.
 The generated .env uses TYPO3_CONTEXT=Development and expects the Vite dev server.
@@ -187,7 +194,7 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
     "helhum/dotenv-connector:^3.2",
     "b13/container:^4.1",
     ...(usesVite ? ["praetorius/vite-asset-collector:^1.18"] : []),
-    ...(usesStylex ? ["skom/stylex-connector:^1.0"] : []),
+    ...(usesStylex ? [STYLEX_CONNECTOR_REQUIREMENT] : []),
     ...config.extensions,
     `${config.sitepackage.vendor}/${sitepackageKebabName(config.sitepackage.name)}:@dev`,
   ];
@@ -291,12 +298,12 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
       { type: "command", executable: "ddev", args: ["npm", "install", "--save-dev", "vite@^7.0.0", "vite-plugin-typo3@^3.0.0", "vite-plugin-live-reload", "@stylexjs/unplugin@^0.19.1", "@babel/parser@^7.29.0"], cwd: projectDirectory },
       { type: "command", executable: "ddev", args: ["npm", "pkg", "set", "type=module", "scripts.dev=vite", "scripts.build=vite build && node verify-stylex-build.mjs", "scripts.watch=vite build --watch"], cwd: projectDirectory },
       { type: "write", path: path.join(projectDirectory, "vite.config.js"), contents: await rootTemplate("vite.config.js") },
-      { type: "copy", from: path.join(templates.stylexRoot, "vite-plugin-stylex-manifest.js"), to: path.join(projectDirectory, "vite-plugin-stylex-manifest.js") },
       { type: "write", path: path.join(projectDirectory, "verify-stylex-build.mjs"), contents: await rootTemplate("verify-stylex-build.mjs") },
       // The add-on reads this variable to avoid its package-manager prompt.
       { type: "command", executable: "env", args: ["VITE_PACKAGE_MANAGER=npm", "ddev", "add-on", "get", "s2b/ddev-vite-sidecar"], cwd: projectDirectory },
       { type: "command", executable: "ddev", args: ["restart"], cwd: projectDirectory },
       { type: "command", executable: "ddev", args: ["npm", "run", "build"], cwd: projectDirectory },
+      { type: "command", executable: "ddev", args: [...STYLEX_VALIDATE_ARGS], cwd: projectDirectory },
       { type: "command", executable: "ddev", args: ["typo3", "cache:flush"], cwd: projectDirectory },
     );
   }

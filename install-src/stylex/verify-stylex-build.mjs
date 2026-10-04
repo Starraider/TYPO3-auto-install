@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
 const output = "public/_assets/vite";
 const manifest = JSON.parse(fs.readFileSync(`${output}/.vite/manifest.json`, "utf8"));
-const stylex = JSON.parse(fs.readFileSync(
-    "packages/yyy_sitepackage/Resources/Public/StylexManifest/stylex-manifest.json", "utf8",
-));
+const stylexManifestPath = "packages/yyy_sitepackage/Resources/Public/StylexManifest/stylex-manifest.json";
+const stylex = JSON.parse(fs.readFileSync(stylexManifestPath, "utf8"));
+assert.equal(stylex.version, "2.0", "Rebuild with the connector's maintained version 2 manifest adapter");
 const entry = Object.values(manifest).find(item =>
     item.isEntry && item.src?.endsWith("/Resources/Private/JavaScript/Main.entry.js"),
 );
@@ -36,4 +37,17 @@ for (const key of ["Site.shell", "Site.content"]) {
         assert(css.includes(`.${className}`), `Built CSS has no selector for ${key}: ${className}`);
     }
 }
-console.log("StyleX build verified: Fluid classes, CSS selectors, and Vite assets exist.");
+assert(Array.isArray(stylex.artifacts) && stylex.artifacts.length > 0, "StyleX manifest declares no paired CSS artifacts");
+const pairedCss = new Set();
+for (const artifact of stylex.artifacts) {
+    assert(typeof artifact.path === "string" && typeof artifact.sha256 === "string", "Invalid paired CSS artifact");
+    const file = path.resolve(path.dirname(stylexManifestPath), artifact.path);
+    assert(fs.existsSync(file), `Missing paired CSS artifact: ${artifact.path}`);
+    const hash = createHash("sha256").update(fs.readFileSync(file)).digest("hex");
+    assert.equal(hash, artifact.sha256, `Mismatched paired CSS artifact: ${artifact.path}`);
+    pairedCss.add(file);
+}
+for (const file of cssFiles) {
+    assert(pairedCss.has(path.resolve(output, file)), `Entry CSS has no StyleX checksum: ${file}`);
+}
+console.log("StyleX build verified: Fluid classes, CSS selectors, Vite assets, and paired CSS checksums match.");

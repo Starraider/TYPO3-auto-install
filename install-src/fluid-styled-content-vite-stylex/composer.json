@@ -18,7 +18,7 @@
         "typo3/cms-rte-ckeditor": "^14.0",
         "typo3/cms-fluid-styled-content": "^14.0",
         "praetorius/vite-asset-collector": "^1.18",
-        "STYLEX_CONNECTOR_PACKAGE": "^1.0"
+        "STYLEX_CONNECTOR_PACKAGE": "STYLEX_CONNECTOR_VERSION"
     },
     "suggest": {
         "friendsoftypo3/content-blocks": "Allows to create custom content elements. "

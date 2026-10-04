@@ -33,6 +33,8 @@ sitepackage:
 # Collector, Vite, and the DDEV Vite sidecar.
 # fluid-styled-content-vite-stylex adds StyleX compilation, its TYPO3 connector,
 # manifest registration, development CSS loading, and a verified production build.
+# Its connector requirement is pinned in src/stylex.ts until the maintained
+# adapter and validator are included in a tagged release.
 developerStack: bootstrap-package
 
 # Optional extensions to install. Interactive installs present these as a

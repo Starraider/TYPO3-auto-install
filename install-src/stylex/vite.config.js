@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import typo3 from "vite-plugin-typo3";
 import liveReload from "vite-plugin-live-reload";
 import stylexPlugin from "@stylexjs/unplugin";
-import stylexManifestPlugin from "./vite-plugin-stylex-manifest.js";
+import stylexManifestPlugin from "./vendor/skom/stylex-connector/Resources/Private/Build/stylex-manifest.mjs";
 
 export default defineConfig({
     plugins: [
@@ -16,6 +16,9 @@ export default defineConfig({
         }),
         stylexManifestPlugin({
             outputPath: "packages/yyy_sitepackage/Resources/Public/StylexManifest/stylex-manifest.json",
+            root: process.cwd(),
+            namespace: "yyy_sitepackage",
+            legacyAliases: true,
         }),
         liveReload([
             "packages/**/*.php",

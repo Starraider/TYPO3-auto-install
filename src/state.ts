@@ -29,7 +29,7 @@ export async function writeState(projectDirectory: string, config: InstallConfig
       ".editorconfig",
       ".gitignore",
       ...(stackUsesVite(config.developerStack) ? ["vite.config.js"] : []),
-      ...(config.developerStack === "fluid-styled-content-vite-stylex" ? ["vite-plugin-stylex-manifest.js", "verify-stylex-build.mjs"] : []),
+      ...(config.developerStack === "fluid-styled-content-vite-stylex" ? ["verify-stylex-build.mjs"] : []),
       ...(config.features.rector ? ["rector.php"] : []),
     ],
   };

@@ -11,6 +11,7 @@ import { readState, removeState } from "./state.js";
 import { DEVELOPER_STACKS, type DeveloperStack, type InstallConfig, type InstallOptions } from "./types.js";
 import { formatCommand, runCommand } from "./process.js";
 import { pathExists } from "./filesystem.js";
+import { STYLEX_VALIDATE_ARGS } from "./stylex.js";
 
 interface CommandFlags {
   config: string;
@@ -180,7 +181,11 @@ program.command("update")
       commands.splice(1, 0, ["ddev", ["npm", "update"]]);
     }
     if (state.developerStack === "fluid-styled-content-vite-stylex") {
-      commands.splice(2, 0, ["ddev", ["npm", "run", "build"]], ["ddev", ["typo3", "cache:flush"]]);
+      commands.splice(2, 0,
+        ["ddev", ["npm", "run", "build"]],
+        ["ddev", [...STYLEX_VALIDATE_ARGS]],
+        ["ddev", ["typo3", "cache:flush"]],
+      );
     }
     for (const [executable, args] of commands) {
       console.log(`${dryRun ? "Would run" : "Running"} ${formatCommand(executable, [...args])}`);

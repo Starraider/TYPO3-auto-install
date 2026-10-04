@@ -212,7 +212,7 @@ describe("installation planning", () => {
     const commands = plan.filter(step => step.type === "command");
     expect(commands.find(step => step.args[0] === "config")?.args).toContain("--nodejs-version=22");
     expect(commands.find(step => step.args[1] === "require")?.args).toEqual(expect.arrayContaining([
-      "skom/stylex-connector:^1.0", "praetorius/vite-asset-collector:^1.18",
+      "skom/stylex-connector:dev-main#701d870b9ae55e8c434af24532b95c10f7e54ef2", "praetorius/vite-asset-collector:^1.18",
     ]));
     const npmDependencies = commands.filter(step => step.args[0] === "npm" && step.args[1] === "install").flatMap(step => step.args);
     expect(npmDependencies).toEqual(expect.arrayContaining([
@@ -222,6 +222,7 @@ describe("installation planning", () => {
     const overlay = plan.find(step => step.type === "render" && step.from.endsWith("fluid-styled-content-vite-stylex"));
     expect(overlay).toMatchObject({ replacements: {
       STYLEX_CONNECTOR_PACKAGE: "skom/stylex-connector",
+      STYLEX_CONNECTOR_VERSION: "dev-main",
       TYPO3_EXTENSION_SITE_SET_DEPENDENCIES: "  - baschte/content-animations-fluid-styles-content",
     } });
     const sidecar = commands.findIndex(step => step.executable === "env");
@@ -230,9 +231,16 @@ describe("installation planning", () => {
     expect(sidecar).toBeGreaterThan(-1);
     expect(restart).toBeGreaterThan(sidecar);
     expect(build).toBeGreaterThan(restart);
-    expect(commands[build + 1].args).toEqual(["typo3", "cache:flush"]);
+    expect(commands[build + 1].args).toEqual([
+      "typo3", "stylex:validate", "--required-key", "Site.shell", "--required-key", "Site.content",
+    ]);
+    expect(commands[build + 2].args).toEqual(["typo3", "cache:flush"]);
     const vite = plan.find(step => step.type === "write" && step.path.endsWith("vite.config.js"));
     expect(vite).toMatchObject({ contents: expect.stringContaining("packages/demo_sitepackage/Resources/Public/StylexManifest/stylex-manifest.json") });
+    expect(vite).toMatchObject({ contents: expect.stringContaining('from "./vendor/skom/stylex-connector/Resources/Private/Build/stylex-manifest.mjs"') });
+    expect(vite).toMatchObject({ contents: expect.stringContaining('namespace: "demo_sitepackage"') });
+    expect(vite).toMatchObject({ contents: expect.stringContaining("legacyAliases: true") });
+    expect(plan.some(step => step.type === "copy" && step.to.endsWith("vite-plugin-stylex-manifest.js"))).toBe(false);
     expect(plan.find(step => step.type === "write" && step.path.endsWith("verify-stylex-build.mjs"))).toBeDefined();
   });
 

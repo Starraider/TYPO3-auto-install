@@ -241,10 +241,18 @@ Select `fluid-styled-content + Vite + StyleX` at the prompt, set
 `--developer-stack fluid-styled-content-vite-stylex` to `install`.
 
 This fifth stack reuses the FSC sitepackage with a StyleX overlay. It installs
-`skom/stylex-connector:^1.0` and Vite Asset Collector in Composer, plus
+`skom/stylex-connector` and Vite Asset Collector in Composer, plus
 `@stylexjs/stylex`, `@stylexjs/unplugin`, `@babel/parser`, Vite, the TYPO3 Vite
 plugin, and live reload at the project root. DDEV uses Node.js 22. This stack
 uses plain CSS and StyleX, so it does not install Sass.
+
+The connector's `1.0.0` tag lacks the maintained manifest adapter and validation
+command. The installer therefore pins the root Composer requirement to
+`dev-main#701d870b9ae55e8c434af24532b95c10f7e54ef2`, a published commit containing
+both. The sitepackage requires `dev-main`; the explicit root requirement permits
+that development dependency without lowering global Composer stability.
+When these changes have a tagged release, replace the pin and branch constraint
+in `src/stylex.ts` with the released minimum version.
 
 The generated project includes:
 
@@ -252,11 +260,13 @@ The generated project includes:
 - an active `skom/stylex-connector` Site Set dependency and manifest registration in `ext_localconf.php`
 - `Resources/Private/JavaScript/Stylex/Site.stylex.js`, imported by `Main.entry.js`,
   with `Site.shell` and `Site.content` classes used in Fluid
-- a root `vite-plugin-stylex-manifest.js` that extracts compiled classes after the StyleX transform
+- a Vite import of the connector's maintained `Resources/Private/Build/stylex-manifest.mjs` adapter
+  after the StyleX transform, with the sitepackage namespace and legacy aliases enabled
 - development loading and refresh of `/virtual:stylex.css` from the Vite origin
 - page caching disabled only in Development contexts so Fluid follows changing atomic class names
 - a scoped rich-text stylesheet imported by the entrypoint
-- a `verify-stylex-build.mjs` script that checks emitted assets and the CSS selectors used by Fluid
+- a `verify-stylex-build.mjs` script that checks emitted assets, Fluid CSS selectors,
+  version 2 manifest output, and paired CSS checksums
 
 FSC CSS and the base template's Bootstrap CDN assets remain enabled for existing
 content elements. StyleX uses `useCSSLayers: false` to work with that unlayered
@@ -264,8 +274,11 @@ CSS. The connector's separate TypoScript CSS include stays disabled because
 Vite Asset Collector delivers the built CSS.
 
 The installer adds the DDEV sidecar with npm selected, restarts DDEV, and runs
-`ddev npm run build`, followed by a TYPO3 cache flush. A failed build or missing
-StyleX CSS stops installation before success is recorded. Both manifests must
+`ddev npm run build`, then
+`ddev typo3 stylex:validate --required-key Site.shell --required-key Site.content`,
+followed by a TYPO3 cache flush. A failed build, stale or missing CSS, invalid
+manifest, unintended key collision, or missing required key stops installation
+before success is recorded. Both manifests must
 be deployed together:
 
 - `public/_assets/vite/.vite/manifest.json` and its referenced assets
@@ -273,15 +286,26 @@ be deployed together:
 
 For development, run `ddev vite` and open the TYPO3 page. Give each new
 `*.stylex.js` file a unique basename and import it from `Main.entry.js`.
-Use `{stylex:class(styles: 'FileName.variant')}` in Fluid. The supplied manifest
-writer supports static `stylex.create()` styles in JS, JSX, TS, and TSX files.
-Dynamic style arguments need a project-specific manifest strategy.
+Use `{stylex:class(styles: 'FileName.variant')}` in Fluid through the enabled
+legacy aliases. The adapter also emits canonical keys containing the sitepackage
+namespace, root-relative module path, style object, and variant. If you disable
+legacy aliases to allow duplicate basenames, migrate the Fluid keys and required
+keys in the verifier and validation commands together. The adapter preserves
+StyleX `null` conflict entries and supports static `stylex.create()` styles in
+JS, JSX, TS, and TSX files. Dynamic style arguments need a project-specific
+recipe adapter.
 
 For production, stop the dev server and run `ddev npm run build`, then
-`ddev typo3 cache:flush`. Serve built assets in TYPO3's Production context.
+`ddev typo3 stylex:validate --required-key Site.shell --required-key Site.content`
+and `ddev typo3 cache:flush`. Serve built assets in TYPO3's Production context.
 The generated `.env` defaults to Development, which expects `ddev vite` to be running. The `update` command also rebuilds and validates this
-stack after dependency updates. The generated manifest writer, verifier, and
-Vite configuration are tracked in installer state for status and uninstall.
+stack after dependency updates. The generated verifier and Vite configuration
+are tracked in installer state for status and uninstall. The manifest adapter
+is owned by the Composer dependency, so the installer does not copy or track it.
+Build and validate assets in a staging release and promote CSS, JavaScript, and
+both manifests together. CSS artifact paths are relative to the StyleX manifest;
+preserve this directory layout during deployment. Atomic JSON writes alone do
+not synchronize an independently deployed CSS file.
 
 The sidecar installation follows the
 [official DDEV add-on instructions](https://github.com/s2b/ddev-vite-sidecar#readme).
