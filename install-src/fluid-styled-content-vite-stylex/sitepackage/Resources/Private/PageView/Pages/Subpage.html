@@ -1,19 +1,19 @@
 <f:layout name="PageLayout"/>
 <f:section name="Main">
-    <div class="layout-subpage">
+    <div class="layout-subpage {stylex:class(styles: 'Site.layoutSubpage')}">
         <f:if condition="{content.stage.records}">
-            <div class="layout-subpage__stage stage-area">
+            <div class="layout-subpage__stage stage-area {stylex:class(styles: 'Site.stage')}">
                 <f:render partial="Stage" arguments="{_all}"/>
             </div>
         </f:if>
-        <div class="layout-subpage__breadcrumb container">
+        <div class="layout-subpage__breadcrumb container {stylex:class(styles: 'Site.container')}">
             <f:render partial="Navigation/Breadcrumb" arguments="{_all}"/>
         </div>
-        <div class="layout-subpage__body container">
-            <div class="layout-subpage__content">
+        <div class="layout-subpage__body container {stylex:class(styles: 'Site.container, Site.subpageBody')}">
+            <div class="layout-subpage__content {stylex:class(styles: 'Site.subpageContent')}">
                 <f:render partial="Content" arguments="{records: content.main.records}"/>
             </div>
-            <aside class="layout-subpage__sidebar" aria-label="Sidebar">
+            <aside class="layout-subpage__sidebar {stylex:class(styles: 'Site.subpageSidebar')}" aria-label="Sidebar">
                 <f:render partial="Content" arguments="{records: content.sidebar.records}"/>
             </aside>
         </div>

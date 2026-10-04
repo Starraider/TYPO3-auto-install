@@ -1,19 +1,19 @@
-<header class="site-header" role="banner">
-    <div class="site-header__container container">
-        <div class="site-header__branding">
-            <f:link.page pageUid="{site.rootPageId}" class="site-header__logo">
+<header class="site-header {stylex:class(styles: 'Site.header')}" role="banner">
+    <div class="site-header__container container {stylex:class(styles: 'Site.container, Site.headerContainer')}">
+        <div class="site-header__branding {stylex:class(styles: 'Site.headerBranding')}">
+            <f:link.page pageUid="{site.rootPageId}" class="site-header__logo {stylex:class(styles: 'Site.headerLogo')}">
                 <f:if condition="{site.configuration.websiteTitle}">
-                    <f:then><span class="site-header__title">{site.configuration.websiteTitle}</span></f:then>
-                    <f:else><span class="site-header__title">TYPO3</span></f:else>
+                    <f:then><span class="site-header__title {stylex:class(styles: 'Site.headerTitle')}">{site.configuration.websiteTitle}</span></f:then>
+                    <f:else><span class="site-header__title {stylex:class(styles: 'Site.headerTitle')}">TYPO3</span></f:else>
                 </f:if>
             </f:link.page>
         </div>
-        <button type="button" class="site-header__toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="site-header__toggle-bar"></span>
-            <span class="site-header__toggle-bar"></span>
-            <span class="site-header__toggle-bar"></span>
+        <button type="button" class="site-header__toggle {stylex:class(styles: 'Site.headerToggle')}" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="site-header__toggle-bar {stylex:class(styles: 'Site.headerToggleBar')}"></span>
+            <span class="site-header__toggle-bar {stylex:class(styles: 'Site.headerToggleBar')}"></span>
+            <span class="site-header__toggle-bar {stylex:class(styles: 'Site.headerToggleBar')}"></span>
         </button>
-        <nav id="primary-nav" class="site-nav" aria-label="Main navigation">
+        <nav id="primary-nav" class="site-nav {stylex:class(styles: 'Site.nav')}" aria-label="Main navigation">
             <f:render partial="Navigation/Menu" arguments="{_all}"/>
         </nav>
     </div>

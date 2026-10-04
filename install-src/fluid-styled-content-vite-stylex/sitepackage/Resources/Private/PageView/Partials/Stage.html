@@ -1,5 +1,5 @@
 <f:if condition="{content.stage.records}">
-    <div class="stage-banner__container container">
+    <div class="stage-banner__container container {stylex:class(styles: 'Site.container, Site.stageBanner')}">
         <f:for each="{content.stage.records}" as="record">
             <f:cObject
                 typoscriptObjectPath="{record.mainType}"

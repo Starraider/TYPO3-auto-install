@@ -1,9 +1,9 @@
 <f:if condition="{footerMenu}">
-    <nav class="footer-nav" aria-label="Footer navigation">
-        <ul class="footer-nav__list">
+    <nav class="footer-nav {stylex:class(styles: 'Site.footerNav')}" aria-label="Footer navigation">
+        <ul class="footer-nav__list {stylex:class(styles: 'Site.footerNavList')}">
             <f:for each="{footerMenu}" as="menuItem">
-                <li class="footer-nav__item">
-                    <a href="{menuItem.link}" class="footer-nav__link">{menuItem.title}</a>
+                <li class="footer-nav__item {stylex:class(styles: 'Site.footerNavItem')}">
+                    <a href="{menuItem.link}" class="footer-nav__link {stylex:class(styles: 'Site.footerNavLink')}">{menuItem.title}</a>
                 </li>
             </f:for>
         </ul>

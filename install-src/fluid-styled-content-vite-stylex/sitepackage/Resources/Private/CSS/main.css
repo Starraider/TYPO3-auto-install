@@ -1,2 +1,49 @@
 /* FSC's generated CSS is in the lower-priority "fsc" cascade layer.
    Add unlayered project styles here to override FSC without !important. */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    color: #1e293b;
+    background-color: #f8fafc;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mobile navigation open state */
+.site-nav--open {
+    display: block !important;
+}
+
+/* Hamburger toggle active animation */
+.site-header__toggle--active .site-header__toggle-bar:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+
+.site-header__toggle--active .site-header__toggle-bar:nth-child(2) {
+    opacity: 0;
+}
+
+.site-header__toggle--active .site-header__toggle-bar:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+/* Breadcrumb separator */
+.breadcrumb-nav__item + .breadcrumb-nav__item::before {
+    content: "/";
+    color: #94a3b8;
+    margin-right: 0.5rem;
+}

@@ -1,12 +1,12 @@
 <f:layout name="PageLayout"/>
 <f:section name="Main">
-    <div class="layout-default">
+    <div class="layout-default {stylex:class(styles: 'Site.layoutDefault')}">
         <f:if condition="{content.stage.records}">
-            <div class="layout-default__stage stage-area">
+            <div class="layout-default__stage stage-area {stylex:class(styles: 'Site.stage')}">
                 <f:render partial="Stage" arguments="{_all}"/>
             </div>
         </f:if>
-        <div class="layout-default__content container">
+        <div class="layout-default__content container {stylex:class(styles: 'Site.container')}">
             <f:render partial="Content" arguments="{records: content.main.records}"/>
         </div>
     </div>

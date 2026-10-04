@@ -1,16 +1,16 @@
 <f:if condition="{breadcrumb}">
-    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-        <ol class="breadcrumb-nav__list">
+    <nav class="breadcrumb-nav {stylex:class(styles: 'Site.breadcrumb')}" aria-label="Breadcrumb">
+        <ol class="breadcrumb-nav__list {stylex:class(styles: 'Site.breadcrumbList')}">
             <f:for each="{breadcrumb}" as="item">
                 <f:if condition="{item.current}">
                     <f:then>
-                        <li class="breadcrumb-nav__item breadcrumb-nav__item--current" aria-current="page">
-                            <span class="breadcrumb-nav__text">{item.title}</span>
+                        <li class="breadcrumb-nav__item breadcrumb-nav__item--current {stylex:class(styles: 'Site.breadcrumbItem')}" aria-current="page">
+                            <span class="breadcrumb-nav__text {stylex:class(styles: 'Site.breadcrumbCurrent')}">{item.title}</span>
                         </li>
                     </f:then>
                     <f:else>
-                        <li class="breadcrumb-nav__item">
-                            <a href="{item.link}" title="{item.title}" class="breadcrumb-nav__link">{item.title}</a>
+                        <li class="breadcrumb-nav__item {stylex:class(styles: 'Site.breadcrumbItem')}">
+                            <a href="{item.link}" title="{item.title}" class="breadcrumb-nav__link {stylex:class(styles: 'Site.breadcrumbLink')}">{item.title}</a>
                         </li>
                     </f:else>
                 </f:if>

@@ -93,6 +93,9 @@ export function makeReplacements(config: InstallConfig): Record<string, string> 
     FSC_STYLEX_NAMESPACE: config.developerStack === "fluid-styled-content-vite-stylex"
       ? 'xmlns:stylex="http://typo3.org/ns/Vendor/StylexConnector/ViewHelpers"'
       : "",
+    FSC_PAGE_WRAPPER_CLASS: config.developerStack === "fluid-styled-content-vite-stylex"
+      ? ` {stylex:class(styles: 'Site.wrapper')}`
+      : "",
     FSC_PAGE_MAIN_CLASS: config.developerStack === "fluid-styled-content-vite-stylex"
       ? ` class="site-main {stylex:class(styles: 'Site.shell')}"`
       : ' class="site-main"',

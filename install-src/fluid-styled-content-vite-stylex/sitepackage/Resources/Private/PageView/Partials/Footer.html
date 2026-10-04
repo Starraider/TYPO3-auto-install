@@ -1,6 +1,6 @@
-<footer class="site-footer" role="contentinfo">
-    <div class="site-footer__container container">
-        <p class="site-footer__copyright">&copy; <f:format.date format="Y">now</f:format.date> {site.configuration.websiteTitle}</p>
+<footer class="site-footer {stylex:class(styles: 'Site.footer')}" role="contentinfo">
+    <div class="site-footer__container container {stylex:class(styles: 'Site.container, Site.footerContainer')}">
+        <p class="site-footer__copyright {stylex:class(styles: 'Site.footerCopyright')}">&copy; <f:format.date format="Y">now</f:format.date> {site.configuration.websiteTitle}</p>
         <f:render partial="Navigation/FooterMenu.html" arguments="{_all}"/>
     </div>
 </footer>
