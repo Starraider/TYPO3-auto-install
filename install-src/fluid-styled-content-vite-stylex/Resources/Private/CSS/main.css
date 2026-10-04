@@ -1,1 +1,2 @@
-/* Add project styles here. Fluid Styled Content supplies its own content styles. */
+/* FSC's generated CSS is in the lower-priority "fsc" cascade layer.
+   Add unlayered project styles here to override FSC without !important. */

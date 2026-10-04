@@ -286,6 +286,7 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
       { type: "copy", from: templates.viteConfig, to: path.join(projectDirectory, "vite.config.js") },
     );
     steps.push({ type: "command", executable: "ddev", args: ["get", "s2b/ddev-vite-sidecar"], cwd: projectDirectory });
+    steps.push({ type: "command", executable: "ddev", args: ["restart"], cwd: projectDirectory });
   }
   if (isFluidStyledContentVite) {
     steps.splice(
@@ -297,6 +298,7 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
       { type: "copy", from: templates.viteConfig, to: path.join(projectDirectory, "vite.config.js") },
     );
     steps.push({ type: "command", executable: "ddev", args: ["get", "s2b/ddev-vite-sidecar"], cwd: projectDirectory });
+    steps.push({ type: "command", executable: "ddev", args: ["restart"], cwd: projectDirectory });
   }
   if (usesStylex) {
     const rootTemplate = async (filename: string) => (await readFile(path.join(templates.stylexRoot, filename), "utf8"))

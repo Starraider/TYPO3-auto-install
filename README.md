@@ -235,6 +235,19 @@ and partials. The sitepackage does not override FSC template paths or bundle
 replacement content-element templates. Its `PageView` files provide the page
 wrapper, navigation, and content regions around the FSC-rendered content.
 
+FSC's default CSS covers content-element layout, images, tables, and spacing.
+It does not provide a full website theme. The project stylesheet starts empty;
+add site-specific styles to `Resources/Private/Scss/main.scss` for FSC/Vite or
+`Resources/Private/CSS/main.css` and the StyleX sources for FSC/Vite/StyleX.
+TYPO3 generates FSC's stylesheet from its site settings and wraps it in the
+`fsc` cascade layer. Vite loads project styles afterwards. Keep project rules
+outside a cascade layer to override FSC's normal declarations, even with
+less-specific selectors, without `!important`. This works in development and
+production. FSC remains outside Vite because its CSS is generated from
+TypoScript settings rather than supplied as an importable CSS file.
+Vite installation restarts DDEV after adding the sidecar so its hostname and
+`VITE_SERVER_URI` are active before the development server starts.
+
 All selectable TYPO3 extensions are included in the Composer requirement for
 every stack. Cookie Manager, Blog, and News have stack-neutral site sets;
 Content Blocks has no automatic site-set dependency; and Content Animations

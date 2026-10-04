@@ -1,0 +1,3 @@
+# Keep TYPO3's generated FSC CSS and its site settings in a base layer.
+# Project CSS loaded through Vite remains unlayered and can override these rules.
+plugin.tx_frontend._CSS_DEFAULT_STYLE.wrap = @layer fsc { | }

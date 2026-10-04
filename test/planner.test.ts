@@ -173,6 +173,8 @@ describe("installation planning", () => {
       args: expect.arrayContaining(["vite@^7.0.0", "vite-plugin-typo3@^3.0.0", "sass-embedded"]),
     });
     expect(viteSidecar).toMatchObject({ type: "command", args: ["get", "s2b/ddev-vite-sidecar"] });
+    const sidecarIndex = plan.indexOf(viteSidecar!);
+    expect(plan[sidecarIndex + 1]).toMatchObject({ type: "command", executable: "ddev", args: ["restart"] });
   });
 
   it("uses and fully renders the Bootstrap Package-only template without Vite dependencies", async () => {

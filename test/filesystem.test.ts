@@ -159,6 +159,11 @@ describe("template rendering", () => {
       expect(siteSet.dependencies).toEqual(expect.arrayContaining([
         "typo3/fluid-styled-content", "typo3/fluid-styled-content-css",
       ]));
+      const setup = await readFile(path.join(sitepackage, "Configuration/Sets/SitePackage/setup.typoscript"), "utf8");
+      expect(setup).toContain("@import './TypoScript/*.typoscript'");
+      const fscCss = await readFile(path.join(sitepackage, "Configuration/Sets/SitePackage/TypoScript/fsc-css.typoscript"), "utf8");
+      expect(fscCss).toContain("plugin.tx_frontend._CSS_DEFAULT_STYLE.wrap = @layer fsc { | }");
+      expect(fscCss).not.toContain("config.removeDefaultCss");
       async function checkFiles(folder: string): Promise<void> {
         for (const entry of await readdir(folder, { withFileTypes: true })) {
           const file = path.join(folder, entry.name);
