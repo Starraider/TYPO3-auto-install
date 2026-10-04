@@ -1,0 +1,44 @@
+// =============================================================================
+// Stage / Hero Area & Jumbotron Component (colPos 1)
+// =============================================================================
+
+@use '../abstracts' as *;
+
+.stage-banner,
+.stage-area,
+.jumbotron {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    background: linear-gradient(135deg, var(--color-bg-alt) 0%, #e2e8f0 100%);
+    border-bottom: 1px solid var(--color-border);
+    padding-block: var(--spacing-xl);
+
+    @include respond-to('md') {
+        padding-block: var(--spacing-2xl);
+    }
+
+    &__container,
+    & > .container {
+        @include container;
+    }
+
+    // Typography inside jumbotron/stage banner
+    h1, h2, .jumbotron-heading {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text);
+        margin-bottom: var(--spacing-sm);
+
+        @include respond-to('md') {
+            font-size: var(--font-size-3xl);
+        }
+    }
+
+    p, .lead {
+        font-size: var(--font-size-md);
+        color: var(--color-text-muted);
+        line-height: var(--line-height-relaxed);
+        max-width: 70ch;
+    }
+}

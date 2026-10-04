@@ -1,4 +1,6 @@
-<footer>
-    <p>&copy; <f:format.date format="Y">now</f:format.date> {site.configuration.websiteTitle}</p>
-    <f:render partial="Navigation/FooterMenu.html" arguments="{_all}"/>
+<footer class="site-footer" role="contentinfo">
+    <div class="site-footer__container container">
+        <p class="site-footer__copyright">&copy; <f:format.date format="Y">now</f:format.date> {site.configuration.websiteTitle}</p>
+        <f:render partial="Navigation/FooterMenu.html" arguments="{_all}"/>
+    </div>
 </footer>

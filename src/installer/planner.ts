@@ -93,8 +93,8 @@ export function makeReplacements(config: InstallConfig): Record<string, string> 
       ? 'xmlns:stylex="http://typo3.org/ns/Vendor/StylexConnector/ViewHelpers"'
       : "",
     FSC_PAGE_MAIN_CLASS: config.developerStack === "fluid-styled-content-vite-stylex"
-      ? ` class="{stylex:class(styles: 'Site.shell')}"`
-      : "",
+      ? ` class="site-main {stylex:class(styles: 'Site.shell')}"`
+      : ' class="site-main"',
     FSC_PAGE_CONTENT_CLASS: config.developerStack === "fluid-styled-content-vite-stylex"
       ? ` class="{stylex:class(styles: 'Site.content')}"`
       : "",

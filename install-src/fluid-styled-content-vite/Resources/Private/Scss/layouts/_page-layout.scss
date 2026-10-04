@@ -1,0 +1,36 @@
+// =============================================================================
+// Global Page Layout Envelope
+// Sticky Header, Flexible Main Content, Sticky Footer
+// =============================================================================
+
+@use '../abstracts' as *;
+
+html,
+body {
+    height: 100%;
+}
+
+// Global page wrapper: Flexbox column ensuring footer stays at bottom
+.site-wrapper,
+body.page-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+// Main content container flows beneath sticky header and expands to fill space
+.site-main,
+main {
+    flex: 1 0 auto;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    isolation: isolate; // Creates a local stacking context so no jumbotron or child element overlaps the header
+    box-sizing: border-box;
+
+    // Direct inner container fallback
+    & > div:not([class]) {
+        width: 100%;
+    }
+}

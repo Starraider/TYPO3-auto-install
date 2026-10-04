@@ -162,7 +162,7 @@ describe("template rendering", () => {
       const setup = await readFile(path.join(sitepackage, "Configuration/Sets/SitePackage/setup.typoscript"), "utf8");
       expect(setup).toContain("@import './TypoScript/*.typoscript'");
       const fscCss = await readFile(path.join(sitepackage, "Configuration/Sets/SitePackage/TypoScript/fsc-css.typoscript"), "utf8");
-      expect(fscCss).toContain("plugin.tx_frontend._CSS_DEFAULT_STYLE.wrap = @layer fsc { | }");
+      expect(fscCss).toContain("plugin.tx_frontend._CSS_DEFAULT_STYLE.wrap >");
       expect(fscCss).not.toContain("config.removeDefaultCss");
       async function checkFiles(folder: string): Promise<void> {
         for (const entry of await readdir(folder, { withFileTypes: true })) {
@@ -178,7 +178,7 @@ describe("template rendering", () => {
       const layout = await readFile(path.join(sitepackage, "Resources/Private/PageView/Layouts/PageLayout.html"), "utf8");
       expect(layout.match(/<vite:asset/g)).toHaveLength(1);
       const header = await readFile(path.join(sitepackage, "Resources/Private/PageView/Partials/Header.html"), "utf8");
-      expect(header).toContain('<nav aria-label="Main navigation">');
+      expect(header).toContain('aria-label="Main navigation"');
       expect(header).not.toContain("<details");
       await expect(readdir(path.join(sitepackage, "ContentBlocks/ContentElements"))).rejects.toMatchObject({ code: "ENOENT" });
       expect(layout).not.toMatch(/FSC_[A-Z_]+/);

@@ -1,0 +1,126 @@
+// =============================================================================
+// Design Tokens & Variables
+// =============================================================================
+
+// Breakpoints (Mobile-First)
+$breakpoints: (
+    'xs': 480px,
+    'sm': 576px,
+    'md': 768px,
+    'lg': 992px,
+    'xl': 1200px,
+    '2xl': 1400px,
+);
+
+// SCSS Sass variables for build-time calculations
+$font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-family-heading: inherit;
+
+$container-max-width: 1200px;
+$container-padding-mobile: 1rem;
+$container-padding-desktop: 2rem;
+
+$header-height: 70px;
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal: 1050;
+
+// Root CSS Custom Properties
+:root {
+    // Brand & Theme Colors
+    --color-primary: #2563eb;
+    --color-primary-hover: #1d4ed8;
+    --color-primary-light: #eff6ff;
+    --color-secondary: #475569;
+    --color-secondary-hover: #334155;
+
+    // Neutral / Content Colors
+    --color-text: #1e293b;
+    --color-text-muted: #64748b;
+    --color-text-subtle: #94a3b8;
+    --color-bg: #ffffff;
+    --color-bg-alt: #f8fafc;
+    --color-bg-surface: #ffffff;
+    --color-border: #e2e8f0;
+    --color-border-hover: #cbd5e1;
+
+    // Header & Navigation Colors
+    --color-header-bg: rgba(255, 255, 255, 0.92);
+    --color-header-border: #e2e8f0;
+    --color-nav-link: #334155;
+    --color-nav-link-hover: #2563eb;
+    --color-nav-link-active: #2563eb;
+
+    // Footer Colors
+    --color-footer-bg: #0f172a;
+    --color-footer-text: #94a3b8;
+    --color-footer-heading: #f8fafc;
+    --color-footer-link: #cbd5e1;
+    --color-footer-link-hover: #ffffff;
+    --color-footer-border: #1e293b;
+
+    // Typography Scale
+    --font-family-base: #{$font-family-base};
+    --font-family-heading: #{$font-family-heading};
+    --font-size-xs: 0.75rem; // 12px
+    --font-size-sm: 0.875rem; // 14px
+    --font-size-base: 1rem; // 16px
+    --font-size-md: 1.125rem; // 18px
+    --font-size-lg: 1.25rem; // 20px
+    --font-size-xl: 1.5rem; // 24px
+    --font-size-2xl: 2rem; // 32px
+    --font-size-3xl: 2.5rem; // 40px
+
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    --line-height-tight: 1.25;
+    --line-height-base: 1.6;
+    --line-height-relaxed: 1.75;
+
+    // Spacing Scale
+    --spacing-3xs: 0.125rem; // 2px
+    --spacing-2xs: 0.25rem; // 4px
+    --spacing-xs: 0.5rem; // 8px
+    --spacing-sm: 0.75rem; // 12px
+    --spacing-md: 1rem; // 16px
+    --spacing-lg: 1.5rem; // 24px
+    --spacing-xl: 2rem; // 32px
+    --spacing-2xl: 3rem; // 48px
+    --spacing-3xl: 4.5rem; // 72px
+
+    // Layout
+    --container-max-width: #{$container-max-width};
+    --container-padding: #{$container-padding-mobile};
+    --header-height: #{$header-height};
+    --z-dropdown: #{$z-dropdown};
+    --z-sticky: #{$z-sticky};
+    --z-fixed: #{$z-fixed};
+    --z-modal: #{$z-modal};
+
+    // Border Radius
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-full: 9999px;
+
+    // Shadows
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    --shadow-header: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+    // Transitions
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (min-width: 768px) {
+    :root {
+        --container-padding: #{$container-padding-desktop};
+    }
+}

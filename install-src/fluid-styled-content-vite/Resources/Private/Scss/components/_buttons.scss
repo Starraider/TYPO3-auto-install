@@ -1,0 +1,65 @@
+// =============================================================================
+// Button Styles & Components
+// =============================================================================
+
+@use '../abstracts' as *;
+
+.btn {
+    @include button-base;
+
+    // Variants
+    &--primary,
+    &-primary {
+        @include button-variant(
+            var(--color-primary),
+            #ffffff,
+            var(--color-primary-hover),
+            #ffffff,
+            var(--color-primary)
+        );
+    }
+
+    &--secondary,
+    &-secondary {
+        @include button-variant(
+            var(--color-secondary),
+            #ffffff,
+            var(--color-secondary-hover),
+            #ffffff,
+            var(--color-secondary)
+        );
+    }
+
+    &--outline,
+    &-outline {
+        @include button-variant(
+            transparent,
+            var(--color-primary),
+            var(--color-primary-light),
+            var(--color-primary-hover),
+            var(--color-primary)
+        );
+    }
+
+    // Sizes
+    &--sm,
+    &-sm {
+        padding: var(--spacing-2xs) var(--spacing-sm);
+        font-size: var(--font-size-xs);
+        border-radius: var(--radius-sm);
+    }
+
+    &--lg,
+    &-lg {
+        padding: var(--spacing-sm) var(--spacing-lg);
+        font-size: var(--font-size-md);
+        border-radius: var(--radius-lg);
+    }
+
+    // Block
+    &--block,
+    &-block {
+        display: flex;
+        width: 100%;
+    }
+}

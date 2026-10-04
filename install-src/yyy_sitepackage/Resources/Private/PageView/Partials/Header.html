@@ -1,6 +1,20 @@
-<header>
-    <f:link.page pageUid="{site.rootPageId}">{site.configuration.websiteTitle}</f:link.page>
-    <nav aria-label="Main navigation">
-        <f:render partial="Navigation/Menu" arguments="{_all}"/>
-    </nav>
+<header class="site-header" role="banner">
+    <div class="site-header__container container">
+        <div class="site-header__branding">
+            <f:link.page pageUid="{site.rootPageId}" class="site-header__logo">
+                <f:if condition="{site.configuration.websiteTitle}">
+                    <f:then><span class="site-header__title">{site.configuration.websiteTitle}</span></f:then>
+                    <f:else><span class="site-header__title">TYPO3</span></f:else>
+                </f:if>
+            </f:link.page>
+        </div>
+        <button type="button" class="site-header__toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="site-header__toggle-bar"></span>
+            <span class="site-header__toggle-bar"></span>
+            <span class="site-header__toggle-bar"></span>
+        </button>
+        <nav id="primary-nav" class="site-nav" aria-label="Main navigation">
+            <f:render partial="Navigation/Menu" arguments="{_all}"/>
+        </nav>
+    </div>
 </header>

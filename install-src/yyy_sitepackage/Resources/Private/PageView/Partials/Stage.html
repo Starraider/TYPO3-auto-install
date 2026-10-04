@@ -1,7 +1,11 @@
-<f:for each="{content.stage.records}" as="record">
-    <f:cObject
-        typoscriptObjectPath="{record.mainType}"
-        data="{record}"
-        table="{record.mainType}"
-    />
-</f:for>
+<f:if condition="{content.stage.records}">
+    <div class="stage-banner__container container">
+        <f:for each="{content.stage.records}" as="record">
+            <f:cObject
+                typoscriptObjectPath="{record.mainType}"
+                data="{record}"
+                table="{record.mainType}"
+            />
+        </f:for>
+    </div>
+</f:if>

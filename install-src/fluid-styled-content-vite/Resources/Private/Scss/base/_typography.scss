@@ -1,0 +1,87 @@
+// =============================================================================
+// Typography
+// =============================================================================
+
+@use '../abstracts' as *;
+
+body {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-base);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
+}
+
+h1 {
+    font-size: var(--font-size-2xl);
+    letter-spacing: -0.025em;
+
+    @include respond-to('md') {
+        font-size: var(--font-size-3xl);
+    }
+}
+
+h2 {
+    font-size: var(--font-size-xl);
+    letter-spacing: -0.02em;
+
+    @include respond-to('md') {
+        font-size: var(--font-size-2xl);
+    }
+}
+
+h3 {
+    font-size: var(--font-size-lg);
+
+    @include respond-to('md') {
+        font-size: var(--font-size-xl);
+    }
+}
+
+h4 {
+    font-size: var(--font-size-md);
+}
+
+h5 {
+    font-size: var(--font-size-base);
+}
+
+h6 {
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+}
+
+p {
+    margin-bottom: var(--spacing-md);
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color var(--transition-fast);
+
+    &:hover {
+        color: var(--color-primary-hover);
+    }
+}
+
+small {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}

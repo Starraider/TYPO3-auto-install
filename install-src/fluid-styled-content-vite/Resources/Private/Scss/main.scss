@@ -1,2 +1,29 @@
-// FSC's generated CSS is in the lower-priority "fsc" cascade layer.
-// Add unlayered project styles here to override FSC without !important.
+// =============================================================================
+// Main SCSS Manifest
+// Loaded via Vite (Main.entry.js)
+// Loaded after FSC CSS, ensuring rules here cleanly style page layouts
+// =============================================================================
+
+// 1. Abstracts (Variables, Design Tokens, Mixins)
+@use 'abstracts' as *;
+
+// 2. Base & Reset
+@use 'base/reset';
+@use 'base/typography';
+
+// 3. Components
+@use 'components/buttons';
+@use 'components/header';
+@use 'components/nav';
+@use 'components/breadcrumb';
+@use 'components/stage';
+@use 'components/footer';
+
+// 4. Layouts (Default 1-column & Subpage 2-column)
+@use 'layouts/page-layout';
+@use 'layouts/default';
+@use 'layouts/subpage';
+
+// 5. Utilities
+@use 'utilities/container';
+@use 'utilities/helpers';

@@ -1,0 +1,23 @@
+// =============================================================================
+// Default Page Layout (1-Column Layout: Stage + Main Content)
+// =============================================================================
+
+@use '../abstracts' as *;
+
+.layout-default,
+body.page-layout--default .site-main {
+    width: 100%;
+
+    &__stage {
+        width: 100%;
+    }
+
+    &__content {
+        @include container;
+        padding-block: var(--spacing-xl);
+
+        @include respond-to('md') {
+            padding-block: var(--spacing-2xl);
+        }
+    }
+}

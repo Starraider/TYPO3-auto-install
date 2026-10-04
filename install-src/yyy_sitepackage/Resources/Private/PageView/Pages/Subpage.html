@@ -1,9 +1,21 @@
 <f:layout name="PageLayout"/>
 <f:section name="Main">
-    <f:render partial="Stage" arguments="{_all}"/>
-    <f:render partial="Navigation/Breadcrumb" arguments="{_all}"/>
-    <f:render partial="Content" arguments="{records: content.main.records}"/>
-    <aside>
-        <f:render partial="Content" arguments="{records: content.sidebar.records}"/>
-    </aside>
+    <div class="layout-subpage">
+        <f:if condition="{content.stage.records}">
+            <div class="layout-subpage__stage stage-area">
+                <f:render partial="Stage" arguments="{_all}"/>
+            </div>
+        </f:if>
+        <div class="layout-subpage__breadcrumb container">
+            <f:render partial="Navigation/Breadcrumb" arguments="{_all}"/>
+        </div>
+        <div class="layout-subpage__body container">
+            <div class="layout-subpage__content">
+                <f:render partial="Content" arguments="{records: content.main.records}"/>
+            </div>
+            <aside class="layout-subpage__sidebar" aria-label="Sidebar">
+                <f:render partial="Content" arguments="{records: content.sidebar.records}"/>
+            </aside>
+        </div>
+    </div>
 </f:section>

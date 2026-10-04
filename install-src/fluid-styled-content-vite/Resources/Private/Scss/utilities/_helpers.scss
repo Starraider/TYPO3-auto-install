@@ -1,0 +1,44 @@
+// =============================================================================
+// Helper & Utility Classes
+// =============================================================================
+
+@use '../abstracts' as *;
+
+// Accessibility
+.visually-hidden,
+.sr-only {
+    @include visually-hidden;
+}
+
+// Text Helpers
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.text-muted { color: var(--color-text-muted); }
+.text-truncate { @include truncate; }
+
+// Spacing Utilities
+.mt-0 { margin-top: 0; }
+.mb-0 { margin-bottom: 0; }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+.mb-xl { margin-bottom: var(--spacing-xl); }
+
+.pt-0 { padding-top: 0; }
+.pb-0 { padding-bottom: 0; }
+.py-md { padding-block: var(--spacing-md); }
+.py-lg { padding-block: var(--spacing-lg); }
+.py-xl { padding-block: var(--spacing-xl); }
+
+// Display Helpers
+.d-block { display: block; }
+.d-flex { display: flex; }
+.d-grid { display: grid; }
+.d-none { display: none; }
+
+@include respond-to('md') {
+    .d-md-block { display: block; }
+    .d-md-flex { display: flex; }
+    .d-md-none { display: none; }
+}
