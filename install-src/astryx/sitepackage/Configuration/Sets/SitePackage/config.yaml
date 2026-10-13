@@ -1,0 +1,5 @@
+name: skom/astryx-sitepackage
+label: 'Astryx starter'
+dependencies:
+  - skom/typo3-astryx
+TYPO3_EXTENSION_SITE_SET_DEPENDENCIES

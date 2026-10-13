@@ -180,7 +180,7 @@ program.command("update")
     if (await pathExists(path.join(projectDirectory, "package.json"))) {
       commands.splice(1, 0, ["ddev", ["npm", "update"]]);
     }
-    if (state.developerStack === "fluid-styled-content-vite-stylex") {
+    if (state.developerStack === "fluid-styled-content-vite-stylex" || state.developerStack === "astryx") {
       commands.splice(2, 0,
         ["ddev", ["npm", "run", "build"]],
         ["ddev", [...STYLEX_VALIDATE_ARGS]],

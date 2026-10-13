@@ -1,0 +1,3 @@
+# Product overrides extend the shared Astryx page templates.
+page.10.paths.20 = EXT:astryx_sitepackage/Resources/Private/PageView/
+page.shortcutIcon = {$AstryxProduct.favicon}

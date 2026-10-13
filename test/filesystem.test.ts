@@ -254,4 +254,45 @@ describe("template rendering", () => {
     expect((await readState(directory))?.generatedPaths).not.toContain("vite-plugin-stylex-manifest.js");
   });
 
+  it("renders the Astryx sitepackage with configured vendor and sitepackage name and dependencies", async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), "typo3-astryx-render-"));
+    temporaryDirectories.push(directory);
+    const config: InstallConfig = {
+      project: { name: "demo-site", title: "Demo site", directory },
+      admin: { username: "admin", name: "Admin", email: "admin@example.test", password: "SecurePass1!" },
+      ddev: { phpVersion: "8.3", serverType: "apache" },
+      database: { driver: "mysqli", host: "db", port: 3306, name: "db", user: "db", password: "db" },
+      sitepackage: { vendor: "acme-agency", name: "my_astryx_sitepackage" },
+      developerStack: "astryx",
+      extensions: ["georgringer/news"],
+      features: { rector: false, playwright: false },
+    };
+    const plan = await buildInstallPlan(config, { dryRun: true, force: false, verbose: false });
+    for (const step of plan) {
+      if (step.type === "render") await renderDirectory(step.from, step.to, step.replacements);
+    }
+    const sitepackage = path.join(directory, "packages/my_astryx_sitepackage");
+    const composer = JSON.parse(await readFile(path.join(sitepackage, "composer.json"), "utf8"));
+    expect(composer.name).toBe("acme-agency/my-astryx-sitepackage");
+    expect(composer.require["skom/typo3-astryx"]).toBe("^0.1.0");
+    expect(composer.require["skom/stylex-connector"]).toBe("^1.1.2");
+    expect(composer.require["praetorius/vite-asset-collector"]).toBe("^1.18");
+    expect(composer.require).not.toHaveProperty("typo3/cms-fluid-styled-content");
+    const set = parse(await readFile(path.join(sitepackage, "Configuration/Sets/SitePackage/config.yaml"), "utf8"));
+    expect(set.name).toBe("acme-agency/my-astryx-sitepackage");
+    expect(set.dependencies).toEqual([
+      "skom/typo3-astryx",
+      "georgringer/news",
+    ]);
+    const registry = await readFile(path.join(sitepackage, "ext_localconf.php"), "utf8");
+    expect(registry).toContain("Vendor\\StylexConnector\\Configuration\\StylexRegistry::registerManifest");
+    expect(registry).toContain("EXT:my_astryx_sitepackage/Resources/Public/StylexManifest/stylex-manifest.json");
+    const assets = await readFile(path.join(sitepackage, "Resources/Private/PageView/Partials/ProductAssets.html"), "utf8");
+    expect(assets).toContain('<vite:asset entry="EXT:my_astryx_sitepackage/Resources/Private/JavaScript/Main.entry.js" />');
+    await writeState(directory, config, "1.0.0");
+    expect((await readState(directory))?.generatedPaths).toEqual(expect.arrayContaining([
+      "vite.config.js", "verify-stylex-build.mjs",
+    ]));
+  });
+
 });

@@ -35,6 +35,9 @@ sitepackage:
 # manifest registration, development CSS loading, and a verified production build.
 # Its connector requirement is pinned in src/stylex.ts until the maintained
 # adapter and validator are included in a tagged release.
+# astryx installs only TYPO3 with Vite, praetorius/vite-asset-collector,
+# skom/stylex-connector and skom/typo3-astryx, excluding typo3/cms-fluid-styled-content
+# and excluding bootstrap_package.
 developerStack: fluid-styled-content-vite-stylex
 
 # Optional extensions to install. Interactive installs present these as a

@@ -1,11 +1,23 @@
 export type ServerType = "apache" | "nginx";
 
-export const DEVELOPER_STACKS = ["bootstrap-package", "bootstrap-vite", "fluid-styled-content", "fluid-styled-content-vite", "fluid-styled-content-vite-stylex"] as const;
+export const DEVELOPER_STACKS = [
+  "bootstrap-package",
+  "bootstrap-vite",
+  "fluid-styled-content",
+  "fluid-styled-content-vite",
+  "fluid-styled-content-vite-stylex",
+  "astryx",
+] as const;
 
 export type DeveloperStack = (typeof DEVELOPER_STACKS)[number];
 
 export function stackUsesVite(stack: DeveloperStack): boolean {
-  return stack === "bootstrap-vite" || stack === "fluid-styled-content-vite" || stack === "fluid-styled-content-vite-stylex";
+  return (
+    stack === "bootstrap-vite" ||
+    stack === "fluid-styled-content-vite" ||
+    stack === "fluid-styled-content-vite-stylex" ||
+    stack === "astryx"
+  );
 }
 
 export const TYPO3_EXTENSION_PACKAGES = [
@@ -40,6 +52,7 @@ export const TYPO3_STACK_EXTENSION_SITE_SETS: Record<DeveloperStack, Partial<Rec
   "fluid-styled-content-vite-stylex": {
     "baschte/content-animations": "baschte/content-animations-fluid-styles-content",
   },
+  astryx: {},
 };
 
 export interface InstallConfig {

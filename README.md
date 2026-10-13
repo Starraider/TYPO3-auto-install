@@ -183,7 +183,7 @@ managed file can have local edits.
 - `database`: the DDEV database connection
 - `sitepackage`: Composer vendor and TYPO3 extension key
 - `developerStack`: `bootstrap-package`, `bootstrap-vite`,
-  `fluid-styled-content`, `fluid-styled-content-vite`, or `fluid-styled-content-vite-stylex`
+  `fluid-styled-content`, `fluid-styled-content-vite`, `fluid-styled-content-vite-stylex`, or `astryx`
 - `extensions`: optional TYPO3 extensions, available with every stack
 - `features`: TYPO3 Rector and Playwright choices
 
@@ -197,16 +197,16 @@ assets. Shared TYPO3 setup, the local Composer sitepackage repository, dotenv
 support, Container, optional extensions, Rector, and Playwright remain
 available in every variant.
 
-| Component | `bootstrap-package` | `bootstrap-vite` | `fluid-styled-content` | `fluid-styled-content-vite` |
-| --- | --- | --- | --- | --- |
-| Interactive label | `bootstrap_package` | `bootstrap_package + Vite` | `fluid-styled-content` | `fluid-styled-content + Vite` |
-| Sitepackage | `install-src/bootstrap-package/sitepackage` | `install-src/bootstrap-vite/sitepackage` | `install-src/fluid-styled-content/sitepackage` | `install-src/fluid-styled-content-vite/sitepackage` |
-| Content renderer | Bootstrap Package | Bootstrap Package | Fluid Styled Content | Fluid Styled Content |
-| Renderer dependency | `bk2k/bootstrap-package` in the local sitepackage | `bk2k/bootstrap-package` in the local sitepackage | `typo3/cms-fluid-styled-content` in the local sitepackage | `typo3/cms-fluid-styled-content` in the local sitepackage |
-| Vite Asset Collector | Not installed | Installed | Not installed | Installed |
-| Vite tooling | Not installed | Vite, TYPO3 plugin, Sass, Bootstrap, Icons, Popper, npm scripts, and `vite.config.js` | Not installed | Vite, TYPO3 plugin, `sass-embedded`, npm scripts, and `vite.config.js` |
-| DDEV Vite sidecar | Not installed | Installed | Not installed | Installed |
-| `baschte/content-animations` site set | Bootstrap Package integration | Bootstrap Package integration | Fluid Styled Content integration | Fluid Styled Content integration |
+| Component | `bootstrap-package` | `bootstrap-vite` | `fluid-styled-content` | `fluid-styled-content-vite` | `fluid-styled-content-vite-stylex` | `astryx` |
+| --- | --- | --- | --- | --- | --- | --- |
+| Interactive label | `bootstrap_package` | `bootstrap_package + Vite` | `fluid-styled-content` | `fluid-styled-content + Vite` | `fluid-styled-content + Vite + StyleX` | `Astryx (Vite + StyleX)` |
+| Sitepackage | `install-src/bootstrap-package/sitepackage` | `install-src/bootstrap-vite/sitepackage` | `install-src/fluid-styled-content/sitepackage` | `install-src/fluid-styled-content-vite/sitepackage` | `install-src/fluid-styled-content-vite-stylex/sitepackage` | `install-src/astryx/sitepackage` |
+| Content renderer | Bootstrap Package | Bootstrap Package | Fluid Styled Content | Fluid Styled Content | Fluid Styled Content | TYPO3 Astryx |
+| Renderer dependency | `bk2k/bootstrap-package` in the local sitepackage | `bk2k/bootstrap-package` in the local sitepackage | `typo3/cms-fluid-styled-content` in the local sitepackage | `typo3/cms-fluid-styled-content` in the local sitepackage | `typo3/cms-fluid-styled-content` in the local sitepackage | `skom/typo3-astryx` in the local sitepackage (FSC removed) |
+| Vite Asset Collector | Not installed | Installed | Not installed | Installed | Installed | Installed |
+| Vite tooling | Not installed | Vite, TYPO3 plugin, Sass, Bootstrap, Icons, Popper, npm scripts, and `vite.config.js` | Not installed | Vite, TYPO3 plugin, `sass-embedded`, npm scripts, and `vite.config.js` | Vite, TYPO3 plugin, StyleX, unplugin, npm scripts, and `vite.config.js` | Vite, TYPO3 plugin, StyleX, unplugin, npm scripts, and `vite.config.js` |
+| DDEV Vite sidecar | Not installed | Installed | Not installed | Installed | Installed | Installed |
+| `baschte/content-animations` site set | Bootstrap Package integration | Bootstrap Package integration | Fluid Styled Content integration | Fluid Styled Content integration | Fluid Styled Content integration | Not configured |
 
 ### Template layout
 
@@ -348,6 +348,14 @@ not synchronize an independently deployed CSS file.
 
 The sidecar installation follows the
 [official DDEV add-on instructions](https://github.com/s2b/ddev-vite-sidecar#readme).
+
+## Astryx + Vite + StyleX
+
+Select `Astryx (Vite + StyleX)` at the prompt, set `developerStack: astryx` in YAML, or pass `--developer-stack astryx` to `install`.
+
+This stack installs only TYPO3 with Vite, `praetorius/vite-asset-collector`, `skom/stylex-connector`, and `skom/typo3-astryx`, while excluding `typo3/cms-fluid-styled-content` (removed via `composer remove typo3/cms-fluid-styled-content`) and excluding `bootstrap_package`.
+
+It uses the `astryx_sitepackage` template with StyleX token and component definitions, Vite entrypoints, and progressive enhancement. The generated sitepackage declares a Site Set dependency on `skom/typo3-astryx`.
 
 ## Installation sequence
 

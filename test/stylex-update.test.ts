@@ -9,7 +9,7 @@ afterEach(async () => {
   await Promise.all(directories.splice(0).map(directory => rm(directory, { recursive: true, force: true })));
 });
 
-async function updateFixture(failValidation = false, dryRun = false) {
+async function updateFixture(failValidation = false, dryRun = false, developerStack = "fluid-styled-content-vite-stylex") {
   const directory = await mkdtemp(path.join(tmpdir(), "stylex-update-check-"));
   directories.push(directory);
   const bin = path.join(directory, "bin");
@@ -17,7 +17,7 @@ async function updateFixture(failValidation = false, dryRun = false) {
   await mkdir(path.join(directory, ".typo3-auto-install"));
   await writeFile(path.join(directory, ".typo3-auto-install/state.json"), JSON.stringify({
     schemaVersion: 1,
-    developerStack: "fluid-styled-content-vite-stylex",
+    developerStack,
   }));
   await writeFile(path.join(directory, "package.json"), "{}");
   await writeFile(path.join(bin, "ddev"), `#!/usr/bin/env node
@@ -68,5 +68,17 @@ describe("StyleX dependency updates", () => {
     expect(result.stdout).toContain('"stylex:validate" "--required-key" "Site.shell" "--required-key" "Site.content"');
     expect(commands).toEqual([]);
     await expect(readFile(log, "utf8")).rejects.toMatchObject({ code: "ENOENT" });
+  });
+
+  it("validates manifests for the astryx developer stack", async () => {
+    const { result, commands } = await updateFixture(false, false, "astryx");
+    expect(result.exitCode).toBe(0);
+    const build = commands.findIndex(args => args.join(" ") === "npm run build");
+    expect(build).toBeGreaterThan(-1);
+    expect(commands[build + 1]).toEqual([
+      "typo3", "stylex:validate", "--required-key", "Site.shell", "--required-key", "Site.content",
+    ]);
+    expect(commands[build + 2]).toEqual(["typo3", "cache:flush"]);
+    expect(commands.at(-1)).toEqual(["typo3", "cache:warmup"]);
   });
 });

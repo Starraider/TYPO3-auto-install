@@ -1,0 +1,9 @@
+categories:
+  AstryxProduct:
+    label: 'Astryx starter'
+settings:
+  AstryxProduct.favicon:
+    label: 'Favicon'
+    category: AstryxProduct
+    type: string
+    default: 'EXT:astryx_sitepackage/Resources/Public/Icons/favicon.ico'

@@ -1,0 +1,4 @@
+/* Project styles belong in the product layer declared by typo3_astryx. */
+@layer product {
+  .astryx-logo img { max-height: 2.75rem; width: auto; }
+}

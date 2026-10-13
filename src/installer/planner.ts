@@ -64,6 +64,21 @@ export function makeReplacements(config: InstallConfig): Record<string, string> 
     yyy: displayName,
     Yyy: `${displayName.slice(0, 1).toUpperCase()}${displayName.slice(1)}`,
     YYY: displayName.toUpperCase(),
+    // The Astryx template uses its own placeholder family.
+    "skom/astryx-sitepackage": `${config.sitepackage.vendor}/${packageName}`,
+    "Skom\\AstryxSitepackage\\": `${vendorNamespace}\\${className}\\`,
+    astryx_sitepackage: extensionKey,
+    "astryx-sitepackage": packageName,
+    "astryx sitepackage": displayName,
+    AstryxSitepackage: className,
+    astryxSitepackage: camelName,
+    ASTRYX_SITEPACKAGE: extensionKey.toUpperCase(),
+    "ASTRYX-SITEPACKAGE": packageName.toUpperCase(),
+    "ASTRYX SITEPACKAGE": displayName.toUpperCase(),
+    ASTRYXSitepackage: className.toUpperCase(),
+    // Preserve fixed extension requirements and namespaces from vendor replacement.
+    "skom/typo3-astryx": "skom/typo3-astryx",
+    "skom/stylex-connector": "skom/stylex-connector",
     // Bare branding placeholders in the template use the human-readable name.
     xxxx: displayName,
     Xxxx: `${displayName.slice(0, 1).toUpperCase()}${displayName.slice(1)}`,
@@ -128,7 +143,7 @@ This TYPO3 v14 project was created with \`typo3-auto-install\`.
 
 ${development}
 
-${config.developerStack === "fluid-styled-content-vite-stylex" ? `StyleX sources live in \`packages/${config.sitepackage.name}/Resources/Private/JavaScript/Stylex/\`.
+${(config.developerStack === "fluid-styled-content-vite-stylex" || config.developerStack === "astryx") ? `StyleX sources live in \`packages/${config.sitepackage.name}/Resources/Private/JavaScript/Stylex/\`.
 Import each new \`*.stylex.js\` source in \`Main.entry.js\`, using a unique basename.
 Fluid resolves its compiled classes with \`{stylex:class(styles: 'Site.shell')}\`.
 
@@ -138,13 +153,13 @@ Then run \`ddev typo3 stylex:validate --required-key Site.shell --required-key S
 and \`ddev typo3 cache:flush\`. Installation and dependency updates run these commands automatically.
 The manifest adapter comes from the Composer-installed connector. Legacy aliases keep
 the supplied Fluid keys working alongside canonical module/object keys.
-The root Composer requirement is \`${STYLEX_CONNECTOR_REQUIREMENT}\`.
+${config.developerStack === "astryx" ? "The root Composer requirement is `skom/typo3-astryx:^0.1.0`." : `The root Composer requirement is \`${STYLEX_CONNECTOR_REQUIREMENT}\`.`}
 Deploy \`public/_assets/vite/\` and
 \`packages/${config.sitepackage.name}/Resources/Public/StylexManifest/stylex-manifest.json\` together.
 Development disables page caching so Fluid class names follow live StyleX edits.
 The generated .env uses TYPO3_CONTEXT=Development and expects the Vite dev server.
 Use TYPO3_CONTEXT=Production to serve the built assets without it.
-Fluid Styled Content supplies the standard content styles, layouts, templates, and partials.
+${config.developerStack === "astryx" ? "TYPO3 Astryx (skom/typo3-astryx) supplies native Astryx components, Content Blocks, and page layouts, replacing Fluid Styled Content." : "Fluid Styled Content supplies the standard content styles, layouts, templates, and partials."}
 ` : ""}
 Useful TYPO3 commands:
 
@@ -180,7 +195,8 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
   const projectDirectory = path.resolve(config.project.directory);
   const isBootstrapVite = config.developerStack === "bootstrap-vite";
   const isFluidStyledContentVite = config.developerStack === "fluid-styled-content-vite";
-  const usesStylex = config.developerStack === "fluid-styled-content-vite-stylex";
+  const isAstryx = config.developerStack === "astryx";
+  const usesStylex = config.developerStack === "fluid-styled-content-vite-stylex" || isAstryx;
   const usesVite = stackUsesVite(config.developerStack);
   // Every developer stack owns a self-contained folder in install-src/:
   //   <stack>/sitepackage  complete sitepackage, rendered to packages/<name>
@@ -203,7 +219,7 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
     "helhum/dotenv-connector:^3.2",
     "b13/container:^4.1",
     ...(usesVite ? ["praetorius/vite-asset-collector:^1.18"] : []),
-    ...(usesStylex ? [STYLEX_CONNECTOR_REQUIREMENT] : []),
+    ...(isAstryx ? ["skom/stylex-connector:^1.1.2", "skom/typo3-astryx:^0.1.0"] : (usesStylex ? [STYLEX_CONNECTOR_REQUIREMENT] : [])),
     ...config.extensions,
     `${config.sitepackage.vendor}/${sitepackageKebabName(config.sitepackage.name)}:@dev`,
   ];
@@ -247,6 +263,9 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
     { type: "command", executable: "ddev", args: ["composer", "config", "repositories.typo3", "composer", "https://composer.typo3.org"], cwd: projectDirectory },
     { type: "command", executable: "ddev", args: ["composer", "config", "repositories.sitepackage", "path", "packages/*"], cwd: projectDirectory },
     { type: "command", executable: "ddev", args: ["composer", "config", "platform.php", `${config.ddev.phpVersion}.0`], cwd: projectDirectory },
+    ...(isAstryx ? [
+      { type: "command" as const, executable: "ddev", args: ["composer", "remove", "typo3/cms-fluid-styled-content", "--no-interaction"], cwd: projectDirectory },
+    ] : []),
     { type: "mkdir", path: path.join(projectDirectory, "packages") },
     {
       type: "render",
@@ -290,7 +309,9 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
   }
   if (usesStylex) {
     const rootTemplate = async (filename: string) => (await readFile(path.join(templates.stackRoot, filename), "utf8"))
-      .replaceAll("yyy_sitepackage", config.sitepackage.name);
+      .replaceAll("yyy_sitepackage", config.sitepackage.name)
+      .replaceAll("astryx_sitepackage", config.sitepackage.name)
+      .replaceAll("astryx-sitepackage", sitepackageKebabName(config.sitepackage.name));
     steps.push(
       { type: "command", executable: "ddev", args: ["npm", "init", "--yes"], cwd: projectDirectory },
       { type: "command", executable: "ddev", args: ["npm", "install", "@stylexjs/stylex@^0.19.1"], cwd: projectDirectory },

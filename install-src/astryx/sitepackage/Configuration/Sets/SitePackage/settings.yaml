@@ -1,0 +1,5 @@
+Astryx.logo: 'EXT:astryx_sitepackage/Resources/Public/Images/logo.svg'
+Astryx.logoAlt: 'Astryx'
+Astryx.navigationRoot: 1
+Astryx.footerRoot: 2
+Astryx.useVite: true

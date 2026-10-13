@@ -1,0 +1,43 @@
+{
+    "name": "skom/astryx-sitepackage",
+    "type": "typo3-cms-extension",
+    "description": "Product configuration and assets for the TYPO3 Astryx starter",
+    "homepage": "https://www.skom.de",
+    "license": [
+        "GPL-2.0-or-later"
+    ],
+    "keywords": [
+        "TYPO3 CMS"
+    ],
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Sven Kalbhenn",
+            "email": "sven@skom.de",
+            "homepage": "https://www.skom.de"
+        }
+    ],
+    "require": {
+        "typo3/cms-core": "^14.0",
+        "typo3/cms-rte-ckeditor": "^14.0",
+        "praetorius/vite-asset-collector": "^1.18",
+        "skom/stylex-connector": "^1.1.2",
+        "skom/typo3-astryx": "^0.1.0"
+    },
+    "suggest": {
+        "friendsoftypo3/content-blocks": "Allows to create custom content elements. "
+    },
+    "autoload": {
+        "psr-4": {
+            "Skom\\AstryxSitepackage\\": "Classes/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "astryx_sitepackage",
+            "Package": {
+                "providesPackages": {}
+            }
+        }
+    }
+}

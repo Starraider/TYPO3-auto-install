@@ -246,4 +246,54 @@ describe("installation planning", () => {
     expect(plan.find(step => step.type === "write" && step.path.endsWith("verify-stylex-build.mjs"))).toBeDefined();
   });
 
+  it("plans installation of the Astryx developer stack excluding FSC and Bootstrap", async () => {
+    const plan = await buildInstallPlan(
+      { ...config, developerStack: "astryx", extensions: ["georgringer/news"] },
+      { dryRun: true, force: false, verbose: false },
+    );
+    const commands = plan.filter(step => step.type === "command");
+    expect(commands.find(step => step.args[0] === "config")?.args).toContain("--nodejs-version=22");
+
+    // Removes fluid-styled-content
+    const removeFsc = commands.find(step => step.args[1] === "remove");
+    expect(removeFsc).toMatchObject({
+      type: "command",
+      executable: "ddev",
+      args: ["composer", "remove", "typo3/cms-fluid-styled-content", "--no-interaction"],
+    });
+
+    // Requires Astryx and StyleX connector without fluid-styled-content
+    const composerRequire = commands.find(step => step.args[1] === "require");
+    expect(composerRequire?.args).toEqual(expect.arrayContaining([
+      "skom/typo3-astryx:^0.1.0",
+      "skom/stylex-connector:^1.1.2",
+      "praetorius/vite-asset-collector:^1.18",
+      "georgringer/news",
+    ]));
+    expect(composerRequire?.args.join(" ")).not.toMatch(/bootstrap/i);
+    expect(composerRequire?.args.join(" ")).not.toMatch(/fluid-styled-content/i);
+
+    // Renders the astryx sitepackage template
+    const astryxSitepackage = plan.find(step => step.type === "render" && step.from.endsWith("astryx/sitepackage"));
+    expect(astryxSitepackage).toBeDefined();
+
+    // Sidecar, build, and validation
+    const sidecar = commands.findIndex(step => step.executable === "env");
+    const restart = commands.findIndex(step => step.args[0] === "restart");
+    const build = commands.findIndex(step => step.args.join(" ") === "npm run build");
+    expect(sidecar).toBeGreaterThan(-1);
+    expect(restart).toBeGreaterThan(sidecar);
+    expect(build).toBeGreaterThan(restart);
+    expect(commands[build + 1].args).toEqual([
+      "typo3", "stylex:validate", "--required-key", "Site.shell", "--required-key", "Site.content",
+    ]);
+
+    // Writes vite.config.js and verify-stylex-build.mjs
+    const vite = plan.find(step => step.type === "write" && step.path.endsWith("vite.config.js"));
+    expect(vite).toMatchObject({ contents: expect.stringContaining("packages/demo_sitepackage/Resources/Public/StylexManifest/stylex-manifest.json") });
+    expect(vite).toMatchObject({ contents: expect.stringContaining("useCSSLayers: true") });
+    const verifier = plan.find(step => step.type === "write" && step.path.endsWith("verify-stylex-build.mjs"));
+    expect(verifier).toBeDefined();
+  });
+
 });

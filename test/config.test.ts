@@ -50,6 +50,7 @@ describe("configuration validation", () => {
     expect(validateConfig({ ...validConfig, developerStack: "bootstrap-package" }).developerStack).toBe("bootstrap-package");
     expect(validateConfig({ ...validConfig, developerStack: "fluid-styled-content" }).developerStack).toBe("fluid-styled-content");
     expect(validateConfig({ ...validConfig, developerStack: "fluid-styled-content-vite" }).developerStack).toBe("fluid-styled-content-vite");
+    expect(validateConfig({ ...validConfig, developerStack: "astryx" }).developerStack).toBe("astryx");
   });
 
   it("accepts the Fluid Styled Content, Vite, and StyleX stack", () => {
