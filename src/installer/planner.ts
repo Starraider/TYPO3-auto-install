@@ -314,7 +314,17 @@ export async function buildInstallPlan(config: InstallConfig, _options: InstallO
       .replaceAll("astryx-sitepackage", sitepackageKebabName(config.sitepackage.name));
     steps.push(
       { type: "command", executable: "ddev", args: ["npm", "init", "--yes"], cwd: projectDirectory },
-      { type: "command", executable: "ddev", args: ["npm", "install", "@stylexjs/stylex@^0.19.1"], cwd: projectDirectory },
+      {
+        type: "command",
+        executable: "ddev",
+        args: [
+          "npm",
+          "install",
+          "@stylexjs/stylex@^0.19.1",
+          ...(isAstryx ? ["highlight.js@^11.12.0"] : []),
+        ],
+        cwd: projectDirectory,
+      },
       { type: "command", executable: "ddev", args: ["npm", "install", "--save-dev", "vite@^7.0.0", "vite-plugin-typo3@^3.0.0", "vite-plugin-live-reload", "@stylexjs/unplugin@^0.19.1", "@babel/parser@^7.29.0"], cwd: projectDirectory },
       { type: "command", executable: "ddev", args: ["npm", "pkg", "set", "type=module", "scripts.dev=vite", "scripts.build=vite build && node verify-stylex-build.mjs", "scripts.watch=vite build --watch"], cwd: projectDirectory },
       { type: "write", path: path.join(projectDirectory, "vite.config.js"), contents: await rootTemplate("vite.config.js") },

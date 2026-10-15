@@ -1,9 +1,9 @@
 # Values here are safe to keep in version control. Pass the administrator
 # password with --admin-password or enter it at the prompt.
 project:
-  name: stylex-test
-  title: StyleX Test
-  directory: ../stylex-test
+  name: typo3-viteplus
+  title: TYPO3 VitePlus
+  directory: ../typo3-viteplus
 
 admin:
   username: sven2209
@@ -24,8 +24,8 @@ database:
   password: db
 
 sitepackage:
-  vendor: acme
-  name: my_typo3_project_sitepackage
+  vendor: skom
+  name: viteplus_sitepackage
 
 # The interactive installer asks for this before the extension multi-select.
 # bootstrap-package and fluid-styled-content install their renderers directly.
