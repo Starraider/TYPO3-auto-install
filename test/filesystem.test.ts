@@ -2,7 +2,7 @@ import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { renderDirectory } from "../src/filesystem.js";
+import { cleanProjectDirectory, renderDirectory } from "../src/filesystem.js";
 import { buildInstallPlan, makeReplacements } from "../src/installer/planner.js";
 import { readState, writeState } from "../src/state.js";
 import { parse } from "yaml";
@@ -295,4 +295,24 @@ describe("template rendering", () => {
     ]));
   });
 
+  it("cleans existing files in project directory while preserving .ddev", async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), "typo3-clean-"));
+    temporaryDirectories.push(directory);
+    const ddevDir = path.join(directory, ".ddev");
+    const vendorDir = path.join(directory, "vendor");
+    await (await import("node:fs/promises")).mkdir(ddevDir);
+    await (await import("node:fs/promises")).mkdir(vendorDir);
+    await writeFile(path.join(ddevDir, "config.yaml"), "name: test");
+    await writeFile(path.join(directory, ".editorconfig"), "root = true");
+    await writeFile(path.join(directory, "composer.json"), "{}");
+    await writeFile(path.join(vendorDir, "autoload.php"), "<?php");
+
+    await cleanProjectDirectory(directory);
+
+    const remaining = await readdir(directory);
+    expect(remaining).toEqual([".ddev"]);
+    await expect(readFile(path.join(ddevDir, "config.yaml"), "utf8")).resolves.toBe("name: test");
+  });
+
 });
+

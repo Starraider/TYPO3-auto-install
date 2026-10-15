@@ -99,6 +99,60 @@ describe("generated StyleX build verification", () => {
     expect(result.exitCode).not.toBe(0);
     expect(result.stderr).toContain("Entry CSS has no StyleX checksum: extra.css");
   });
+
+  it("verifies the Astryx developer stack build where StyleX selectors reside in the Astryx entrypoint CSS", async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), "astryx-build-check-"));
+    directories.push(directory);
+    const output = path.join(directory, "public/_assets/vite");
+    const styles = path.join(directory, "packages/custom_sitepackage/Resources/Public/StylexManifest");
+    await mkdir(path.join(output, ".vite"), { recursive: true });
+    await mkdir(styles, { recursive: true });
+
+    const siteCss = ".site-specific{}";
+    const astryxCss = ".xShell{color:red}.xContent{padding:1rem}.astryx-classic-gallery-tiles{display:flex}.astryx-classic-gallery-tile{flex:1}";
+    await writeFile(path.join(output, "site.css"), siteCss);
+    await writeFile(path.join(output, "astryx.css"), astryxCss);
+    await writeFile(path.join(output, "site.js"), "export {};");
+    await writeFile(path.join(output, "astryx.js"), "const f = 'data-astryx-classic-gallery data-gallery-category';");
+
+    await writeFile(path.join(output, ".vite/manifest.json"), JSON.stringify({
+      "packages/custom_sitepackage/Resources/Private/JavaScript/Main.entry.js": {
+        isEntry: true,
+        src: "packages/custom_sitepackage/Resources/Private/JavaScript/Main.entry.js",
+        file: "site.js",
+        css: ["site.css"],
+      },
+      "vendor/skom/typo3-astryx/Resources/Private/JavaScript/Main.entry.js": {
+        isEntry: true,
+        src: "vendor/skom/typo3-astryx/Resources/Private/JavaScript/Main.entry.js",
+        file: "astryx.js",
+        css: ["astryx.css"],
+      },
+    }));
+
+    await writeFile(path.join(styles, "stylex-manifest.json"), JSON.stringify({
+      version: "2.0",
+      capabilities: ["static-conflicts", "null-clearing"],
+      artifacts: [
+        { path: path.relative(styles, path.join(output, "site.css")), sha256: createHash("sha256").update(siteCss).digest("hex") },
+        { path: path.relative(styles, path.join(output, "astryx.css")), sha256: createHash("sha256").update(astryxCss).digest("hex") },
+      ],
+      styles: {
+        "Site.shell": { kind: "compiled", className: "xShell", properties: { color: "xShell" } },
+        "Site.content": { kind: "compiled", className: "xContent", properties: { padding: "xContent" } },
+      },
+    }));
+
+    const verifier = await readFile(path.resolve("install-src/astryx/root/verify-stylex-build.mjs"), "utf8");
+    await writeFile(path.join(directory, "verify-stylex-build.mjs"), verifier
+      .replaceAll("astryx_sitepackage", "custom_sitepackage")
+      .replaceAll("astryx-sitepackage", "custom_sitepackage")
+      .replaceAll("astryx-sitepackage", "custom-sitepackage"));
+
+    const result = await execa(process.execPath, ["verify-stylex-build.mjs"], { cwd: directory });
+    expect(result.stdout).toContain("StyleX build verified");
+    expect(result.stdout).toContain("Classic Gallery layout and filtering are present");
+  });
 });
 
 async function changeManifest(directory: string, change: (manifest: any) => void): Promise<void> {

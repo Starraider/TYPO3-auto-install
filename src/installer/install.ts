@@ -1,6 +1,6 @@
 import path from "node:path";
 import type { InstallConfig, InstallOptions, InstallStep } from "../types.js";
-import { isDirectoryEmpty } from "../filesystem.js";
+import { cleanProjectDirectory, isDirectoryEmpty } from "../filesystem.js";
 import { PlanExecutor } from "./executor.js";
 import { buildInstallPlan, templateVersion } from "./planner.js";
 import { printPlan } from "./plan-output.js";
@@ -25,6 +25,9 @@ export async function install(config: InstallConfig, options: InstallOptions): P
 
   const executor = new PlanExecutor(projectDirectory, options);
   try {
+    if (options.force) {
+      await cleanProjectDirectory(projectDirectory);
+    }
     await executor.execute(plan);
     await writeState(projectDirectory, config, await templateVersion());
   } catch (error) {

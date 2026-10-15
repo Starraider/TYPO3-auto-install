@@ -12,6 +12,9 @@ const entry = Object.values(manifest).find(item =>
     item.isEntry && item.src?.includes("/astryx-sitepackage/Resources/Private/JavaScript/Main.entry.js"),
 );
 assert(entry, "Vite did not build the sitepackage entrypoint");
+const astryxEntry = Object.values(manifest).find(item =>
+    item.isEntry && (item.src?.includes("/typo3-astryx/Resources/Private/JavaScript/Main.entry.js") || item.src?.includes("/typo3_astryx/Resources/Private/JavaScript/Main.entry.js")),
+);
 const cssFiles = new Set();
 const visited = new Set();
 function collect(item) {
@@ -28,6 +31,7 @@ function collect(item) {
     }
 }
 collect(entry);
+if (astryxEntry) collect(astryxEntry);
 assert(cssFiles.size > 0, "Vite emitted no CSS for the entrypoint");
 const css = [...cssFiles].map(file => fs.readFileSync(path.join(output, file), "utf8")).join("\n");
 for (const key of ["Site.shell", "Site.content"]) {
@@ -68,9 +72,6 @@ if (astryxManifestPath) {
     console.log("Astryx recipe selectors are present in the consuming Vite build.");
 }
 
-const astryxEntry = Object.values(manifest).find(item =>
-    item.isEntry && (item.src?.includes("/typo3-astryx/Resources/Private/JavaScript/Main.entry.js") || item.src?.includes("/typo3_astryx/Resources/Private/JavaScript/Main.entry.js")),
-);
 if (astryxEntry) {
     const galleryCss = (astryxEntry.css ?? []).map(file => fs.readFileSync(path.join(output, file), "utf8")).join("\n");
     for (const selector of [".astryx-classic-gallery-tiles", ".astryx-classic-gallery-tile"]) {

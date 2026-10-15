@@ -1,4 +1,4 @@
-import { access, cp, mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
+import { access, cp, mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 export async function pathExists(filePath: string): Promise<boolean> {
@@ -13,6 +13,14 @@ export async function pathExists(filePath: string): Promise<boolean> {
 export async function isDirectoryEmpty(directory: string): Promise<boolean> {
   if (!(await pathExists(directory))) return true;
   return (await readdir(directory)).length === 0;
+}
+
+export async function cleanProjectDirectory(directory: string): Promise<void> {
+  if (!(await pathExists(directory))) return;
+  for (const entry of await readdir(directory)) {
+    if (entry === ".ddev") continue;
+    await rm(path.join(directory, entry), { recursive: true, force: true });
+  }
 }
 
 export async function copyDirectory(source: string, destination: string): Promise<void> {
