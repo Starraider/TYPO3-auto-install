@@ -12,6 +12,8 @@ export async function pathExists(filePath: string): Promise<boolean> {
 
 export async function isDirectoryEmpty(directory: string): Promise<boolean> {
   if (!(await pathExists(directory))) return true;
+  const directoryStat = await stat(directory);
+  if (!directoryStat.isDirectory()) return false;
   return (await readdir(directory)).length === 0;
 }
 
@@ -19,6 +21,18 @@ export async function cleanProjectDirectory(directory: string): Promise<void> {
   if (!(await pathExists(directory))) return;
   for (const entry of await readdir(directory)) {
     if (entry === ".ddev") continue;
+    await rm(path.join(directory, entry), { recursive: true, force: true });
+  }
+}
+
+export async function emptyDirectory(directory: string): Promise<void> {
+  if (!(await pathExists(directory))) return;
+  const directoryStat = await stat(directory);
+  if (!directoryStat.isDirectory()) {
+    await rm(directory, { force: true });
+    return;
+  }
+  for (const entry of await readdir(directory)) {
     await rm(path.join(directory, entry), { recursive: true, force: true });
   }
 }

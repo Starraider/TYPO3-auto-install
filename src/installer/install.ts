@@ -9,10 +9,10 @@ import { readState, writeState } from "../state.js";
 export async function install(config: InstallConfig, options: InstallOptions): Promise<InstallStep[]> {
   const projectDirectory = path.resolve(config.project.directory);
   const existingState = await readState(projectDirectory);
-  if (existingState && !options.force) {
+  if (existingState && !options.force && !options.dryRun) {
     throw new Error(`This directory already has installer state. Run status, update, or use --force to reinstall: ${projectDirectory}`);
   }
-  if (!existingState && !(await isDirectoryEmpty(projectDirectory)) && !options.force) {
+  if (!existingState && !(await isDirectoryEmpty(projectDirectory)) && !options.force && !options.dryRun) {
     throw new Error(`The installation directory is not empty: ${projectDirectory}. Choose an empty directory or pass --force.`);
   }
 

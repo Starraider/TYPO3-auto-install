@@ -2,7 +2,7 @@ import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { cleanProjectDirectory, renderDirectory } from "../src/filesystem.js";
+import { cleanProjectDirectory, emptyDirectory, isDirectoryEmpty, renderDirectory } from "../src/filesystem.js";
 import { buildInstallPlan, makeReplacements } from "../src/installer/planner.js";
 import { readState, writeState } from "../src/state.js";
 import { parse } from "yaml";
@@ -312,6 +312,39 @@ describe("template rendering", () => {
     const remaining = await readdir(directory);
     expect(remaining).toEqual([".ddev"]);
     await expect(readFile(path.join(ddevDir, "config.yaml"), "utf8")).resolves.toBe("name: test");
+  });
+
+  it("empties all files and directories in project directory including .ddev", async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), "typo3-empty-"));
+    temporaryDirectories.push(directory);
+    const ddevDir = path.join(directory, ".ddev");
+    const vendorDir = path.join(directory, "vendor");
+    await (await import("node:fs/promises")).mkdir(ddevDir);
+    await (await import("node:fs/promises")).mkdir(vendorDir);
+    await writeFile(path.join(ddevDir, "config.yaml"), "name: test");
+    await writeFile(path.join(directory, ".editorconfig"), "root = true");
+    await writeFile(path.join(directory, "composer.json"), "{}");
+    await writeFile(path.join(vendorDir, "autoload.php"), "<?php");
+
+    expect(await isDirectoryEmpty(directory)).toBe(false);
+
+    await emptyDirectory(directory);
+
+    const remaining = await readdir(directory);
+    expect(remaining).toEqual([]);
+    expect(await isDirectoryEmpty(directory)).toBe(true);
+  });
+
+  it("handles non-existent and empty directories for isDirectoryEmpty and emptyDirectory", async () => {
+    const missing = path.join(tmpdir(), "typo3-non-existent-dir-" + Date.now());
+    expect(await isDirectoryEmpty(missing)).toBe(true);
+    await expect(emptyDirectory(missing)).resolves.toBeUndefined();
+
+    const empty = await mkdtemp(path.join(tmpdir(), "typo3-empty-dir-"));
+    temporaryDirectories.push(empty);
+    expect(await isDirectoryEmpty(empty)).toBe(true);
+    await emptyDirectory(empty);
+    expect(await isDirectoryEmpty(empty)).toBe(true);
   });
 
 });

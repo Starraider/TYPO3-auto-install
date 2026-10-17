@@ -64,3 +64,12 @@ export async function askForInstallConfig(defaults: InstallConfig): Promise<Inst
 export async function confirmInstall(): Promise<boolean> {
   return cancelled(await p.confirm({ message: "Execute this plan?", initialValue: true }));
 }
+
+export async function confirmEmptyDirectory(directory: string): Promise<boolean> {
+  return cancelled(
+    await p.confirm({
+      message: `Target folder is not empty (${directory}). Empty folder (delete all contents) before proceeding with the installation?`,
+      initialValue: false,
+    }),
+  );
+}

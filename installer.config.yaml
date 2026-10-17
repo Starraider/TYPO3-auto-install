@@ -1,9 +1,9 @@
 # Values here are safe to keep in version control. Pass the administrator
 # password with --admin-password or enter it at the prompt.
 project:
-  name: typo3-viteplus
-  title: TYPO3 VitePlus
-  directory: ../typo3-viteplus
+  name: svenja-chafe
+  title: Svenja Chafe
+  directory: ../svenja-chafe
 
 admin:
   username: sven2209
@@ -25,7 +25,7 @@ database:
 
 sitepackage:
   vendor: skom
-  name: viteplus_sitepackage
+  name: svenja_sitepackage
 
 # The interactive installer asks for this before the extension multi-select.
 # bootstrap-package and fluid-styled-content install their renderers directly.

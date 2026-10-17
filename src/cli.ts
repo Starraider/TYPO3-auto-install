@@ -6,11 +6,11 @@ import * as p from "@clack/prompts";
 import { loadConfig, validateConfig } from "./config/loader.js";
 import { assertPreflightChecks, runPreflightChecks } from "./preflight.js";
 import { install } from "./installer/install.js";
-import { confirmInstall, askForInstallConfig } from "./prompts.js";
+import { confirmInstall, confirmEmptyDirectory, askForInstallConfig } from "./prompts.js";
 import { readState, removeState } from "./state.js";
 import { DEVELOPER_STACKS, type DeveloperStack, type InstallConfig, type InstallOptions } from "./types.js";
 import { formatCommand, runCommand } from "./process.js";
-import { pathExists } from "./filesystem.js";
+import { emptyDirectory, isDirectoryEmpty, pathExists } from "./filesystem.js";
 import { STYLEX_VALIDATE_ARGS } from "./stylex.js";
 
 interface CommandFlags {
@@ -127,10 +127,27 @@ addInstallOptions(program.command("install").description("create a TYPO3 project
     const config = await loadInstallConfig(flags);
     await preflight(!flags.dryRun);
     const options = installOptions(flags);
+    const projectDirectory = path.resolve(config.project.directory);
+
+    let shouldEmpty = false;
+    if (!flags.yes && !options.dryRun && !options.force && !(await isDirectoryEmpty(projectDirectory))) {
+      shouldEmpty = await confirmEmptyDirectory(projectDirectory);
+      if (!shouldEmpty) {
+        p.cancel("Installation aborted. Target folder is not empty.");
+        return;
+      }
+    }
+
     if (!flags.yes && !options.dryRun && !(await confirmInstall())) {
       p.cancel("Installation cancelled. No changes were made.");
       return;
     }
+
+    if (shouldEmpty) {
+      await emptyDirectory(projectDirectory);
+      p.log.step("Target folder emptied.");
+    }
+
     await install(config, options);
     if (!options.dryRun) p.outro(`TYPO3 is ready at https://${config.project.name}.ddev.site`);
   });
